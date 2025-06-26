@@ -1,0 +1,133 @@
+arn:aws:iam::965985314336:role/source-data-sync-role
+arn:aws:iam::965985314336:role/dest-datasync-policy
+
+Create Role in Source
+==============
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "datasync.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+
+ADD Policy to that role for source s3 access 
+============================================
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::sourcedatasync12"
+        },
+        {
+            "Action": [
+                "s3:GetObject",
+                "s3:ListMultipartUploadParts",
+                "s3:GetObjectTagging"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::sourcedatasync12/*"
+        }
+    ]
+}
+create another dest role in source account only
+=======================================
+Role
+====
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "datasync.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+
+ADD Policy to Role 
+=================
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::datasync-demo-destination-bucket-us-east-1"
+        },
+        {
+            "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:ListMultipartUploadParts",
+                "s3:PutObject",
+                "s3:GetObjectTagging",
+                "s3:PutObjectTagging"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::datasync-demo-destination-bucket-us-east-1/*"
+        }
+    ]
+}
+
+
+add dest s3 bucket policy
+=====================
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "DataSyncCreateS3LocationAndTaskAccess",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::396608777944:role/datasync-destination-location-role"
+            },
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads",
+                "s3:AbortMultipartUpload",
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:ListMultipartUploadParts",
+                "s3:PutObject",
+                "s3:GetObjectTagging",
+                "s3:PutObjectTagging"
+            ],
+            "Resource": [
+                "arn:aws:s3:::datasync-demo-destination-bucket-us-east-1",
+                "arn:aws:s3:::datasync-demo-destination-bucket-us-east-1/*"
+            ]
+        }
+    ]
+}
+
+dest location in datasync 
+===========================
+aws datasync create-location-s3 \
+  --s3-bucket-arn arn:aws:s3:::destdatasync12 \
+  --region us-east-1 \
+  --s3-config '{
+    "BucketAccessRoleArn":"arn:aws:iam::965985314336:role/dest-datasync-policy"
+  }'
