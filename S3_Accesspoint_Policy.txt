@@ -1,0 +1,63 @@
+Bucket Policy:
+==============
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "*",
+            "Resource": [
+                "arn:aws:s3:::fsx-task-bucket",
+                "arn:aws:s3:::fsx-task-bucket/*"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "s3:DataAccessPointAccount": "965985314336"
+                }
+            }
+        }
+    ]
+}
+
+AccessPoint Policy:
+====================
+
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "AllowObjectAccessViaAccessPoint",
+			"Effect": "Allow",
+			"Principal": {
+				"AWS": "arn:aws:iam::965985314336:user/fsx-user"
+			},
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject"
+			],
+			"Resource": [
+				"arn:aws:s3:us-east-1:965985314336:accesspoint/test/object/*",
+				"arn:aws:s3:us-east-1:965985314336:accesspoint/test"
+			]
+		},
+		{
+			"Sid": "AllowListBucketViaAccessPoint",
+			"Effect": "Allow",
+			"Principal": {
+				"AWS": "arn:aws:iam::965985314336:user/fsx-user"
+			},
+			"Action": "s3:ListBucket",
+			"Resource": "arn:aws:s3:us-east-1:965985314336:accesspoint/test"
+		}
+	]
+}
+
+Download all objects
+=====================
+aws s3 cp s3://arn:aws:s3:us-east-1:965985314336:accesspoint/test/ . --recursive
+
+
+NO need of iam policy just accessing aws cli is sufficient
