@@ -1,0 +1,50 @@
+GKE SSL CERTIFICATE
+===================
+Step 1:
+-------
+Create Managed Certificate  
+
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: my-google-managed-cert
+spec:
+  domains:
+    - eureka.manojpadigineti.cloud
+
+Step 2:
+-------
+Add Annotation to Ingress
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eureka-ingress
+  annotations:
+    networking.gke.io/managed-certificates: "my-google-managed-cert"
+spec:
+  tls:
+  - hosts:
+    - eureka.manojpadigineti.cloud
+  rules:
+  - host: eureka.manojpadigineti.cloud
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: eureka-service   # 🔹 replace with your service name
+            port:
+              number: 80
+              
+Step 3:
+-------
+Add Ingress created LB ip to DNS (A record)
+
+Steps Summary:
+
+1. Apply both YAMLs.
+2. Point DNS A record → Ingress IP.
+3. Wait for cert status Active.
+4. Test https://eureka.manojpadigineti.cloud.
