@@ -1,0 +1,125 @@
+----------------------------
+| EKS AWS Controller Setup | 
+----------------------------
+Controller Installation (Done)
+EKS Cluster → OIDC Provider → IAM Policy → eksctl iamserviceaccount → Helm install
+kubectl get deployment aws-load-balancer-controller -n kube-system  # ✓ Running
+---
+One-Time Setup (Done)
+IngressClassParams (alb) → internet-facing scheme
+IngressClass (alb) → default controller reference  
+---
+Deployment + Service → Ingress resource only
+---
+Download an IAM policy for the AWS Load Balancer Controller that allows it to make calls to AWS APIs on your behalf.
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.14.1/docs/install/iam_policy.json
+---
+Create an IAM policy using the policy downloaded in the previous step.
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+---
+Replace the values for cluster name, region code, and account ID
+eksctl create iamserviceaccount \
+    --cluster=demo-cluster \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --attach-policy-arn=arn:aws:iam::725412824849:policy/AWSLoadBalancerControllerIAMPolicy \
+    --override-existing-serviceaccounts \
+    --region ap-south-2 \
+    --approve
+---
+Install AWS Load Balancer Controller
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update eks
+Create OIDC_Provider
+---
+eksctl utils associate-iam-oidc-provider --region=ap-south-2 --cluster=demo-cluster
+---
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \
+  --set clusterName=demo-cluster \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --version 1.14.0 \
+  --set region=ap-south-2 \
+  --set vpcId=vpc-08f5574aec8e3e1fb
+---
+# alb-ingressclassparams.yaml - CORRECT API for LBC
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: IngressClassParams
+metadata:
+  name: alb
+spec:
+  scheme: internet-facing
+
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: alb
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: ingress.k8s.aws/alb
+  parameters:
+    apiGroup: elbv2.k8s.aws
+    kind: IngressClassParams
+    name: alb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-2048
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-2048
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: app-2048
+    spec:
+      containers:
+        - image: public.ecr.aws/l6m2t8p7/docker-2048:latest
+          imagePullPolicy: Always
+          name: app-2048
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-2048
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: app-2048
+---
+# 2048-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-2048
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+spec:
+  ingressClassName: alb
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: service-2048
+            port:
+              number: 80
