@@ -1,3 +1,29 @@
+NLB: https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
+ALB: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+
+-----------
+|VPC Setup|
+-----------
+Subnets must be in different AZ
+2 - Must be tagged in the following format. This is so that Kubernetes knows to use only those subnets for external load balancers instead of choosing a public subnet in each Availability Zone (based on the lexicographical order of the subnet IDs). If you use eksctl or an Amazon EKS AWS CloudFormation template to create your VPC after March 26, 2020, then the subnets are tagged appropriately when they’re created.
+  tags: kubernetes.io/role/elb : 1
+        Key – kubernetes.io/role/elb
+		Value – 1
+2 - Private subnets – Must be tagged in the following format. This is so that Kubernetes and the AWS Load Balancer Controller know that the subnets can be used for internal load balancers.
+  tags: kubernetes.io/role/internal-elb : 1
+        Key – kubernetes.io/role/internal-elb
+        Value – 1
+If you’re using the AWS Load Balancer Controller version 2.1.1 or earlier, subnets must be tagged as follows. If using version 2.1.2 or later, this tag is optional
+  Key – kubernetes.io/cluster/<my-cluster>
+  Value – shared or owned 
+  Command to get version - (kubectl get deployment aws-load-balancer-controller -n kube-system -o jsonpath='{.spec.template.spec.containers[0].image}')
+
+Node group will be in Private subnets and EKS 
+Choose the subnets in your VPC where the control plane may place elastic network interfaces (ENIs) to facilitate communication with your cluster. --Should be Private Subnets 
+
+
+Ingress Annotations: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/ingress/annotations/
+Service Annotations: https://kubernetes-sigs.github.io/aws-load-balancer-controller/latest/guide/service/annotations/
 ----------------------------
 | EKS AWS Controller Setup | 
 ----------------------------
