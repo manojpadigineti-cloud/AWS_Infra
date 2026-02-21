@@ -1,0 +1,48 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SSL Tunneling for EKS cluster:
+===============================
+Describe custer to get cluster endpoint 
+----------------------------------------
+aws eks describe-cluster   --name eks-private   --region us-east-1   --query "cluster.endpoint"   --output text
+
+Edit Host File:
+---------------
+C:\Windows\System32\drivers\etc\hosts
+127.0.0.1 AAFBBAD7EF4B0123147E37B2F860B2DA.gr7.us-east-1.eks.amazonaws.com
+
+Run below command in powershell:
+---------------------------------
+ssh -i mkey.pem `
+-L 6443:AAFBBAD7EF4B0123147E37B2F860B2DA.gr7.us-east-1.eks.amazonaws.com:443 `
+ec2-user@44.197.242.57 `
+-N
+
+In the config edit with port given for SSL Tunnel:
+-------------------------------------------------
+server: https://AAFBBAD7EF4B0123147E37B2F860B2DA.gr7.us-east-1.eks.amazonaws.com:6443
+
+Note: In local now check on any termal
+------------------------------------------------------------------------------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Alternate option:
+=================
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+cd C:\Users\Admin\Downloads
+
+Start SOCKS Tunnel to Bastion:
+------------------------------
+ssh -i mkey.pem -D 1080 ec2-user@44.197.242.57 -N
+
+Open a NEW PowerShell Window:
+-----------------------------
+$env:HTTPS_PROXY="socks5h://127.0.0.1:1080"
+
+Test:
+-----
+curl https://AAFBBAD7EF4B0123147E37B2F860B2DA.gr7.us-east-1.eks.amazonaws.com 
+kubectl get nodes
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
