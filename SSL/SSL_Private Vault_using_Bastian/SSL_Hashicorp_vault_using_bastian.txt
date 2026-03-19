@@ -1,0 +1,20 @@
+### Connect to Hashicorp Vault using Bastian
+
+Note: Vault is in private server hich has access through Bastian
+
+Use below command to establish tunneling from local to bastian, Then vault is available in local host
+-----------------------------------------------------------------------------------------------------
+1. ssh -L 8200:10.0.2.98:8200 devops@100.24.236.95
+2. https://localhost:8200/ui --> Open it in browser, We can able to access vault
+
+
+
+If Multiple Applications
+------------------------
+ssh -i mkey.pem \
+-L 8200:10.0.2.98:8200 \
+-L 8080:10.0.2.98:8080 \
+ec2-user@<BASTION_PUBLIC_IP>
+
+https://localhost:8200/ui --> Vault
+http://localhost:8080  --> Jenkins
