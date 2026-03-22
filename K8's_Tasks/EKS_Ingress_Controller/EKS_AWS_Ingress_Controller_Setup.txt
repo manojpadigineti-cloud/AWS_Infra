@@ -1,3 +1,35 @@
+==========================
+=======IMPORTANT==========
+==========================
+# Ingress annotation
+alb.ingress.kubernetes.io/target-type: instance
+type: NodePort
+
+# Ingress annotation
+alb.ingress.kubernetes.io/target-type: ip
+type: ClusterIP
+
+Based on annotation, service type should be given
+---------------------------------------------------------------------------------
+
+IngressClassParams          IngressClass
+(the settings/config)  →→→  (the class that uses those settings)
+        │                           │
+        │                           ▼
+        │                   Ingress resources
+        └──────────────────→ reference this class
+
+IngressClassParams = blueprint/config (what kind of ALB, what scheme)
+IngressClass = the class name that ingresses use to pick a controller
+Ingress = the actual route that references the class
+
+Mandatory Annotations for alb
+-----------------------------
+alb.ingress.kubernetes.io/scheme: internet-facing
+alb.ingress.kubernetes.io/target-type: ip  # or instance
+kubernetes.io/ingress.class: alb -- which ingressclass to be used
+====================================================================================
+
 NLB: https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
 ALB: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 
@@ -6,7 +38,7 @@ ALB: https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
 -----------
 Subnets must be in different AZ
 2 - Must be tagged in the following format. This is so that Kubernetes knows to use only those subnets for external load balancers instead of choosing a public subnet in each Availability Zone (based on the lexicographical order of the subnet IDs). If you use eksctl or an Amazon EKS AWS CloudFormation template to create your VPC after March 26, 2020, then the subnets are tagged appropriately when they’re created.
-  tags: kubernetes.io/role/elb : 1
+  tags: kubernetes.io/role/elb : 1  # Minimum 2 subnets with this tag, even if it is private
         Key – kubernetes.io/role/elb
 		Value – 1
 2 - Private subnets – Must be tagged in the following format. This is so that Kubernetes and the AWS Load Balancer Controller know that the subnets can be used for internal load balancers.
@@ -45,14 +77,28 @@ aws iam create-policy \
     --policy-name AWSLoadBalancerControllerIAMPolicy \
     --policy-document file://iam_policy.json
 ---
+
+### If this doesn't worked out, create a podidentity role with any name like lb_pod_identity and attach the above downloaded policy (AWSLoadBalancerControllerIAMPolicy), then create a service account in cluster within (kube-system) namespace with the name we like (should be same if we create it with terraform ex: service_account = "aws-load-balancer-controller") use the same name to create SA.
+
+==========
+TF Example -- This creates an access entry or if we want to create manually ==> AWS Console → EKS → Your Cluster → Access tab → Pod Identity Associations
+==========
+resource "aws_eks_pod_identity_association" "pod-identity-associate_aws_controller" {
+  for_each = var.eks
+  cluster_name    = each.value["name"]
+  namespace       = "kube-system"
+  service_account = "aws-load-balancer-controller"
+  role_arn        = var.aws_controller_role[each.value["aws_controller_role"]]
+}
+  OR
 Replace the values for cluster name, region code, and account ID
 eksctl create iamserviceaccount \
-    --cluster=demo-cluster \
+    --cluster=prod-cluster \
     --namespace=kube-system \
     --name=aws-load-balancer-controller \
-    --attach-policy-arn=arn:aws:iam::725412824849:policy/AWSLoadBalancerControllerIAMPolicy \
+    --attach-policy-arn=arn:aws:iam::093468662840:policy/AWSLoadBalancerControllerIAMPolicy \
     --override-existing-serviceaccounts \
-    --region ap-south-2 \
+    --region us-east-1 \
     --approve
 ---
 Install AWS Load Balancer Controller
@@ -60,17 +106,18 @@ helm repo add eks https://aws.github.io/eks-charts
 helm repo update eks
 Create OIDC_Provider
 ---
-eksctl utils associate-iam-oidc-provider --region=ap-south-2 --cluster=demo-cluster
+eksctl utils associate-iam-oidc-provider --region=us-east-1 --cluster=prod-cluster --approve
 ---
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+helm upgrade aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system \
-  --set clusterName=demo-cluster \
+  --set clusterName=prod-cluster \
   --set serviceAccount.create=false \
   --set serviceAccount.name=aws-load-balancer-controller \
   --version 1.14.0 \
-  --set region=ap-south-2 \
-  --set vpcId=vpc-08f5574aec8e3e1fb
+  --set region=us-east-1 \
+  --set vpcId=vpc-072f366205d5cb016
 ---
+
 # alb-ingressclassparams.yaml - CORRECT API for LBC
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: IngressClassParams
