@@ -1,5 +1,54 @@
 [1] Q61. Ansible ad-hoc vs inventory?
+Ad-hoc commands are one-time, quick operations executed directly from CLI (e.g., ping, restart service), whereas inventory is a structured file defining managed hosts and groups. In enterprise use, inventory (static or dynamic like AWS EC2 plugin) is essential for scalable automation, while ad-hoc is used for quick troubleshooting.
+Example (Ad-hoc):
+
+  
+ansible all -i inventory.ini -m ping
+ 
+
+Example (Inventory file):
+
+ ini
+[web]
+server1 ansible_host=10.0.0.1
+server2 ansible_host=10.0.0.2
+ 
+
 [2] Q62. Terraform vs Ansible?
+Terraform is an Infrastructure as Code (IaC) tool used for provisioning infrastructure (immutable, declarative), while Ansible is a configuration management tool used for configuring and managing software inside servers (mutable, procedural). In enterprise setups, Terraform handles provisioning (VPC, EC2, EKS), and Ansible handles application configuration (packages, services, patches).
+
 [3] Q35. Ansible usage?
+Ansible is used for configuration management, application deployment, patching, orchestration, and automation of repetitive tasks across servers without agents. It uses SSH and YAML-based playbooks.
+Example Playbook:
+
+ yaml
+- hosts: web
+  become: yes
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+ 
+
 [4] Q36. Secrets in Ansible?
+Secrets are managed using Ansible Vault, which encrypts sensitive data like passwords, API keys, and certificates. In enterprise, Vault is integrated with CI/CD pipelines and external secret managers.
+Example:
+
+  
+ansible-vault encrypt secrets.yml
+ansible-playbook site.yml --ask-vault-pass
+ 
+
 [5] Q37. Secure playbooks?
+Secure playbooks follow best practices like using Ansible Vault for secrets, least privilege access, avoiding hardcoded credentials, using roles, and validating inputs. SSH keys and RBAC are enforced in enterprise environments.
+Example:
+
+ yaml
+- name: Secure user creation
+  user:
+    name: appuser
+    shell: /bin/ 
+    state: present
+  become: yes
+ 

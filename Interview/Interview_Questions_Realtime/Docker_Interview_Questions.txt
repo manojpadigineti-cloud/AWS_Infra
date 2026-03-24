@@ -1,40 +1,122 @@
-[1] What is the RUN command in Docker?
-[2] Container keeps restarting in production. Root cause?
-[3] Docker image size is too large. How do you optimize?
-[4] How do you scan Docker images for vulnerabilities?
-[5] How do you manage secrets in Docker securely?
-[6] Container keeps restarting. How to find root cause? (duplicate of [2])
-[7] Docker image size too large. How to optimize? (duplicate of [3])
-[8] How to scan Docker images for vulnerabilities? (duplicate of [4])
-[9] How to manage secrets in Docker securely? (duplicate of [5])
-[10] Docker image layers read-only or read-write?
-[11] How to pass env variables in Docker?
-[12] Which registries used?
-[13] Sample Dockerfile (Node.js)?
+[1] RUN command Docker?
+Executes command during build creating new layer. docker build -t app . RUN apt update && apt install -y nodejs. Cached unless context changes. Use && chain.
+
+[2] Container restarting production root cause?
+kubectl get pods → CrashLoopBackOff. kubectl logs -p pod → OOMKilled (limits), healthcheck fail, initContainer error, ConfigMap secret missing, port conflict liveness probe.
+
+[3] Docker image size large optimize?
+Multi-stage: FROM node:18 → build → FROM node:18-alpine copy /app. .dockerignore node_modules. Distroless/scratch. Dive analyze layers. Remove caches RUN rm -rf /tmp/*.
+
+[4] Scan Docker vulnerabilities?
+Trivy: trivy image --exit-code 1 --severity HIGH,CRITICAL app:latest. Clair API. Snyk CLI. CI: pre-push hook. Runtime: Falco syscalls.
+
+[5] Manage secrets Docker securely?
+NOT docker run -e DB_PASS=secret. Use Docker Secrets swarm: echo 'pass' | docker secret create db_pass -. App: cat /run/secrets/db_pass. K8s Secrets mount.
+
+[6-9] [Infrastructure patterns]
+
+[10] Docker layers read-only/write?
+All layers read-only immutable. Top container layer read-write unionfs (overlay2). docker commit creates new layer. Changes persist only running container.
+
+[11] Pass env vars Docker?
+docker run -e NODE_ENV=prod -e DB_HOST=postgres app. Dockerfile: ENV NODE_ENV=prod. docker-compose.yml environment: - DB_HOST=postgres. --env-file .env.
+
+[12] Registries used?
+ECR (AWS), GCR (GKE), Harbor self-hosted, Docker Hub free. Private: Nexus Docker repo. Multi-reg: docker tag app:latest 123456.dkr.ecr.us-east-1.amazonaws.com/app:latest.
+
+[13] Sample Dockerfile Node.js?
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+EXPOSE 3000
+HEALTHCHECK CMD curl -f http://localhost:3000/health || exit 1
+CMD ["node", "server.js"]
+
 [14] Multi-stage builds?
+FROM node:18 AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm ci --only=production
+CMD ["node", "dist/server.js"]
+Size: 300MB→120MB.
+
 [15] Volume vs bind mount?
+Volume: docker volume create data; docker run -v data:/app/data app. Managed Docker daemon. Bind: docker run -v /host/path:/container/path app. Host filesystem direct. Volumes preferred backup/portable.
+
 [16] Optimize Docker images?
+.dockerignore, multi-stage, alpine/distroless, layer order (deps first), RUN apt clean, no DEBUG builds, upx Go binaries, single COPY after build.
+
 [17] ENTRYPOINT vs CMD?
-[18] Why Kubernetes over Docker?
-[19] CrashLoopBackOff troubleshooting?
-[20] Docker image layers? (duplicate of [10])
-[21] Multi-stage build? (duplicate of [14])
-[22] Optimize Docker images? (duplicate of [16])
-[23] CMD vs ENTRYPOINT? (duplicate of [17])
-[24] Volume vs bind mount? (duplicate of [15])
+ENTRYPOINT ["nginx"] # /usr/sbin/nginx
+CMD ["-g", "daemon off;"] # args
+docker run app → nginx -g daemon off;
+docker run app -D → nginx -D. ENTRYPOINT shell form /bin/sh -c.
+
+[18] Kubernetes over Docker?
+Orchestration: scaling, self-healing, service discovery, rolling updates, secrets/configmaps, multi-container pods, storage orchestration. Docker single host.
+
+[19] CrashLoopBackOff troubleshoot?
+kubectl describe pod → Events (ImagePullBackOff, ErrImagePull). logs -p → exit code 137 OOM, 1 probe fail. resources limits/requests. initContainers. readiness probe.
+
+[20-24] [CI/CD patterns]
+
 [25] Docker networking modes?
-[26] Why container fails in Jenkins but works locally?
+bridge (default docker0), host (share host net), none (isolated), overlay (swarm), macvlan. docker network create mybridge; docker run --network mybridge.
+
+[26] Container fails Jenkins local OK?
+No Docker daemon: docker:dind agent. /var/run/docker.sock perms. Image pull auth (aws ecr login). Resource limits CPU/memory. Network DNS jenkins-agent vs localhost.
+
 [27] Image pull failure?
+aws ecr get-login-password | docker login. Private repo auth. Image digest mismatch. Quota exceeded. docker system prune -a low disk.
+
 [28] Docker registry?
+Daemon stores /var/lib/docker. docker image ls. Garbage collect docker image prune. API v2 protocol push/pull.
+
 [29] Container security?
-[30] How to reduce Docker image size? (duplicate of [3])
-[31] What are Docker volumes?
+Non-root USER 1000, no ALL capabilities, read-only rootfs, seccomp profile, AppArmor, no latest tag, sign cosign, scan Trivy, network policy.
+
+[30] [K8s patterns]
+
+[31] Docker volumes?
+Persistent storage -v vol:/container/path. docker volume create pgdata; docker run -v pgdata:/var/lib/postgresql/data postgres. Backup docker run --volumes-from pgdata -v backup:/backup busybox tar.
+
 [32] COPY vs ADD?
+COPY src dest # files/tar
+ADD src dest # tar auto-extract, URL, remote git. COPY preferred explicit. ADD url deprecated.
+
 [33] Sharing Dockerfiles?
+Monorepo services/dockerfiles/. CI build all. Shared base images registry/base:v1. docker-compose multi-service dev.
+
 [34] Running vs stopped containers?
-[35] Stages in Docker image build? (duplicate of [14])
-[36] ENTRYPOINT vs CMD? (duplicate of [17])
-[37] Docker image layers read-only or read-write? (duplicate of [10])
-[38] How do you scan Docker images? (duplicate of [4])
-[39] ADD vs CMD vs ENTRYPOINT? (duplicate of [17])
-[40] Dockerfile (Go best practice)?
+docker ps (running), docker ps -a (all). Stopped: container exists image/data. docker start ID. docker rm delete.
+
+[35-38] [Pipeline patterns]
+
+[39] ADD vs CMD vs ENTRYPOINT?
+ADD: copy+untar URLs. CMD: default args /bin/sh -c. ENTRYPOINT: executable + CMD args. Immutable entry.
+
+[40] Dockerfile Go best practice?
+FROM golang:1.21-alpine AS builder
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o app .
+
+FROM alpine:3.18
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /src/app .
+USER 1000
+EXPOSE 8080
+ENTRYPOINT ["./app"]

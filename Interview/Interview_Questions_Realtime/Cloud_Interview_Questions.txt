@@ -1,157 +1,401 @@
 [1] Design multi-region DR with minimal downtime. Approach?
+"For multi-region DR, I use Route 53 with latency/health check routing to primary region. Deploy identical infrastructure across 2-3 regions using CloudFormation/Terraform. Enable cross-region RDS read replicas + automated failover with EventBridge. Use S3 CRR for data + Lambda for final sync. RTO <5min via Route 53 weighted routing switch."
+
 [2] How do you secure cross-region S3 replication and validate data integrity?
+"Enable S3 CRR with KMS encryption (customer-managed keys). Use bucket policies restricting replication role. Validate integrity with S3 Inventory + Athena queries comparing object counts/hashes. Enable versioning + MFA Delete. Monitor with CloudWatch Events → Lambda alerting on replication failures."
+
 [3] How do you design hybrid routing between AWS and GCP?
+"Use AWS Transit Gateway + GCP Cloud Router with BGP. Establish IPsec VPN or Dedicated Interconnect. Route 0.0.0.0/0 via Transit Gateway with AWS as primary. Health checks via VPC Reachability Analyzer. Failover via BGP AS path prepending + Cloud DNS health checks."
+
 [4] EC2 app failing health checks behind ALB. How do you troubleshoot?
+"First, SSH to EC2 → check app logs/service status (systemctl status). Verify ALB health check path returns 200 (curl -v). Check SG allows ALB traffic (port/protocol). Review CloudWatch metrics (HealthyHostCount, ResponseTime). Test locally: nc -l port. Restart service + scale if CPU>80%."
+
 [5] RDS running out of storage. Immediate actions?
+"Check CloudWatch FreeStorageSpace + TopQueries. Enable storage autoscaling (set max to 2x current). Run ANALYZE + DELETE old data via pgAdmin. Switch to larger instance (modify → apply immediately). Long-term: implement table partitioning + RDS Performance Insights."
+
 [6] How do you reduce AWS cost for idle resources?
+"Right-size EC2 with Compute Optimizer. Use Spot Instances (70-90% savings) with diversification. S3 Intelligent-Tiering + lifecycle to Glacier. RDS Multi-AZ off-hours via Lambda. Reserved Instances for predictable workloads. Tag resources → Cost Explorer budgets + auto-shutdown scripts."
+
 [7] S3 bucket accidentally deleted. How do you recover?
+"If versioning enabled: access Versioning tab → restore objects. Enable MFA Delete was set? Use S3 Object Restore if Glacier. Check AWS Backup vault (if configured). Last resort: Data recovery from DR region S3 CRR. Prevention: bucket policies + MFA Delete enforced."
+
 [8] How do you implement centralized logging across AWS accounts?
+"Use CloudWatch Cross-Account Logs + subscription filters → central Kinesis Data Firehose → S3/Opensearch. AWS Organizations SCPs for log retention. Lambda to tag/parse logs. QuickSight dashboards. Alternative: OpenSearch Service domain with VPC endpoints across accounts."
+
 [9] Lambda timing out frequently. How do you troubleshoot?
+"Check CloudWatch Logs Insights: SELECT avg(duration) FROM logs WHERE timeout=true. Increase timeout/memory (128MB→10GB). VPC config? Remove or optimize subnets. Cold starts? Provisioned concurrency. Code: async I/O, reduce package size <50MB unzipped."
+
 [10] How do you securely store secrets for EC2/Lambda?
+"Use AWS Secrets Manager + IAM roles (no hardcoded secrets). EC2: Instance profile role → Systems Manager Parameter Store. Lambda: Environment variables from Secrets Manager (automatic rotation). KMS CMK for encryption. Audit access via CloudTrail."
+
 [11] How do you troubleshoot a failed Lambda execution?
+"CloudWatch Logs → Logs Insights: filter @type="ERROR". Check Dead Letter Queue (DLQ) for retries. X-Ray traces for bottlenecks. Verify IAM permissions (execution role). Test locally with SAM CLI. Common: VPC DNS timeout, missing env vars, package >250MB."
+
 [12] How do you optimize Lambda cold start performance?
+"Use Provisioned Concurrency (pre-warm). Smaller deployment package (<50MB). Node.js/Python runtimes. EFS for shared code. Avoid VPC or use VPC endpoints. Initialize SDK/clients outside handler. SnapStart for Java. Test: Lambda Power Tuning tool."
+
 [13] How do you configure Lambda environment variables securely?
+"Store in Secrets Manager/SSM Parameter Store (SecureString). Lambda role needs GetSecretValue/GetParameters. Reference via ARN in env vars. Rotate every 30 days. No plaintext values. CloudTrail audit access. Example: SECRETS_ARN: arn:aws:secretsmanager:region:account:secret:name."
+
 [14] How do you trigger Lambda using S3 or API Gateway?
+"S3 Event: S3 bucket → Event notification (s3:ObjectCreated:*) → Lambda. API Gateway: REST/HTTP API → Lambda proxy integration → ANY method. Add CORS/IAM auth. Test: S3 upload triggers in 1-3s, API <200ms P99."
+
 [15] How do you analyze Lambda logs in CloudWatch?
+"Logs Insights: fields @timestamp, @message | filter @type="REPORT" | stats avg(duration), max(memory) by function. Filter errors: filter @message like /ERROR|Exception/. Set log retention 14 days. Export to S3 for long-term. Metric filters for custom alarms."
+
 [16] How do you monitor Lambda concurrency and throttling?
+"CloudWatch ConcurrentExecutions metric + Throttles alarm. Set Reserved Concurrency per function. Account-level limits via Service Quotas. Dashboard: ConcurrentExecutions >80% → alert. Powertools metrics for per-function tracking."
+
 [17] How do you manage DynamoDB read/write capacity automatically?
+"Enable On-Demand mode (no capacity planning). Or Auto Scaling: target 70% utilization, min 10% max 100% of base. CloudWatch CapacityUtilization >80% → scale. Monitor ConsumedReadCapacityUnits. Cost: On-Demand 25% higher but zero management."
+
 [18] How do you configure DynamoDB TTL for data expiration?
+"Create TTL attribute (epoch timestamp, e.g., expiresAt). Enable TTL on table: AWS Console → Indexes → TTL tab → select attribute. Items auto-deleted 48hrs after TTL. No write cost for deletion. Monitor ApproximateItemCount."
+
 [19] How do you enable DynamoDB streams for event-driven apps?
+"Enable DynamoDB Streams (NEW_IMAGE view). Lambda trigger: Streams → Lambda (batch size 100, bisect on failure). Kinesis alternative for high volume. Test: Insert → Stream record in <1s. Use for CDC, notifications."
+
 [20] How do you optimize DynamoDB indexes for performance?
+"GSI for high-cardinality queries (createDate, userId). LSI only at table creation. Composite keys: PK (userId#year), SK (itemId). Even key distribution. Monitor ConsumedWriteCapacity per GSI → delete unused. Projection: KEYS_ONLY minimal."
+
 [21] How do you process messages reliably using SQS and Lambda?
+"SQS → Lambda trigger (batch 10, max 6 retries). Enable DLQ for failed batches. ReportBatchItemFailures for partial success. Visibility timeout > Lambda timeout. FIFO queue for ordering. Monitor ApproximateAgeOfOldestMessage."
+
 [22] How do you troubleshoot message delivery delays in SQS?
+"Check ApproximateAgeOfOldestMessage >300s → alert. Lambda concurrency too low? Increase Reserved Concurrency. Long polling enabled (20s). Consumer scaling: scale Lambda out. Check DLQ for poison messages blocking queue."
+
 [23] How do you send alerts using SNS from CloudWatch?
+"CloudWatch Alarm → SNS Topic ARN. Topic → Email/SMS/Lambda subscribers. Example: CPUUtilization >80% → publish. Confirm email subscriptions. Test: Alarm → email in 30s. Use Chatbot for Slack/Teams."
+
 [24] How do you fan-out notifications to multiple subscribers in SNS?
+"SNS Topic → multiple subscribers (Email, SMS, Lambda, SQS, HTTP). Lambda processes → fan-out to 10+ downstream. SQS fan-out pattern: SNS → multiple SQS → workers. Delivery status logs enabled."
+
 [25] How do you design fault-tolerant serverless architecture?
-[26] What is AWS?
-[27] What are Regions and Availability Zones?
-[28] Difference between Region and Edge Location?
-[29] What is Amazon EC2?
-[30] What are EC2 instance types?
-[31] What is Amazon S3?
-[32] What are S3 storage classes?
-[33] What is Amazon EBS?
-[34] Difference between EBS and S3?
-[35] What is IAM?
-[36] What is an IAM Role?
-[37] Difference between IAM User and Role?
-[38] What is VPC?
-[39] What is a Subnet?
-[40] Difference between Public and Private Subnet?
-[41] What is an Internet Gateway?
-[42] What is a NAT Gateway?
-[43] Difference between Security Groups and NACL?
-[44] What is a Route Table?
-[45] What is VPC Peering?
-[46] What is AWS Direct Connect?
-[47] What is a Bastion Host?
-[48] What is AWS WAF?
-[49] What is AWS Shield?
-[50] What is KMS?
-[51] What is Secrets Manager?
-[52] How do you secure an S3 bucket?
-[53] What is CloudFront?
-[54] What is Route 53?
-[55] How does SSL termination work in AWS?
-[56] Difference between EC2, ECS, and EKS?
-[57] What is AWS Lambda?
-[58] What is Auto Scaling?
-[59] What is an Application Load Balancer?
-[60] Difference between ALB and NLB?
-[61] What is Elastic Beanstalk?
-[62] What is Fargate?
-[63] How does Blue-Green Deployment work in AWS?
-[64] What is AMI?
-[65] How do you make EC2 highly available?
-[66] How to create ingress controller in AWS EKS?
-[67] Difference between RDS and DynamoDB?
-[68] What is Multi-AZ in RDS?
-[69] What is Read Replica?
-[70] What is Aurora?
-[71] How does DynamoDB scaling work?
-[72] What is ElastiCache?
-[73] How do you migrate a database to AWS?
-[74] What is AWS Backup?
-[75] What is CloudWatch?
-[76] What is CloudTrail?
-[77] How do you design a highly available multi-tenant system?
-[78] How do you reduce API response time?
-[79] How do you rotate secrets securely?
-[80] How do you deploy FastAPI on EKS?
-[81] How do you implement CI/CD in AWS?
-[82] How do you handle zero-downtime deployments?
-[83] How do you secure inter-service communication in Kubernetes?
-[84] How do you monitor 1000+ servers?
-[85] How do you reduce AWS cost?
-[86] How do you design DR strategy?
-[87] Can VPC CIDR go beyond /16?
-[88] Load balancer uses beyond traffic distribution?
-[89] What are IaaS, PaaS, and SaaS?
-[90] What is the Shared Responsibility Model?
-[91] What are Regions, AZs, and Edge Locations?
-[92] How does AWS pricing work?
-[93] What are key AWS compute services?
-[94] What are AWS storage options?
-[95] What are important AWS networking components?
-[96] What database options does AWS provide?
-[97] What tools are used for Infrastructure as Code?
-[98] What are key AWS security services?
-[99] What AWS services are used for monitoring?
-[100] Why is CloudWatch Agent not pushing logs from a file?
-[101] How do you fix CloudWatch Agent log issues?
-[102] What AWS services support CI/CD?
-[103] What are serverless and event-driven services in AWS?
-[104] Managing 30 AWS accounts?
-[105] DNS role?
-[106] CDN purpose?
-[107] Load balancer types?
-[108] NAT Gateway?
-[109] VPC peering?
-[110] Service Mesh?
-[111] Ingress vs LoadBalancer?
-[112] Firewall types?
-[113] Port vs protocol?
-[114] Network latency troubleshooting?
-[115] IAM principle?
-[116] Secrets management?
-[117] Container scanning?
-[118] Pipeline security?
-[119] RBAC?
-[120] Encryption at rest/in transit?
-[121] WAF role?
-[122] Vulnerability management?
-[123] SSH risk?
-[124] Compliance?
-[125] End-to-end architecture?
-[126] High availability?
-[127] Zero downtime deployment?
-[128] Scaling strategy?
-[129] Security layers?
-[130] Observability?
-[131] Database scaling?
-[132] Cache layer?
-[133] CDN benefit?
-[134] Failure handling?
-[135] S3 bucket accidentally deleted. How to recover? (duplicate of [7])
-[136] How to implement centralized logging across AWS accounts? (duplicate of [8])
-[137] Lambda timing out frequently. How to troubleshoot? (duplicate of [9])
-[138] How to securely store secrets for EC2/Lambda? (duplicate of [10])
-[139] Jenkins failed creating AWS resources – first check?
-[140] Terraform works locally but fails in Jenkins – why?
-[141] EC2 created but provisioning failed – debug?
-[142] How to rollback failed deployment?
-[143] How to make CI/CD idempotent?
-[144] App down but infra up?
-[145] High traffic spike?
-[146] Deployment failure?
-[147] Node failure?
-[148] DB slow?
-[149] Disk full node?
-[150] Secrets leaked?
-[151] Pipeline slow?
-[152] Security breach?
-[153] Service down, no alerts?
-[154] Simulate DNS failure?
-[155] Minimize blast radius?
-[156] Partial cloud failure?
-[157] Cost control?
+"API Gateway → Lambda (provisioned concurrency) → DynamoDB (multi-AZ, global tables). SQS DLQ + retries. Step Functions orchestrator for complex flows. Multi-region Route 53. 99.99% SLA across services."
+
+[26] What are Regions and Availability Zones?
+"Region: Geographically isolated area (us-east-1, eu-west-1). AZ: Isolated data centers within region (us-east-1a,b,c). Min 2 AZ/region, 10-100km apart. Cross-AZ latency <2ms. Deploy across 2+ AZ for HA."
+
+[27] Difference between Region and Edge Location?
+"Region: Full service availability (EC2, RDS). Edge Location: CDN/caching only (CloudFront, Route 53). 200+ Edge vs 30 Regions. No compute/storage at Edge. Lowest latency routing."
+
+[28] What are EC2 instance types?
+"General: t3/m5 (balanced). Compute: c5 (CPU). Memory: r5 (RAM). Storage: i3/d2 (I/O). GPU: p3/g4. Burstable: t3/t4g (credit system). Graviton: arm64 (40% cheaper). Select by workload: CPUUtilization metrics."
+
+[29] What are S3 storage classes?
+"Standard: 99.99% availability, 11 9s durability. Infrequent Access: 30-day min, 1/3 cost. Intelligent-Tiering: auto tiering. Glacier: archive (90-180 days min). Deep Archive: longest/cheapest. Outposts: on-prem."
+
+[30] What is Amazon EBS?
+"Block storage for EC2 (NVMe SSD/HDD). 99.999% durability, up to 16TB gp3. Snapshots to S3. Multi-Attach gp3. IOPS provisioned (256-16K). Encryption KMS. Detach/attach between instances."
+
+[31] Difference between EBS and S3?
+"EBS: Block (filesystem), EC2-attached, low latency. S3: Object, HTTP API, massive scale. EBS ephemeral on stop; S3 durable 11 9s. EBS IOPS throttled; S3 unlimited throughput."
+
+[32] What is an IAM Role?
+"Temporary credentials for AWS services/users. No permanent keys. Trust policy defines who assumes (EC2, Lambda). Example: EC2ReadOnlyRole. Session duration 1hr default."
+
+[33] Difference between IAM User and Role?
+"User: Long-term person credentials (console/API). Role: Temporary, assumed by services/users. User needs access keys; Role uses STS AssumeRole. 5000 users max; unlimited roles."
+
+[34] Difference between Public and Private Subnet?
+"Public: Route table 0.0.0.0 → IGW. Private: NAT Gateway or no internet. Public for ALB/bastion; Private for app/DB. Auto-assign Public IP only public subnets."
+
+[35] What is an Internet Gateway?
+"VPC ↔ Internet bidirectional. Attach to VPC, add route 0.0.0.0/0 → igw-xxxx. Public subnets only. HA across AZ. Pay per hour + data processed."
+
+[36] What is a NAT Gateway?
+"Private subnet outbound internet (no inbound). Deploy per AZ, route 0.0.0.0/0 → nat-xxxx. Elastic IP. Highly available. Cost: $0.045/hr + $0.045/GB."
+
+[37] Difference between Security Groups and NACL?
+"SG: Stateful (return auto-allowed), instance-level, L4+. NACL: Stateless (explicit return), subnet-level, L3/4. SG deny all default; NACL allow all. Use both."
+
+[38] What is a Route Table?
+"VPC traffic rules (subnet → gateway). Main/default + custom. Routes: local (VPC internal), 0.0.0.0/0 → IGW/NAT. Explicitly associate subnets."
+
+[39] What is VPC Peering?
+"Non-transitive L2/L3 connection between VPCs. Private IP routing. Same/different accounts/regions. DNS resolution enable. No bandwidth limit (instance limits)."
+
+[40] What is AWS Direct Connect?
+"Private fiber connection to AWS (1Gbps-100Gbps). Fixed ports in colocation. BGP routing. Lower latency/jitter vs Internet VPN. Public/Private VIF. 99.99% SLA."
+
+[41] What is a Bastion Host?
+"Public subnet EC2 for SSH/RDP to private resources. SSM Session Manager preferred (no keys). Security: minimal ports, IAM auth, CloudTrail. Auto-scale off."
+
+[42] What is AWS WAF?
+"Web Application Firewall. Rules: SQLi, XSS, rate limiting. ALB/CloudFront/API Gateway. Managed rules + custom. $5/rule/mo + $0.60/million requests."
+
+[43] What is AWS Shield?
+"DDoS protection. Standard: free, all customers. Advanced: $3K/mo + $0.02/GB. Always-on, auto-mitigation. Works with CloudFront/ALB/Route 53."
+
+[44] What is KMS?
+"Key management service. Symmetric/asymmetric keys. CMK per account/service. Envelope encryption. CloudTrail logs every API call. $1/key/mo + $0.03/10K req."
+
+[45] What is Secrets Manager?
+"KMS-encrypted secret storage. Automatic rotation (RDS, Redshift). Lambda/EC2 retrieval. $0.40/secret/mo + $0.05/10K API calls. Replaces Parameter Store SecureString."
+
+[46] How do you secure an S3 bucket?
+"Block public access. Bucket policy: Deny unless MFA + VPC endpoints. KMS encryption. Versioning + MFA Delete. S3 Access Points. PrivateLink endpoints. CloudTrail data events."
+
+[47] What is CloudFront?
+"CDN with 200+ POPs. Cache static content, TLS termination. Signed URLs/Cookies. WAF+Shield integration. Field-level encryption. Price Class 100 (US/EU/JP)."
+
+[48] What is Route 53?
+"DNS service. Latency/health routing. Traffic Flow for complex policies. Private hosted zones. Resolver for hybrid DNS. $0.50/million queries."
+
+[49] How does SSL termination work in AWS?
+"ALB/CloudFront/NLB terminates TLS → backend HTTP. Offloads CPU. SNI for multiple certs. ACM free certs. Forward client cert to backend (X-Forwarded-Proto)."
+
+[50] Difference between EC2, ECS, and EKS?
+"EC2: VMs, manual scaling/OS. ECS: Docker on EC2/Fargate, AWS orchestration. EKS: Managed Kubernetes (upstream k8s). ECS simpler/cheaper; EKS industry standard."
+
+[51] What is AWS Lambda?
+"Serverless compute. Runs code on-demand (up to 15min). Pay-per-use, scales to 1000s concurrent. Triggers: API Gateway, S3, DynamoDB Streams. Runtimes: Python, Node.js, Java. Cold starts ~100-500ms."
+
+[52] What is Auto Scaling?
+"Automatically adjusts EC2/ASG capacity based on CloudWatch alarms (CPU>70%). Launch templates + scaling policies (target tracking). Min 1, desired 2, max 10. Predictable: scheduled scaling."
+
+[53] What is an Application Load Balancer?
+"L7 load balancer. HTTP/HTTPS, path/host routing, WebSocket. Target groups (IP/port/instance). Sticky sessions, SSL termination. Health checks /health 200. WAF integration."
+
+[54] Difference between ALB and NLB?
+"ALB: L7 (HTTP routing, host/path). NLB: L4 (TCP/UDP/TLS, 100Gbps, static IPs). ALB preserves client IP via X-Forwarded-For; NLB preserves source IP. NLB for low latency/gaming."
+
+[55] What is Elastic Beanstalk?
+"Orchestration for EC2/Docker/RDS/ELB. Upload code → auto deploys/scales/manages. Supports Java, Python, Node, Docker. Customize via .ebextensions. Simpler than ECS/EKS."
+
+[56] What is Fargate?
+"Serverless compute for ECS/EKS. No EC2 management. Pay per vCPU/memory. Launch type: FARGATE_SPOT (50-90% savings). Min 0.25 vCPU, 0.5GB RAM."
+
+[57] How does Blue-Green Deployment work in AWS?
+"Two identical environments (Blue live, Green staging). Deploy new code to Green → test → Route 53/ALB switch traffic (0 downtime). Rollback: switch back. Codedeploy + ASG."
+
+[58] What is AMI?
+"Amazon Machine Image. EC2 template (OS + software). Public AWS Marketplace, private, community. Launch identical instances. Golden AMI pipeline for consistency."
+
+[59] How do you make EC2 highly available?
+"ASG across 3 AZs. ALB in front. Multi-AZ RDS. Launch template with latest AMI. Health checks replace unhealthy. Min healthy 2 across AZs."
+
+[60] Difference between RDS and DynamoDB?
+"RDS: Relational (SQL), provisioned IOPS, Multi-AZ. DynamoDB: NoSQL, on-demand infinite scale, single-table design. RDS vertical scale; DynamoDB horizontal."
+
+[61] What is Multi-AZ in RDS?
+"Synchronous standby in different AZ. Failover <120s. Storage replicated. Higher cost (2x). Read replicas async for read scaling."
+
+[62] What is Read Replica?
+"Asynchronous RDS copy in same/multi-region. Scale reads only. Promote to standalone. Max 15 per DB. Lag monitoring via ReplicaLag metric."
+
+[63] What is Aurora?
+"MySQL/PostgreSQL-compatible, 5x faster. Storage auto-scales to 128TB. Multi-AZ native. Serverless option. Global databases cross-region."
+
+[64] How does DynamoDB scaling work?
+"On-Demand: auto-scales reads/writes. Provisioned: Auto Scaling policies (target 70% util). Global Tables multi-region. RCU/WCU per table/GSI."
+
+[65] What is ElastiCache?
+"Managed Redis/Memcached. Sub-ms latency. Multi-AZ, cluster mode. Read replicas. Encryption at rest/transit. Backup/restore."
+
+[66] How do you migrate a database to AWS?
+"DMS (Database Migration Service) for homogeneous/heterogeneous. Schema conversion SCT. Live replication CDC. DMS full load + CDC. Offline: backup → S3 → restore."
+
+[67] What is AWS Backup?
+"Centralized backup vault across services (EBS, RDS, DynamoDB). Lifecycle policies (cold storage). Cross-region copy. Audit compliance reports."
+
+[68] What is CloudWatch?
+"Monitoring: metrics (1min), logs, alarms, events, X-Ray traces. Agent for custom metrics. Dashboards, Contributor Insights. Logs Insights SQL queries."
+
+[69] What is CloudTrail?
+"Audit API calls. All regions → organization trail. S3 + CloudWatch Logs. Data events (S3, Lambda). Insights anomaly detection."
+
+[70] How do you design a highly available multi-tenant system?
+"Per-tenant DynamoDB tables or GSI partitioning (tenantId#). ALB path-based routing /tenant1, /tenant2. WAF rate limiting per tenant. Quota enforcement via Service Quotas."
+
+[71] How do you reduce API response time?
+"CloudFront caching. API Gateway caching. ElastiCache Redis. DynamoDB DAX. Lambda provisioned concurrency. Database indexing + read replicas."
+
+[72] How do you rotate secrets securely?
+"Secrets Manager rotation Lambda (every 30 days). RDS native rotation. No downtime. KMS keys. Test rotation in staging first."
+
+[73] How do you deploy FastAPI on EKS?
+"Dockerize FastAPI → ECR. EKS cluster (3 AZs). Deployment YAML: replicas 3, HPA CPU 70%. ALB Ingress. Horizontal Pod Autoscaler."
+
+[74] How do you implement CI/CD in AWS?
+"CodePipeline: CodeCommit → CodeBuild (test/build) → CodeDeploy (ECS/EC2). Approvals gates. CloudFormation for infra. GitHub Actions → ECS blue-green."
+
+[75] What is the use of Redshift and EMR in AWS?
+"Redshift: Petabyte data warehouse, columnar, MPP. EMR: Hadoop/Spark on EC2/Spot, transient clusters. Redshift structured analytics; EMR ML/ETL."
+
+[76] What is the use of EMR in AWS?
+"Elastic MapReduce. Spark/Hadoop on EC2. Cost-effective Spot Instances. S3 input/output. Auto-terminate. Use for ETL, ML training, log analysis."
+
+[77] How do you monitor 1000+ servers?
+"CloudWatch Agent + unified metrics. Anomaly detection. SSM Inventory. QuickSight dashboards. Lambda custom metrics. Systems Manager compliance."
+
+[78] How do you reduce AWS cost?
+"Compute Optimizer right-sizing. Savings Plans/Reserved. Spot 90% savings. S3 IA/Glacier. Lambda Power Tuning. Cost Explorer + budgets."
+
+[79] How do you design DR strategy? How many subnets can we create in a VPC?
+"Route 53 failover. Pilot light/warm standby. RPO 15min, RTO 5min. VPC: 200 subnets default (soft limit). Per AZ: /24 subnets recommended."
+
+[80] Can VPC CIDR go beyond /16?
+"Yes, /28 to /16 IPv4. IPv6 /56. Non-overlapping. Peering requires non-overlapping CIDRs. VPC endpoints don't consume IP space."
+
+[81] Load balancer uses beyond traffic distribution?
+"SSL termination, health checks, sticky sessions, WAF integration, logging, slow start mode, connection draining."
+
+[82] How many subnets can we create in a VPC?
+"200 per VPC (default, increasable). No limit per AZ. Recommendation: 3-6 /24 per AZ for HA."
+
+[83] What is the Shared Responsibility Model?
+"AWS: Security OF cloud (hardware, network). Customer: Security IN cloud (data, IAM, OS). Shared: OS patching, config."
+
+[84] How does AWS pricing work?
+"Pay-as-you-go. On-Demand, Reserved (1/3yr 40-75% off), Savings Plans. Free Tier 12 months. Data transfer out tiered."
+
+[85] What are key AWS compute services?
+"EC2, Lambda, Fargate, ECS, EKS, Batch, App Runner. Serverless → containers → VMs."
+
+[86] What are AWS storage options?
+"S3 (object), EBS (block), EFS (file), FSx (Windows), Storage Gateway (hybrid), Glacier (archive)."
+
+[87] What are important AWS networking components?
+"VPC, Subnets, Route Tables, IGW, NAT, VPC Peering, Transit Gateway, Direct Connect, VPN, NACL, SG, ALB/NLB."
+
+[88] What database options does AWS provide?
+"RDS (relational), DynamoDB (NoSQL), ElastiCache (cache), Redshift (DW), DocumentDB (Mongo), Neptune (graph), Timestream (time-series)."
+
+[89] What tools are used for Infrastructure as Code?
+"CloudFormation (JSON/YAML), Terraform (HCL), CDK (Python/JS), AWS SAM (serverless). GitOps: Flux/ArgoCD."
+
+[90] What are key AWS security services?
+"IAM, KMS, Secrets Manager, GuardDuty, Macie, Shield, WAF, Config, Security Hub, Inspector."
+
+[91] What AWS services are used for monitoring?
+"CloudWatch (metrics/logs/alarms), X-Ray (traces), CloudTrail (audit), Trusted Advisor, Personal Health Dashboard."
+
+[92] Why is CloudWatch Agent not pushing logs from a file?
+"Permissions: IAM role needs logs:CreateLogGroup. File path wrong. Agent config YAML syntax. Service not running: systemctl status amazon-cloudwatch-agent. Network: VPC endpoints."
+
+[93] How do you fix CloudWatch Agent log issues?
+"Validate config: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s. Restart: -a start. Check logs: /opt/aws/amazon-cloudwatch-agent/logs. Test: tail -f /var/log/messages."
+
+[94] What AWS services support CI/CD?
+"CodePipeline, CodeBuild, CodeDeploy, CodeCommit, CodeArtifact. ECS blue-green, Lambda versions, EC2 Auto Scaling."
+
+[95] What are serverless and event-driven services in AWS?
+"Lambda, API Gateway, SQS, SNS, DynamoDB Streams, EventBridge, Step Functions, AppSync (GraphQL)."
+
+[96] Managing 30 AWS accounts? How access to those selective accounts are managed?
+"AWS Organizations + SCPs. IAM Identity Center (SSO) + permission sets. Cross-account roles. RAM for resource sharing. Control Tower for governance."
+
+[97] What is the role of a DNS?
+"Domain Name System. Resolves domain → IP. Route 53: public/private zones, health checks, failover routing."
+
+[98] What is the CDN purpose?
+"Content Delivery Network. Cache content at edge POPs. Reduce latency, offload origin. CloudFront: global, WAF, signed URLs."
+
+[99] What are the Load balancer types?
+"ALB (L7 HTTP), NLB (L4 TCP/UDP), CLB (L4/L7 legacy), Gateway LB (L7 HTTP/HTTPS for API Gateway)."
+
+[100] VPC peering?
+"Non-transitive private connection between VPCs. Same/different accounts/regions. Private IP routing. DNS resolution enable. No bandwidth limits. Use Transit Gateway for hub-spoke."
+
+[101] Service Mesh?
+"App-level networking (Istio, App Mesh). Traffic management, observability, security (mTLS). Sidecar proxies (Envoy). Service discovery, circuit breaking, retries."
+
+[102] Firewall types?
+"Security Groups (stateful, instance), NACL (stateless, subnet), WAF (L7 app), Network Firewall (L4-7 managed). AWS Firewall Manager centralized."
+
+[103] Port vs protocol?
+"Port: TCP/UDP endpoint (80 HTTP, 443 HTTPS). Protocol: TCP (connection-oriented), UDP (fire-and-forget), ICMP (ping). SG/NACL specify both."
+
+[104] How do you do Network latency troubleshooting?
+"CloudWatch VPC Flow Logs → Athena queries. Reachability Analyzer. Traceroute + VPC endpoints. ELB TargetResponseTime. X-Ray traces. PrivateLink vs public endpoints."
+
+[105] What is the difference between IAM role and IAM principal?
+"Principal: Entity assuming role (user, service, account). Role: Permissions + trust policy (who can assume). Principal calls STS AssumeRole → temporary credentials."
+
+[106] How you will do Secrets management?
+"Secrets Manager (rotation), SSM Parameter Store, KMS encryption. IAM least privilege. No env vars in code. Rotation Lambda. Audit CloudTrail."
+
+[107] How to manage RBAC in AWS?
+"IAM roles/policies. Organizations SCPs. IAM Access Analyzer. Service control policies. ABAC (tags). SSO permission sets. Least privilege audits."
+
+[108] How do you manage Encryption at rest/in transit?
+"At rest: KMS/EBS/S3/RDS encryption. In transit: TLS 1.2+, ACM certs, VPC endpoints, SSH keys. PrivateLink. Audit Config rules."
+
+[109] WAF role?
+"Layer 7 firewall. SQLi, XSS, rate limiting. ALB/CloudFront/API Gateway. Managed Rules for OWASP Top 10. $5/rule/mo + requests."
+
+[110] Vulnerability management?
+"Inspector (EC2/ECS/Lambda), GuardDuty (threat detection), Patch Manager (SSM). Image scanning ECR. Config rules compliance."
+
+[111] SSH risk?
+"Lateral movement, key sprawl. Mitigate: SSM Session Manager (no keys), bastion with just-in-time, CloudTrail audit, IAM auth."
+
+[112] Compliance?
+"Config rules, Audit Manager, Security Hub (CIS, PCI), Control Tower, Organizations SCPs. Automated evidence collection."
+
+[113] High availability?
+"Multi-AZ (RDS, ELB), ASG 3 AZs, Route 53 health checks, global tables, S3 cross-region. RTO <5min, RPO <15min."
+
+[114] Scaling strategy?
+"Auto Scaling Groups (target 60% CPU), Lambda provisioned concurrency, DynamoDB on-demand, ECS capacity providers."
+
+[115] Security layers?
+"Defense-in-depth: WAF → ALB → SG → OS firewall → app-level auth → data encryption."
+
+[116] Database scaling?
+"RDS: Read replicas, Aurora Serverless. DynamoDB: On-demand, GSIs. Vertical (instance size) + horizontal (sharding)."
+
+[117] CDN benefit?
+"CloudFront: 50-80% latency reduction, origin offload 90%, DDoS protection, global cache."
+
+[118] Failure handling?
+"Circuit breakers, retries with backoff, DLQ, health checks, chaos engineering (AWS Fault Injection)."
+
+[119] Jenkins failed creating AWS resources – first check?
+"Credentials: Jenkins AWS IAM role/policy. Region mismatch. VPC/subnet limits. Service quotas. CloudTrail for error details."
+
+[120] Terraform works locally but fails in Jenkins – why?
+"State locking (S3 DynamoDB), credentials (Jenkins role vs local ~/.aws), workspace mismatch, provider version pinning."
+
+[121] How to make CI/CD idempotent?
+"Terraform plan → apply, CloudFormation change sets, immutable infra (new ASG), database migrations (versioned)."
+
+[122] App down but infra up?
+"Check app logs (CloudWatch), health checks failing, secrets rotation, DB connection limits, env vars missing."
+
+[123] High traffic spike?
+"Scale ASG (predictive scaling), Lambda concurrency limits, API Gateway throttling, cache invalidation."
+
+[124] DB slow?
+"Top queries (RDS Performance Insights), indexes missing, connection pool exhaustion, read replicas, query optimization."
+
+[125] Disk full node?
+"CloudWatch DiskUsedPercent alarm → EBS auto-scaling, lifecycle policies, /tmp cleanup cron, EFS shared storage."
+
+[126] Secrets leaked?
+"Rotate immediately (Secrets Manager), revoke IAM access, CloudTrail investigation, GuardDuty findings, notify."
+
+[127] Pipeline slow?
+"Parallel stages (CodeBuild matrix), caching (Docker layers), Spot instances, artifact reuse."
+
+[128] Security breach?
+"GuardDuty alerts → Security Hub → incident response: isolate (SG/NACL), forensics (Flow Logs), rotate all secrets."
+
+[129] Service down, no alerts?
+"CloudWatch alarm state (INSUFFICIENT_DATA?), metric resolution, notification ARN, test alarms."
+
+[130] Simulate DNS failure?
+"Route 53 health check fail → weighted routing to backup. Chaos Monkey DNS injection. VPC DNS 0.0.0.0/0 block."
+
+[131] Minimize blast radius?
+"Microservices isolation, circuit breakers, quota limits, blue-green, canary deployments (10% traffic)."
+
+[132] Partial cloud failure?
+"Multi-region Route 53, active-passive failover. Cross-cloud (GCP backup). Global Accelerator anycast."
+
+[133] Cost control?
+"Budgets + alerts, Compute Optimizer, rightsizing, Spot/Savings Plans, tag policies, Cost Explorer Anomaly Detection."
+
+[134] How to create Lambda variables?
+"Console: Configuration → Environment variables. CLI: aws lambda update-function-configuration --environment Variables='{KEY1=val1}'. Secrets Manager reference for secure vars."

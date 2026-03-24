@@ -1,15 +1,149 @@
 [1] Apart from disk usage, what other automation tasks have you done using Python?
+In enterprise environments, I have automated API integrations (Jenkins triggers, cloud APIs), SSL monitoring, IAM audits, cost cleanup, Kubernetes self-healing, and alerting systems. These reduce manual ops and improve reliability.
+Example (Trigger Jenkins Job via API):
+
+ python
+import requests
+
+url = "http://jenkins.example.com/job/test/build"
+auth = ("user", "token")
+
+response = requests.post(url, auth=auth)
+print(response.status_code)
+ 
+
 [2] Have you worked with requests in Python scripts?
+Yes, extensively used for REST API integrations (AWS, GitHub, Jenkins, monitoring tools). It simplifies HTTP operations and authentication handling.
+Example:
+
+ python
+import requests
+
+response = requests.get("https://api.github.com")
+print(response.json())
+ 
+
 [3] Automate log cleanup?
+Used Python scripts scheduled via cron to delete logs older than retention policy (e.g., 7 days) to prevent disk issues.
+Example:
+
+ python
+import os, time
+
+log_dir = "/var/log/myapp"
+days = 7
+now = time.time()
+
+for file in os.listdir(log_dir):
+    path = os.path.join(log_dir, file)
+    if os.stat(path).st_mtime < now - days*86400:
+        os.remove(path)
+ 
+
 [4] Check SSL expiry?
+Used ssl and socket modules to monitor certificate expiry and alert before expiration.
+Example:
+
+ python
+import ssl, socket
+from datetime import datetime
+
+hostname = "google.com"
+ctx = ssl.create_default_context()
+
+with socket.create_connection((hostname, 443)) as sock:
+    with ctx.wrap_socket(sock, server_hostname=hostname) as ssock:
+        cert = ssock.getpeercert()
+        expiry = datetime.strptime(cert['notAfter'], '%b %d %H:%M:%S %Y %Z')
+        print("Expiry:", expiry)
+ 
+
 [5] Automate package updates?
+Automated OS patching using Python subprocess integrated with cron/CI pipelines.
+Example:
+
+ python
+import subprocess
+
+subprocess.run(["sudo", "apt", "update"])
+subprocess.run(["sudo", "apt", "upgrade", "-y"])
+ 
+
 [6] CPU alert automation?
+Used psutil to monitor CPU and trigger alerts when threshold exceeded.
+Example:
+
+ python
+import psutil
+
+cpu = psutil.cpu_percent(interval=1)
+if cpu > 80:
+    print(f"High CPU Usage: {cpu}%")
+ 
+
 [7] Prevent disk space issues by deleting old logs automatically.
-[8] 2. Check SSL Certificate Expiry (duplicate of [4])
-[9] 3. Automate System Package Updates (duplicate of [5])
-[10] 4. Send Alerts for High CPU Usage (duplicate of [6])
-[11] 5. Restart a Failing Kubernetes Pod
+Implemented cleanup + monitoring to maintain disk health proactively.
+Example:
+
+ python
+import shutil
+
+total, used, free = shutil.disk_usage("/")
+if used / total > 0.8:
+    print("Disk usage above 80%, trigger cleanup")
+ 
+
+[8] Check SSL Certificate Expiry (duplicate of [4])
+Same approach using ssl module to fetch and validate expiry date with alerting.
+
+[9] Automate System Package Updates (duplicate of [5])
+Used subprocess with package managers (apt/yum) integrated with scheduling.
+
+[10] Send Alerts for High CPU Usage (duplicate of [6])
+Used psutil + alerting integrations (email/Slack/webhooks) in production.
+
+[11] Restart a Failing Kubernetes Pod
+Automated self-healing by detecting failed pods and deleting them so Kubernetes recreates automatically.
+Example:
+
+ python
+import subprocess
+
+pod = "my-pod"
+namespace = "default"
+
+subprocess.run(["kubectl", "delete", "pod", pod, "-n", namespace])
+ 
+
 [12] Crontab usage?
+Used to schedule automation tasks like cleanup, backups, monitoring scripts in production servers.
+Example:
+
+  
+0 2 * * * /usr/bin/python3 /scripts/cleanup.py
+ 
+
 [13] PM2 usage?
+PM2 is used as a process manager for Node.js apps to ensure high availability, auto-restarts, and monitoring.
+Example:
+
+  
+pm2 start app.js --name myapp
+ 
+
 [14] Kill process via PM2?
+Used to stop or remove running applications safely.
+Example:
+
+  
+pm2 stop myapp
+pm2 delete myapp
+ 
+
 [15] Check running nodes?
+Used to monitor running Node.js applications and their status.
+Example:
+
+  
+pm2 list
+ 

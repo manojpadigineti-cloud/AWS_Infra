@@ -1,27 +1,79 @@
-[1] Intermittent failures across microservices but logs look normal. How to find root cause?
-[2] Logging/monitoring tools?
+[1] Intermittent failures microservices logs normal root cause? (Systematic approach)
+Distributed tracing OpenTelemetry Jaeger traceID correlate logs metrics across services auth→payment→inventory. p99 latency spikes Prometheus Grafana service graph. Chaos engineering reproduce replay traffic. eBPF Pixie network call graph. SLO error budget identify flaky endpoints.
+
+[2] Logging/monitoring tools production stack?
+Observability pillars: Loki/Promtail logs structured JSON traceID, Prometheus metrics scrape 15s, Jaeger/Zipkin traces. Grafana visualize, Alertmanager Slack PagerDuty. EFK legacy OpenSearch. Pixie eBPF zero-agent.
+
 [3] Prometheus role?
+Pull-based time-series database scrape /metrics HTTP endpoints kubelet node-exporter app. PromQL query rate(http_requests_total[5m]) > 100. Federation Thanos scalable.
+
 [4] Grafana role?
-[5] ELK stack?
-[6] SLI/SLO/SLA?
-[7] Alerting strategy?
-[8] High memory in Prometheus?
-[9] Logs vs metrics vs traces?
-[10] Incident debugging approach?
-[11] Alert fatigue issue?
-[12] Monitoring failure?
-[13] How to make Prometheus highly available?
-[14] What are challenges with Prometheus?
-[15] What is Prometheus Operator?
-[16] Application latency increased. How to find root cause?
-[17] How to create meaningful alerts?
-[18] How do monitoring tools collect metrics?
+Visualization dashboards panels Prometheus Loki Jaeger datasources. Service maps heatmaps annotations. Provisioning yaml GitOps.
+
+[5] ELK stack components usage?
+Elasticsearch search index logs, Logstash parse/enrich pipeline json grok, Kibana dashboards visualize. Fluent Bit → Logstash beats → ES modern EFK OpenSearch.
+
+[6] SLI/SLO/SLA definitions examples?
+SLI measurable availability 99.9% (1xx-4xx)/total. SLO objective 99.95% monthly burn error budget. SLA contract <99.9% penalty credits. Golden signals latency traffic errors saturation.
+
+[7] Alerting strategy best practices?
+Critical P1 customer impact pages 5min, P2 degradation tickets 30min, P3 logs. Runbook links Grafana annotations suppress alert storm. SLO based error budget 0%.
+
+[8] High memory Prometheus causes solutions?
+Cardinality high labels unique users/IPs drop >10 unique. Retention 15d → 90d Thanos remote-write S3. Downsampling recording rules.
+
+[9] Logs vs metrics vs traces differences?
+Logs events text ERROR traceID, metrics numeric time-series CPU 75% 15s, traces distributed request spans latency p95 auth 200ms→payment 500ms. Golden signals + traces.
+
+[10] Incident debugging approach SRE?
+SLI breach → triage P1/P2 → traceID Jaeger → logs Loki → metrics Prometheus → reproduce staging → root cause 5 Whys → mitigate rollback → postmortem blameless.
+
+[11] Alert fatigue mitigation?
+Consolidate alerts SLO compound, suppress maintenance, runbooks self-service, pages only P0/P1, Mute chatops.
+
+[12] Monitoring failure impact recovery?
+Single point Prometheus HA Thanos federation. Backup scrape configs Git. Alertmanager cluster.
+
+[13] Prometheus highly available?
+3 replicas thanos-sidecar S3 long-term query federation. StatefulSet PVC Alertmanager cluster 3 replicas gossip.
+
+[14] Prometheus challenges scale?
+Cardinality explosion scraping overload no native push. Thanos/Cortex/VM federate. Pushgateway ephemeral jobs.
+
+[15] Prometheus Operator?
+CRDs ServiceMonitor PodMonitor scrape config. kube-prometheus-stack Helm all-in-one Prometheus Grafana node-exporter.
+
+[16] Application latency increased root cause? (Methodical)
+Prometheus rate(http_request_duration_seconds_bucket[5m]) p99 >500ms. Jaeger traces slow DB/3rd party. top CPU OOM? Network tcpdump. Pixie SQL queries.
+
+[17] Create meaningful alerts?
+Thresholds percentile-based rate(errors[5m])>0.1% not avg. Runbook "https://runbook.example.com/p99". Group by service inhibit noise.
+
+[18] Monitoring tools collect metrics?
+Pull Prometheus scrape /metrics, push StatsD/Prom gateway. Push/Pull agents Telegraf collectd.
+
 [19] Real-world monitoring strategy?
-[20] Key metrics?
+Golden signals RED (requests/errors/duration) + USE (utilization/saturation/errors) + per-service business KPIs conversion rate. SLO dashboards Grafana Alerting PagerDuty.
+
+[20] Key metrics production?
+Latency p50 p95 p99.9, traffic RPS, errors 5xx rate, saturation CPU>80% memory>90% disk I/O queue.
+
 [21] Correlate logs/metrics/traces?
-[22] Monitoring failure? (duplicate of [12])
-[23] Grafana dashboards?
+OpenTelemetry semantic conventions traceID spanID log.level="ERROR" service.name="auth". Grafana Tempo Loki Prometheus unified query.
+
+[22] Sequential: Jaeger UI trace waterfall.
+
+[23] Grafana dashboards examples?
+Node exporter CPU/memory disk, app latency error heatmap, service graph Kiali Istio, SLO burn rate.
+
 [24] Configure dashboards?
+Provisioning /etc/grafana/provisioning/dashboards yaml git-sync datasources Prometheus URL.
+
 [25] Node Exporter?
-[26] Email alerts from Grafana?
+Prometheus scrape host metrics /proc/cpuinfo meminfo diskstats netdev. Static config port 9100.
+
+[26] Email alerts Grafana?
+Alertmanager config smtp smtp.example.com receivers email template slack webhook.
+
 [27] Alert conditions?
+PromQL avg(rate(cpu_usage[5m])) > 0.8 FOR 2m. No data 5m. Group by instance job.

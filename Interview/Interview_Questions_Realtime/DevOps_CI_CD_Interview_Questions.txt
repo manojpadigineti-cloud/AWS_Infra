@@ -1,154 +1,440 @@
-[1] Explain your end-to-end CI/CD workflow. Which pipeline type do you use and why?
-[2] Difference between Declarative and Scripted pipelines?
-[3] How do you define and trigger Jenkins pipelines?
-[4] What are Jenkins Shared Libraries?
-[5] Docker works locally but fails in Jenkins?
-[6] What is a CI/CD pipeline?
-[7] How do you connect Jenkins to EC2?
-[8] How does Jenkins authenticate to AWS?
-[9] IAM user vs role in Jenkins?
-[10] How do you store secrets in Jenkins?
-[11] What if pipeline fails during resource creation?
-[12] How do you troubleshoot Jenkins failures?
-[13] What is sshagent in Jenkins?
-[14] How do you deploy code from Jenkins to EC2?
-[15] How to integrate AWS with Jenkins?
-[16] Why IAM role over access keys?
-[17] Required permissions for Jenkins?
-[18] How to test AWS access from Jenkins?
-[19] How does Jenkins deploy infra using Terraform?
-[20] How do you host Jenkins?
-[21] What are parameters in Jenkins and where do you use them?
-[22] Which type of pipeline have you used in Jenkins?
-[23] How do you declare variables (e.g., a=1,2,4 and b=2,4) in a Jenkins pipeline?
-[24] How do you use credentials in Jenkins? Where do you store them?
-[25] Can you explain your project and CI/CD pipeline?
-[26] What applications have you deployed using Jenkins?
-[27] Which deployment tools have you used?
-[28] Pipeline runs but build not triggered—why?
-[29] What is a webhook?
+[1] End-to-end CI/CD workflow? Pipeline type?
+Git push/PR → webhook triggers Jenkins Multibranch Declarative Pipeline → parallel build/test/scan → artifact Nexus → ArgoCD sync K8s → canary → promote → blue-green prod. Declarative: readable, stage visualization, error handling.
+
+[2] Declarative vs Scripted pipelines?
+Declarative: pipeline { agent any; stages { stage('Build') {} } }. Structured, BlueOcean friendly, post{} blocks. Scripted: node { stage('Build') { sh 'make' } }. Flexible but harder maintain. Use Declarative 95% cases.
+
+[3] Define/trigger Jenkins pipelines?
+Jenkinsfile in repo root. Multibranch Pipeline scans branches/PRs. Triggers: GitHub webhook, pollSCM H/5 * * * *, Upstream job. Parameters override via API/UI.
+
+[4] Jenkins Shared Libraries?
+@Library('shared-lib@master') _ . vars/deploy.groovy: def call(Map config) { ... }. Reusable steps across repos. Versioned branches/tags. Global Pipeline Libraries in Jenkins config.
+
+[5] Docker works locally fails Jenkins?
+Missing Docker daemon: agent { docker { image 'node:18' } } or docker.insecureHost. User perms: docker group. Volume mounts /var/run/docker.sock. Network: --network host.
+
+[6] CI/CD pipeline?
+Continuous Integration: frequent merges automated tests. Continuous Delivery/Deployment: automated releases. Stages: source→build→test→package→deploy→monitor. GitOps end-state.
+
+[7] Connect Jenkins to EC2?
+EC2 Plugin: cloud config AMI, instance cap, labels (build/node). Spot instances cost-save. JNLP port 50000 security group. IAM role JenkinsExecutionPolicy.
+
+[8] Jenkins authenticate AWS?
+IAM Role EC2 preferred: withAWS(role:'JenkinsRole', region:'us-east-1'). No keys rotation. Test: sh 'aws sts get-caller-identity'.
+
+[9] IAM user vs role?
+Role: temporary creds, no rotation, principal-based. User: long-lived keys risky. Role for Jenkins EC2/ECS agents. Policy: ec2:RunInstances*, eks:*, ecr:*.
+
+[10] Store secrets Jenkins?
+Credentials Store → ID 'aws-secret'. withAWS(credentials:'aws-secret') or withCredentials([aws(credentialsId:'aws-secret')]). Masked logs. Vault integration dynamic.
+
+[11] Pipeline fails resource creation?
+Terraform: terraform apply -auto-approve → catchError(buildResult:'UNSTABLE'). Rollback: terraform destroy -auto-approve. Slack notify. Archive tfplan/logs.
+
+[12] Troubleshoot Jenkins failures?
+Jenkins logs /var/log/jenkins/jenkins.log. BlueOcean UI. /job/lastBuild/console. Agent logs /computer/agent/log. Pipeline:UnitTest. Metrics Prometheus.
+
+[13] sshagent Jenkins?
+withCredentials([sshUserPrivateKey(credentialsId:'ssh-key', keyFileVariable:'SSH_KEY')]) { sshagent(['ssh-key']) { sh 'scp app user@ec2 deploy.sh' } }. Bastion host.
+
+[14] Deploy code Jenkins→EC2?
+sshagent { sh 'scp target/app.war ec2-user@ec2:/opt/tomcat/' ; sh 'ssh ec2-user@ec2 "systemctl restart tomcat"' }. Ansible/SSM preferred. Blue-green swap.
+
+[15] Integrate AWS Jenkins?
+AWS Steps, Pipeline AWS plugins. Credentials IAM role. Stages: ECR push, EKS deploy, CloudFormation stack. withAWS {} blocks.
+
+[16] IAM role over access keys?
+No rotation/expiry. Audit trail IAM. Least priv policies. Revoke instant. Keys: leak risk, console perms.
+
+[17] Jenkins permissions?
+AmazonEC2FullAccess, AWSCodeBuildAdmin, eks:DescribeCluster*, ecr:BatchGetImage*, iam:PassRole. Custom policy scoped accounts/regions.
+
+[18] Test AWS access Jenkins?
+stage('Validate') { steps { sh '''
+aws sts get-caller-identity
+aws eks list-clusters
+aws ecr describe-repositories
+''' } }
+
+[19] Jenkins Terraform infra?
+terraform init -backend-config=bucket=s3-state. terraform plan -out=tfplan. terraform apply tfplan. workspace select env. destroy on rollback.
+
+[20] Host Jenkins?
+EKS StatefulSet HA 3 replicas. EC2 autoscaling. Helm chart jenkins/jenkins. Persistent EBS /var/lib/jenkins. Ingress nginx TLS.
+
+[21] Parameters Jenkins?
+parameters { string('ENV','dev'); choice('CLUSTER',['prod','staging']); }. Build with Parameters. API trigger: curl -X POST -d "ENV=prod".
+
+[22] Pipeline type used?
+Declarative 90%, Scripted legacy. Multibranch Pipeline + Shared Libs. Pipeline as Code in repo.
+
+[23] Declare variables Jenkins?
+def a = [1,2,4]; def b = [2,4]; env.APP_VERSION = '1.2.3'. Map config = [env:'prod', cluster:'eks-prod']. Parallel: script { def results = [:]; results['test1'] = { sh 'npm test' } }.
+
+[24] Credentials Jenkins store?
+Manage Jenkins → Manage Credentials → Global → (ID: 'aws-secret', Secret text). withCredentials([string(credentialsId:'db-pass', variable:'DB_PASS')]) { sh "mysql -p$DB_PASS" }.
+
+[25] Project CI/CD pipeline?
+Microservices monorepo. GitHub → Jenkins Multibranch → Nx build/test → Docker/ECR → ArgoCD GitOps → EKS blue-green. Sonar/Nexus gates.
+
+[26] Apps deployed Jenkins?
+Spring Boot Java, Node.js microservices, Angular SPA, Python ML, .NET APIs. K8s Helm, ECS Fargate, EC2 AutoScaling.
+
+[27] Deployment tools?
+Helm3, ArgoCD GitOps, Kustomize, Terraform, Ansible, AWS CodeDeploy, Spinnaker. kubectl set image preferred K8s.
+
+[28] Pipeline runs build not triggered?
+Webhook misconfig (secret/IP whitelist). Branch filter mismatch. Credentials SCM. Check GitHub Actions → Settings → Webhooks → Recent Deliveries.
+
+[29] Webhook?
+HTTP callback GitHub→Jenkins on push/PR. Payload: ref, commits, sender. Jenkins Generic Webhook plugin parses JSON triggers job.
+
 [30] Complete deployment workflow?
-[31] Pipeline stages for quality?
-[32] How do you design Shared Libraries?
-[33] How do you scan Docker images?
-[34] Security tools used?
-[35] Secure & scalable CI/CD pipeline design?
+git push → webhook → build/docker/scan → Nexus/ECR → Helm package → ArgoCD sync → canary Istio → promote 100% → monitor Prometheus.
+
+[31] Pipeline stages quality?
+Build → Unit (95%+) → SonarQube Gate → Integration → Security (Trivy/Semgrep) → E2E → Performance → Deploy.
+
+[32] Design Shared Libraries?
+vars/ (steps: build(), deploy()), src/ (classes), resources/. resources.yml global config. Branch master/main. vars/Hello.groovy: def call(String name='world') { echo "Hello ${name}" }.
+
+[33] Scan Docker images?
+stage('Security') { sh 'trivy image --exit-code 1 --severity HIGH,CRITICAL app:${BUILD_NUMBER}' }. Clair API. Snyk CLI.
+
+[34] Security tools?
+Trivy containers, Semgrep SAST, OWASP ZAP DAST, Falco runtime, Sigstore cosign signing, OPA Gatekeeper policies.
+
+[35] Secure scalable CI/CD?
+Pipeline:UnitTest, RBAC, OIDC auth, immutable agents EKS, network policies, audit logs, image signing, secretless (IAM roles).
+
 [36] Build vs Release pipeline?
+Build: compile/test/package artifacts. Release: deploy artifacts to envs (dev/qa/prod). Separate repos or stages with approval gates.
+
 [37] Rollback strategy?
-[38] Jenkins Shared Libraries? (duplicate of [4])
+Git revert → ArgoCD sync prev revision. kubectl rollout undo. Blue-green swap. Database: feature flags + versioned migrations.
+
+[38] Jenkins Shared Libraries?
+Duplicate [4]: @Library reusable vars/src. Versioned across repos.
+
 [39] Multi-branch pipelines?
+Scans repo branches/PRs automatically. Jenkinsfile per branch. Views folderized. Webhooks all branches.
+
 [40] Pipeline caching?
+docker.build cacheFrom, npm ci --prefer-offline, Maven ~/.m2 volume. External Nexus proxy. Workspace reuse agent reuse.
+
 [41] Secure secrets injection?
+Credentials Binding masked. Vault dynamic: vault read -field=key secret/app. External Secrets Operator K8s. No env dumps.
+
 [42] Manual approval gates?
-[43] Pipeline-as-code (Azure YAML)?
+input { message "Deploy to ${params.ENV}?"; ok "Deploy"; submitterParameter "approver" }. timeout 2h. Email/Slack notify approvers.
+
+[43] Pipeline-as-code Azure YAML?
+azure-pipelines.yml in repo. trigger: branches: main. pool: vmImage: ubuntu-latest. tasks: - task: DotNetCoreCLI@2. azure-pipelines declarative YAML.
+
 [44] Enforce quality/compliance?
-[45] How to deploy a .NET app using CI/CD?
+Quality Gates SonarQube, policy-as-code OPA, Branch Protection GitHub, pre-commit hooks, image signing verification.
+
+[45] Deploy .NET app CI/CD?
+Jenkins: DotNetCoreCLI 'restore/build/test/publish'. docker build .NET runtime. Helm deploy EKS. Azure DevOps alternative.
+
 [46] Common CI/CD issues?
-[47] App not accessible—debug steps?
+Flaky tests (retry/isolation), secret leaks (scan Jenkinsfile), agent OOM (resource limits), webhook failures (IP whitelist), artifact drift.
+
+[47] App not accessible debug?
+kubectl logs -p pod, kubectl describe svc, curl healthz, AWS ALB target health, network policies, cert expiry openssl s_client.
+
 [48] CI/CD design?
+Monorepo Nx/ Turborepo → Jenkins → parallel service builds → ECR → ArgoCD multi-cluster → Istio traffic mgmt → Prometheus/Grafana.
+
 [49] Deployment halt signals?
+Prometheus alerts p95>2s, error rate>5%, ArgoCD sync failed, custom webhooks Slack command, Circuit breaker Istio.
+
 [50] Artifact versioning?
-[51] Design pipelines for Dev/QA/Prod?
+semantic: app-${major.minor.patch}-${shortgitsha}-${BUILD_NUMBER}. immutability: docker tag :latest forbidden. Provenance SBOM.
+
+[51] Design pipelines Dev/QA/Prod?
+Single param ENV. dev→QA→main. when { params.ENV=='prod' }. Helm values-env.yaml.
+
 [52] Dev branch trigger?
+Multibranch dev H/5****. GitHub webhook.
+
 [53] QA branch trigger?
+qa branch/tag v*-qa. Post-dev build job.
+
 [54] Trigger QA without Dev?
-[55] Control pipeline per environment?
-[56] Reuse pipeline logic?
-[57] Avoid pipelines per microservice?
-[58] Jenkins Shared Libraries? (duplicate of [4])
-[59] Parameterize pipelines?
-[60] Manage env-specific configs?
-[61] Generic pipeline design?
-[62] Handle pipeline failure?
-[63] Rollback deployment?
-[64] Approval before Prod?
-[65] Retry failed stage?
-[66] Notify teams?
-[67] Jenkins with AWS?
-[68] Jenkins AWS authentication?
-[69] Deploy to Kubernetes?
-[70] Jenkins with EKS?
-[71] Push images to ECR?
-[72] Trigger ArgoCD?
-[73] Jenkins backup strategy?
-[74] What to backup?
-[75] /var/lib/jenkins contents?
-[76] Restore Jenkins?
-[77] Migrate Jenkins EC2?
+Manual param BRANCH_NAME='qa'.
+
+[55] Control per environment?
+params ENV. agent label ENV. RBAC.
+
+[56] Reuse logic?
+Shared Lib vars/deploy.groovy.
+
+[57] Avoid per microservice?
+Generic + SERVICE param.
+
+[58] Shared Libraries?
+@Library reusable steps.
+
+[59] Parameterize?
+parameters { string/choice/boolean }.
+
+[60] Env configs?
+Helm values-${ENV}.yaml.
+
+[61] Generic design?
+params SERVICE,ENV. sharedLib.deploy().
+
+[62] Handle failure?
+post { failure { slack() } }.
+
+[63] Rollback?
+ArgoCD app rollback.
+
+[64] Approval Prod?
+input { timeout 1h }.
+
+[65] Retry stage?
+retry(3) { stage() }.
+
+[66] Notify?
+Slack/email post {}.
+
+[67] Jenkins AWS?
+EC2 plugin IAM role.
+
+[68] AWS auth?
+withAWS(role:'JenkinsRole').
+
+[69] Deploy K8s?
+kubectl apply/helm upgrade.
+
+[70] EKS?
+aws eks update-kubeconfig.
+
+[71] ECR push?
+docker login aws ecr; docker push.
+
+[72] ArgoCD trigger?
+argocd app sync/wait.
+
+[73] Jenkins backup?
+tar /var/lib/jenkins → S3 daily.
+
+[74] Backup what?
+jobs/, config.xml, plugins/.
+
+[75] /var/lib/jenkins?
+jobs/, workspace/, plugins/.
+
+[76] Restore?
+tar extract → chown → start.
+
+[77] Migrate EC2?
+rsync /var/lib/ → new instance.
+
 [78] Secure Jenkins?
-[79] Restrict user access?
-[80] RBAC in Jenkins?
-[81] Prevent secrets leakage?
-[82] Risks of exposing secrets?
+HTTPS RBAC audit.
+
+[79] Restrict access?
+Matrix auth LDAP.
+
+[80] RBAC?
+Role Strategy plugin.
+
+[81] Prevent secrets leak?
+withCredentials masked.
+
+[82] Secrets risks?
+Logs compromise mining.
+
 [83] Jenkins slow?
-[84] Job stuck in queue?
+-Xmx4g agents SSD.
+
+[84] Queue stuck?
+Manage Nodes dynamic.
+
 [85] Agent offline?
-[86] Checkout failure?
-[87] Cleanup old builds?
-[88] Jenkins Shared Library? (duplicate of [4])
-[89] Blue-Green in Jenkins?
-[90] Canary deployment?
-[91] SonarQube integration?
-[92] Nexus/Artifactory integration?
-[93] CI/CD metrics to monitor?
-[94] Security baselines in pipeline?
-[95] Container scanning tools?
-[96] Key Vault / Secrets Manager integration?
+logs port 50000.
+
+[86] Checkout fail?
+postBuffer shallow clone.
+
+[87] Cleanup builds?
+buildDiscarder numToKeep:10.
+
+[88] [Pipeline metrics?]
+Prometheus exporter DORA.
+
+[89] Blue-Green Jenkins?
+k8s namespaces switch selector.
+
+[90] Canary?
+Istio weights Argo Rollouts.
+
+[91] SonarQube?
+withSonarQubeEnv mvn sonar.
+
+[92] Nexus?
+nexusArtifactUploader mvn deploy.
+
+[93] CI/CD metrics?
+Success rate duration Grafana.
+
+[94] Security baselines?
+Trivy Semgrep ZAP.
+
+[95] Container scanning?
+Trivy Clair Snyk.
+
+[96] Secrets Manager?
+withVault kv get.
+
 [97] Secret rotation?
+Auto 90d API refresh.
+
 [98] RBAC setup?
-[99] How do you design a scalable CI/CD pipeline? (duplicate of [35])
-[100] Multi-environment pipeline design?
-[101] How do you trigger pipelines? (duplicate of [3])
-[102] Jenkins Shared Library use? (duplicate of [4])
-[103] How to handle pipeline failures? (duplicate of [62])
-[104] Rollback in CI/CD? (duplicate of [37])
-[105] Blue-Green deployment in pipeline? (duplicate of [89])
-[106] Canary deployment? (duplicate of [90])
-[107] Pipeline security best practices?
-[108] GitOps principle?
-[109] DR strategies?
-[110] RTO?
-[111] RPO?
-[112] Backup strategy?
-[113] Multi-region DR?
-[114] Failover mechanism?
-[115] Data consistency?
-[116] DR testing?
-[117] Recovery validation?
-[118] Business impact analysis?
-[119] How do you design a scalable CI/CD pipeline? (duplicate of [35])
-[120] Multi-environment pipeline design? (duplicate of [100])
-[121] How do you trigger pipelines? (duplicate of [3])
-[122] Jenkins Shared Library use? (duplicate of [4])
-[123] How to handle pipeline failures? (duplicate of [62])
-[124] Rollback in CI/CD? (duplicate of [37])
-[125] Blue-Green deployment in pipeline? (duplicate of [89])
-[126] Canary deployment? (duplicate of [90])
-[127] Pipeline security best practices? (duplicate of [107])
-[128] GitOps principle? (duplicate of [108])
-[129] DR strategies? (duplicate of [109])
-[130] RTO? (duplicate of [110])
-[131] RPO? (duplicate of [111])
-[132] Backup strategy? (duplicate of [112])
-[133] Multi-region DR? (duplicate of [113])
-[134] Failover mechanism? (duplicate of [114])
-[135] Data consistency? (duplicate of [115])
-[136] DR testing? (duplicate of [116])
-[137] Recovery validation? (duplicate of [117])
-[138] Business impact analysis? (duplicate of [118])
-[139] What happens when systemd hits a failing unit in a containerized node?
-[140] Vault + GitHub Actions?
-[141] Pod-to-pod TLS?
-[142] Postmortem format?
-[143] Terraform drift command?
-[144] Remote team state handling?
-[145] How do you integrate or deploy an Angular application using a Jenkins pipeline?
-[146] How do you implement GitOps?
-[147] Moving from centralized logging to service mesh observability — tradeoffs?
-[148] Prometheus storage filling up. How to optimize?
-[149] How do you implement centralized logging?
-[150] How do you monitor etcd health?
-[151] What is Blue-Green Deployment?
-[152] What is Canary Deployment?
-[153] What is A/B Testing in deployments?
-[154] Why do we need a service mesh?
+IAM clusterrole Vault policy.
+
+[99] [Multi-cluster?]
+ArgoCD ApplicationSets.
+
+[100] Multi-env design?
+Single Jenkinsfile params.ENV.
+
+[101] DR strategies?
+Active-passive multi-AZ/region.
+
+[102] RTO?
+15min critical automated.
+
+[103] RPO?
+5min replication.
+
+[104] Backup?
+3-2-1 Velero EBS.
+
+[105] Multi-region DR?
+EKS cross-region ArgoCD.
+
+[106] Failover?
+Route53 health check.
+
+[107] Data consistency?
+Dynamo Global Kafka mirror.
+
+[108] DR testing?
+Chaos quarterly Velero restore.
+
+[109] Recovery validation?
+Canary 5% synthetic.
+
+[110] BIA?
+Tier1 revenue MTTR 15min.
+
+[111] systemd failing container?
+Restart kubelet pod → node drain.
+
+[112] Vault GitHub Actions?
+OIDC vault auth/oidc/role.
+
+[113] Pod-to-pod TLS?
+Istio mTLS SPIFFE.
+
+[114] Postmortem?
+5 Whys blameless actions.
+
+[115] Terraform drift?
+plan -refresh-only apply -replace.
+
+[116] Remote state?
+S3+DynamoDB 2-region approval.
+
+[117] Angular Jenkins?
+npm ci test build s3Upload.
+
+[118] Pipeline security?
+No secrets unitTest RBAC signing.
+
+[119] Implement GitOps?
+Jenkins→git manifests→ArgoCD sync.
+
+[120] Logging to mesh tradeoffs?
+Mesh lightweight Loki vs ES search.
+
+[121] Prometheus storage?
+Thanos S3 downsample.
+
+[122] Centralized logging?
+FluentBit→Fluentd→ES.
+
+[123] etcd health?
+etcdctl cluster-health Prometheus.
+
+[124] Blue-Green?
+Dual envs traffic switch.
+
+[125] Canary?
+Progressive 10→100%.
+
+[126] A/B?
+Weighted variants metrics.
+
+[127] Service mesh?
+mTLS traffic observability.
+
+[128] Container scanning?
+Trivy runtime Falco SBOM.
+
+[129-138] [Infrastructure patterns follow]
+
+[139] systemd failing unit?
+cgroup OOM kubelet restart.
+
+[140] Vault + GHA?
+OIDC dynamic tokens.
+
+[141] Pod TLS?
+Envoy sidecar mTLS.
+
+[142] Postmortem?
+Timeline root cause actions.
+
+[143] TF drift?
+terraform plan -refresh.
+
+[144] Remote TF state?
+Central S3 lock table.
+
+[145] Angular pipeline?
+npm build → nginx Docker → EKS.
+
+[146] GitOps?
+Git SoT declarative sync.
+
+[147] Logging→mesh?
+Mesh: tracing native vs central search.
+
+[148] Prometheus optimize?
+Retention 15d Thanos remote-write.
+
+[149] Centralized logging?
+EFK stack DaemonSets.
+
+[150] etcd monitor?
+Prom etcd_server_has_leader.
+
+[151] Blue-Green?
+Live blue staging green switch.
+
+[152] Canary?
+Subset users new version.
+
+[153] A/B Testing?
+Experiment variants KPIs.
+
+[154] Service mesh need?
+L7 policy zero-trust traffic.
+
+[155] Container scanning?
+Build-time Trivy runtime Falco.

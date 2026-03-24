@@ -1,47 +1,134 @@
-[1] What is sed and -E option?
-[2] How do you check a DNS entry in a system?
-[3] What are environment variables?
-[4] What is a cron job and how do you create it?
-[5] If a cron job already exists, would you modify it or create a new one? Why?
-[6] Why do we use webhook triggers?
-[7] Systemd logs missing after reboot. What to check?
-[8] Kill process in Ubuntu?
+[1] What is sed -E option? (Detailed explanation)
+sed stream editor processes text streams line-by-line substitution/delete/insert. -E extended regex (ERE) |() {}?+ non-escaped unlike basic BRE. sed -E 's/([0-9]+)-([0-9]+)/\2-\1/g' swap dates vs sed -r legacy. Production: sed -i inplace edit config files CI/CD.
+
+[2] Check DNS entry system?
+nslookup domain.com OR dig domain.com @8.8.8.8 +short. host domain.com. /etc/resolv.conf nameserver. netstat -rn routing. Troubleshoot: dig +trace authoritative servers.
+
+[3] Environment variables?
+Key-value pairs shell process env export APP_PORT=8080 child inherits. Persistent /etc/environment ~/. rc systemd Environment=. Read $VAR ${VAR:-default}. CI/CD secrets mask.
+
+[4] Cron job create?
+crontab -e edit * * * * * /script.sh @daily @reboot. /etc/cron.d system-wide MAILTO=user@domain. systemd timer modern alternative.
+
+[5] Modify existing cron or new? Why?
+Modify existing consolidate avoid duplication list crontab -l. New if different scope/team. Version control /etc/cron.d GitOps ansible.
+
+[6] Webhook triggers why?
+HTTP POST GitHub→Jenkins/GitLab CI push/PR events instant vs pollSCM. Payload JSON ref commits. Security secret token IP whitelist.
+
+[7] Systemd logs missing reboot?
+journalctl -u service --since "2026-03-24" -b-1 previous boot. journald.conf Storage=persistent /var/log/journal. Rotation MaxFileSec=1w.
+
+[8] Kill process Ubuntu?
+ps aux | grep app → kill PID graceful SIGTERM 15. kill -9 9 force. pkill appname user processes. systemd systemctl stop service.
+
 [9] Open firewall?
+ufw allow 8080/tcp sudo ufw reload status. iptables -A INPUT -p tcp --dport 8080 -j ACCEPT. firewalld firewall-cmd --add-port=8080/tcp permanent reload.
+
 [10] Check open ports?
+netstat -tlnp OR ss -tlnp listen TCP/UDP PID. lsof -i :8080. nmap localhost.
+
 [11] netstat -ntlp?
-[12] Cron job? (duplicate of [4])
+-n numeric IP/port no resolve -t TCP -l listen -p PID/program. ss -tlnp modern replacement.
+
+[12] Sequential: lsof netstat ss compare performance.
+
 [13] Clear cache?
-[14] What is a Forward Proxy?
-[15] What is a Reverse Proxy?
+echo 3 > /proc/sys/vm/drop_caches (pages dentries inodes) prod careful. systemd-tmpfiles --clean. free -h before/after.
+
+[14] Forward Proxy?
+Client → proxy → internet Squid/V2Ray caches/auth hides client IP. Browser PAC config http_proxy=proxy:3128.
+
+[15] Reverse Proxy?
+Internet → proxy → backend servers nginx/HAProxy L7 LB TLS termination. Hide internal IPs.
+
 [16] Forward vs Reverse Proxy?
-[17] How to get current date/time in shell?
-[18] How to format date?
-[19] Where is shell scripting used in CI/CD?
-[20] How to log timestamps in scripts?
-[21] Bash one-liner to find containers using >500MB RSS memory?
+Forward client-side internet access corp firewall. Reverse server-side LB SSL offload WAF. Same nginx config different use.
+
+[17] Current date/time shell?
+date +"%Y-%m-%d %H:%M:%S" ISO. TZ=UTC date. date -u universal.
+
+[18] Format date?
+date +%Y-%m-%dT%H:%M:%SZ RFC3339. %s epoch. strftime man date.
+
+[19] Shell scripting CI/CD usage?
+Jenkins sh steps docker build/test/deploy. Ansible playbooks. ArgoCD init containers. GitHub Actions  .
+
+[20] Log timestamps scripts?
+printf "[%s] %s\n" "$(date -Iseconds)" "message". logger -t myscript. ts '%Y-%m-%dT%H:%M:%S' < log.
+
+[21]   one-liner containers >500MB RSS?
+docker stats --no-stream --format "{{.Name}}\t{{.MemUsage}}" | awk '$2 ~ /GB/ || $2 > 500MB {print}' OR ps -eo pid,ppid,cmd,%mem,%cpu --cumulative | grep containerd-shim.
+
 [22] Check disk space?
-[23] Count lines in file?
+df -h human GiB /dev/xvda1 85%. du -sh /var/log * /var/lib/docker. ncdu interactive.
+
+[23] Count lines file?
+wc -l logfile.txt. grep -c . file. sed -n '$='.
+
 [24] Download file?
+curl -O https://example.com/app.zip -L follow redirect --progress-bar. wget -c resume.
+
 [25] Disk full issue?
+df -h identify /var/log full. journalctl --vacuum-time=7d. docker system prune -a. logrotate force.
+
 [26] Check CPU usage?
+top/htop interactive. ps aux --sort=-%cpu | head. mpstat 1 5 sar.
+
 [27] Check memory usage?
-[28] Kill process? (duplicate of [8])
-[29] Check open ports? (duplicate of [10])
+free -h. vmstat 1. top SHIFT+M memory sort cat /proc/meminfo.
+
+[28] Sequential: top ps vmstat perf.
+
+[29] Sequential: htop glances.
+
 [30] Check logs?
+tail -f /var/log/app.log. journalctl -u app -f. less +G.
+
 [31] High CPU alert handling?
-[32] Cron job use? (duplicate of [4])
-[33] File permissions (777)?
+top identify process PID strace -p PID syscalls perf top flamegraph. pmap RSS. kill OOM if zombie.
+
+[32] Sequential: sar mpstat.
+
+[33] File permissions 777?
+rwx all user/group/other world-writable insecure chmod 777 NEVER prod. 755 exec search safe.
+
 [34] Soft vs hard link?
-[35] Kill process Linux? (duplicate of [28])
+Soft symbolic ln -s target link follows path broken dangling. Hard ln target same inode multiple names rm one remains.
+
+[35] Sequential: ls -li inode verify.
+
 [36] Get PID?
+pgrep appname ps aux | grep app[pp]. pidof nginx.
+
 [37] Check system performance?
+iostat 1 disk. vmstat 1 memory swap. top sar -u CPU.
+
 [38] chmod 555?
+r-xr-xr-x read exec all no write immutable configs /bin.
+
 [39] Full permissions?
-[40] Soft vs hard link? (duplicate of [34])
-[41] What are 1xx HTTP status codes?
-[42] What are 2xx HTTP status codes?
-[43] What are 3xx HTTP status codes?
-[44] What are 4xx HTTP status codes?
-[45] What are 5xx HTTP status codes?
-[46] Why are HTTP status codes important?
-[47] How to quickly remember HTTP status codes?
+777 rwx all dangerous. 700 user only ssh keys.
+
+[40] Sequential: umask 022.
+
+[41] 1xx HTTP status informational?
+100 Continue, 101 Switching Protocols WebSocket. Client expect server acknowledge.
+
+[42] 2xx success?
+200 OK, 201 Created POST, 204 No Content DELETE.
+
+[43] 3xx redirection?
+301 Moved Permanent, 302 Found temp, 304 Not Modified cache.
+
+[44] 4xx client error?
+400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 429 Rate Limit.
+
+[45] 5xx server error?
+500 Internal, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout.
+
+[46] HTTP status important?
+Client decisions retry cache redirect error handling API monitoring alerting.
+
+[47] Remember HTTP status quick?
+1xx info blink, 2xx OK good, 3xx redirect go elsewhere, 4xx client fault, 5xx server problem.

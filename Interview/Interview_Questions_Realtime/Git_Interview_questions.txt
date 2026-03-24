@@ -1,63 +1,188 @@
-[1] How many Git repositories or Git tools have you used?
-[2] Which branching strategy do you follow?
-[3] Fixing critical production bug?
-[4] How can you restrict users in GitHub?
-[5] Why do we use Pull Requests (PRs) in Git?
-[6] Difference between working directory, staging area, and repository?
-[7] What is HEAD in Git?
-[8] Difference between tracked and untracked files?
-[9] What does git init do internally?
-[10] Default branch and how to change it?
+[1] Git repos/tools used? (2-3 sentences)
+Managed 50+ GitHub Enterprise repositories including monorepos for microservices and Terraform infrastructure. Used GitHub CLI for automation, GitLab for legacy CI, Bitbucket for enterprise Jira integration. Implemented Git LFS for large ML models and pre-commit hooks with Black/ShellCheck for code quality.
+
+[2] Branching strategy? 
+Follow trunk-based development with short-lived feature branches merged daily via PRs under 3 days to minimize integration hell. Main branch is always deployable with protected rules requiring 2 approvals and CI gates. Release branches v1.2.x for hotfixes tagged semver v1.2.3 following GitHub Flow adapted for enterprise scale.
+
+[3] Critical prod bug fix?
+Create hotfix/BUG-123 from main: git checkout -b hotfix/BUG-123 main, implement fix with test, commit "FIX: CVE-2024-1234 severity high". PR with 2 approvers, SonarQube gate, ArgoCD deploys canary 10% traffic Istio, monitor p95<500ms Prometheus, promote 100% blue-green. Conduct blameless postmortem with 5 Whys and action items assigned Jira.
+
+[4] Restrict GitHub users?
+Configure branch protection rules on main: require PR reviews (2+), status checks (CI/Sonar), CODEOWNERS auto-reviewers, dismiss stale approvals, no force-push. Use Teams for RBAC repo access (read/write/admin), repository roles. Audit logs GitHub Advanced Security, restrict fork PRs to base branches.
+
+[5] Pull Requests purpose?
+PRs enforce code review by peers, automated CI/CD gates (tests/security scans), threaded discussions for design decisions, knowledge sharing across team. Single responsibility commits, linear history squash/rebase, full audit trail compliance SOC2. Required for protected branches preventing direct pushes.
+
+[6] Working dir/staging/repo difference?
+Working directory contains modified tracked/untracked files visible in git status red. Staging area (index) holds git add changes ready commit shown git diff --staged green. Repository .git/objects stores committed history immutable blobs/trees/commits accessible git log.
+
+[7] HEAD in Git?
+HEAD is movable pointer to current commit, either branch label (attached HEAD) or direct SHA (detached). Visualize git log --oneline --graph --decorate --all shows HEAD@{?} reflog positions. Detached during checkout SHA or rebase—create branch before new commits to avoid loss.
+
+[8] Tracked vs untracked files?
+Tracked files known to Git via prior add/commit, changes show git status modified. Untracked new files not added, listed red unless .gitignore. List git ls-files --others --exclude-standard, clean with git clean -fdx.
+
+[9] git init internally does?
+Creates .git/ directory with HEAD (ref: refs/heads/master), config, description, hooks/, info/, objects/ (empty), refs/heads/ refs/tags/. Initializes empty repository ready first git add/commit. Sets user.name/email if configured.
+
+[10] Default branch and change?
+Default changed to main from master 2020 inclusivity. Change locally git branch -M main, remote git push -u origin main, GitHub Settings→Branches→Change default. Apply protection rules immediately.
+
 [11] Purpose of .git directory?
-[12] How to check current branch?
-[13] What happens with git add .?
-[14] What is a bare repository?
-[15] Difference between git pull and git clone?
+Core repository database: objects/ (SHA1 blobs/trees/commits/packfiles), refs/ (branches/tags/ remotes/), HEAD, config (user/repo settings), index (staging), logs/ (ref history), hooks/ (pre-commit etc), info/exclude.
+
+[12] Check current branch?
+git branch shows list with * current, git status "On branch main", git rev-parse --abbrev-ref HEAD scriptable. git symbolic-ref HEAD full ref.
+
+[13] What happens git add .?
+Stages all changes recursively from current directory: modified tracked files, new untracked (gitignore respected). Creates index entries blobs .git/index. Use git add -A entire repo, -p interactive hunks.
+
+[14] Bare repository?
+Repository without working directory, only .git/ contents for server-side push/pull. git clone --bare URL, used central hubs like GitHub mirrors. No checkout, git push --mirror sync.
+
+[15] git pull vs git clone?
+git clone URL creates full repo copy with history + working directory first time. git pull = git fetch origin + git merge (or rebase) updates existing clone. Avoid pull shared feature branches.
+
 [16] Fast-forward vs three-way merge?
-[17] What is git cherry-pick?
+Fast-forward linear when target ahead source: git merge --ff-only feature integrates without merge commit. Three-way needed diverged histories: common ancestor + source + target → new merge commit parents. Always --no-ff enterprise traceability.
+
+[17] git cherry-pick?
+Apply commit(s) from one branch to current: git cherry-pick abc123def copies patch metadata. Conflicts resolve add --continue, -x adds source commit message. Use for hotfixes main without full merge.
+
 [18] git revert vs git reset?
-[19] Types of git reset?
+git revert abc123 creates new commit undoing changes safe for shared/public branches. git reset --hard abc123 rewrites history moves HEAD dangerous shared repos. Revert PRs, reset local feature branches.
+
+[19] Types git reset?
+--soft HEAD~2 keeps changes staged HEAD moves. --mixed (default) unstaged working tree clean. --hard discards ALL changes to target commit. ORIG_HEAD safety git reset --hard ORIG_HEAD.
+
 [20] origin vs upstream vs local?
-[21] What is detached HEAD?
-[22] How to rename branch?
-[23] How to squash commits?
-[24] Undo last commit without losing changes?
-[25] git diff vs staged vs HEAD?
-[26] What is git reflog?
+origin: your remote fork default git remote add origin. upstream: canonical source git remote add upstream ORIGINAL.git. Local branches no remote prefix. git remote -v rename.
+
+[21] Detached HEAD state?
+git checkout abc123 points HEAD direct commit SHA not branch label. New commits orphaned when switch away—recover git reflog create branch. Happens rebase/checkout tag/amend.
+
+[22] Rename branch locally/remote?
+Local: git branch -m old-branch new-branch. Remote: git push origin -d old-branch; git push -u origin new-branch. Default branch: GitHub Settings change.
+
+[23] Squash commits before merge?
+git rebase -i HEAD~5 → change pick to s squash combine messages. git merge --squash feature → single commit. GitHub UI squash merge option.
+
+[24] Undo last commit keep changes?
+git reset --soft HEAD~1 reverts commit keeps staged. --mixed HEAD~1 unstaged working tree intact. git commit --amend edit message.
+
+[25] git diff variations?
+git diff: unstaged working vs staging index. git diff --staged: staging vs HEAD commit. git diff HEAD: working vs last commit. --name-only files only.
+
+[26] git reflog usage?
+Records all HEAD position changes 90 days: git reflog view git reset --hard HEAD@{5}. Recover reset/delete/rebases. git log -g reflog order.
+
 [27] Recover deleted branch?
-[28] What is git bisect?
-[29] git blame usage?
-[30] Resolve conflicts during rebase?
-[31] Annotated vs lightweight tag?
-[32] How to sign commits/tags?
-[33] What is git worktree?
-[34] What is git submodule?
-[35] What is git subtree?
+git reflog | grep branch-name → SHA git checkout -b recovered SHA. git branch -D local-only deleted remote persists origin/branch.
+
+[28] git bisect binary search?
+git bisect start → git bisect bad (current) → git bisect good v1.0 → git bisect run npm test automates. Manual git bisect good/bad halves history.
+
+[29] git blame practical?
+git blame -L 42,42 src/main.go line author/date. IDE GitLens. -C copy detection across files.
+
+[30] Resolve rebase conflicts?
+git rebase main feature → conflict markers edit files → git add → git rebase --continue. Skip git rebase --skip, abort --abort return original.
+
+[31] Annotated vs lightweight tags?
+Lightweight git tag v1.0 SHA pointer. Annotated git tag -a v1.0 -m "Release 1.0" full object signed GPG verifiable info.
+
+[32] Sign commits/tags GPG?
+git config --global commit.gpgsign true; user.signingkey 1234ABCD. GitHub SSH/GPG verify status. cosign container signatures.
+
+[33] git worktree multiple checkouts?
+git worktree add ../hotfix feature/hotfix parallel working dirs same repo. list prune remove. Avoid submodule issues.
+
+[34] git submodule nested repos?
+git submodule add https://github.com/lib/uuid path → .gitmodules commit fixed SHA. clone --recursive update --remote latest.
+
+[35] git subtree vs submodule?
+subtree git subtree add --prefix=frontend upstream main --squash single repo merged history. Simpler than submodule no recursion.
+
 [36] Clean untracked files safely?
-[37] What is git archive?
-[38] How Git stores data?
-[39] Compression and hashing?
-[40] git filter-branch?
-[41] SSL deployment?
-[42] Resolve merge conflict? (duplicate of [30])
-[43] Switch branch? (duplicate of [12])
-[44] Sensitive credentials committed — remove from history?
-[45] Rebase conflict — how to resolve? (duplicate of [30])
-[46] Broken force-push to main — recovery?
-[47] Apply fix from one branch to another?
-[48] Revert a merged buggy branch?
-[49] Recover deleted local branch? (duplicate of [27])
-[50] Extract subdirectory into new repo?
-[51] Handle & prevent merge conflicts? (duplicate of [30])
-[52] Repo size too large?
+git status untracked listed. git clean -n dry-run preview, -fd force delete dirs/files, -x ignore .gitignore patterns.
+
+[37] git archive export?
+git archive --format=tar --prefix=app/ HEAD | gzip > app.tar.gz clean release no .git history.
+
+[38] How Git stores data internally?
+Content-addressable: .git/objects/ SHA1 blobs (files), trees (dirs), commits (pointers metadata), packfiles delta compressed history.
+
+[39] Git compression hashing mechanism?
+SHA1 prefix 2 chars/dir objects/12hex blob zlib single → pack delta similar objects 90% smaller. Immutable verify git fsck.
+
+[40] git filter-branch rewrite history?
+git filter-branch --commit-filter 'if [ "$GIT_AUTHOR_EMAIL" = "bad@example.com" ]; then skip_commit "$@"; fi' -- --all (deprecated). Use git filter-repo modern safe.
+
+[41] SSL deployment production?
+cert-manager.io ACME Let's Encrypt ClusterIssuer → Ingress tlsSecret auto-renew 60d before expiry. AWS ALB ACM certificates. Validate sslscan/Qualys SSLLabs A+.
+
+[42] Resolve merge conflicts step-by-step?
+git merge feature → conflict files <<< HEAD === feature >>> edit choose → git add resolved → git commit (auto message) → push.
+
+[43] Git hooks enterprise usage?
+Client pre-commit lint test black shellcheck. Server update hook reject force-push main, check signed commits. Husky/gitolite.
+
+[44] Remove sensitive credentials from history?
+git filter-repo --path .env --invert-paths --mailmap → git push --force-with-lease. BFG Repo-Cleaner --delete-files '*.key' java jar. Team: git remote prune origin reclone.
+
+[45] Rebase conflicts resolution workflow?
+Conflicts during git rebase target branch → edit files remove markers → git add ALL resolved → git rebase --continue → repeat till done OR --abort.
+
+[46] Recovery broken force-push main?
+Local git reflog find ORIG_HEAD → git reset --hard ORIG_HEAD → git push --force-with-lease. GitHub admin restore reflog SHA. Team git fetch → reset origin/main.
+
+[47] Apply fix from branch to another?
+git checkout target-branch → git cherry-pick source-branch~1..source-branch (range) OR single abc123. Resolve conflicts -x source commit message traceability.
+
+[48] Revert merged buggy feature branch?
+git revert -m 1 MERGE_COMMIT_SHA (parent 1 main) creates safe undo commit. No history rewrite. PR revert to main.
+
+[49] Git stash workflow?
+git stash push -m "WIP login" → git pull origin main → git stash pop apply/test conflicts → stash drop if success.
+
+[50] Extract subdirectory to new repo?
+git clone repo newcd; cd newcd; git filter-repo --subdirectory-filter frontend/ --force → new history only frontend → push new remote.
+
+[51] Git LFS large file storage?
+git lfs track "*.model" "*.zip" → git add .gitattributes → commit → lfs push --all origin. migrate existing git lfs migrate import --include="*.jar".
+
+[52] Repo size optimization?
+git gc --aggressive --prune=now pack. BFG --strip-blobs-bigger-than 50M --no-blob-protection. LFS everything >10MB. filter-repo deduplicate.
+
 [53] Recover after git reset --hard?
+git reflog → git reset --hard ORIG_HEAD (previous) OR HEAD@{2}. Stash? git stash list apply 0.
+
 [54] Split one commit into two?
-[55] Changes on main instead of branch?
-[56] Create & apply patch?
-[57] Detached HEAD after rebase? (duplicate of [21])
-[58] Avoid losing work during pull?
+git reset --soft HEAD~1 → git add --patch partial files → git commit -m "Part 1" → git commit remaining "Part 2".
+
+[55] Accidentally committed to main not branch?
+git checkout -b feature/mistake → git reset --hard main@{1} (reflog) → git checkout main → git reset --hard main@{1} → push -f.
+
+[56] Create and apply patch files?
+git format-patch -3 HEAD → 0001.patch 0002.patch. Receiver git am --3way *.patch OR apply single patch.
+
+[57] Detached HEAD after rebase normal?
+Expected during interactive rebase conflicts. Resolve add --continue. Lost? reflog create branch SHA.
+
+[58] Avoid losing uncommitted work during pull?
+Always git stash -m "WIP" → git pull → stash pop (conflicts manual). Better: commit feature branch first pull safe.
+
 [59] Compare non-consecutive commits?
-[60] Partial history after clone?
-[61] Prevent direct push to main?
-[62] Git aliases for productivity?
+git diff commit1 commit2 direct. git diff commit1...commit2 symmetric changes both sides.
+
+[60] Shallow clone partial history?
+git clone --depth 1 → fast but no history. git fetch --unshallow --all full. --depth=50 recent 50 commits.
+
+[61] Prevent direct pushes to main?
+GitHub Settings→Branches→Add rule main: Require PR review (2+), status checks CI pass, restrict pushes (admins only/enforce).
+
+[62] Git aliases productivity boost?
+git config alias.st 'status -sb'; lg 'log --oneline --graph --decorate'; co 'checkout'; ci 'commit -v'; rb 'rebase -i'; unstage 'reset HEAD --'; last 'log -1 HEAD'.
+
 [63] Create branch from older commit?
+git checkout -b feature/backport abc123def (SHA). git branch feature/backport abc123 without checkout.
