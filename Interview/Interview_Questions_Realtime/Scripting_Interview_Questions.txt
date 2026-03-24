@@ -1,0 +1,15 @@
+[1] Apart from disk usage, what other automation tasks have you done using Python?
+[2] Have you worked with requests in Python scripts?
+[3] Automate log cleanup?
+[4] Check SSL expiry?
+[5] Automate package updates?
+[6] CPU alert automation?
+[7] Prevent disk space issues by deleting old logs automatically.
+[8] 2. Check SSL Certificate Expiry (duplicate of [4])
+[9] 3. Automate System Package Updates (duplicate of [5])
+[10] 4. Send Alerts for High CPU Usage (duplicate of [6])
+[11] 5. Restart a Failing Kubernetes Pod
+[12] Crontab usage?
+[13] PM2 usage?
+[14] Kill process via PM2?
+[15] Check running nodes?

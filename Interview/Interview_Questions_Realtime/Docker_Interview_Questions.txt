@@ -1,0 +1,40 @@
+[1] What is the RUN command in Docker?
+[2] Container keeps restarting in production. Root cause?
+[3] Docker image size is too large. How do you optimize?
+[4] How do you scan Docker images for vulnerabilities?
+[5] How do you manage secrets in Docker securely?
+[6] Container keeps restarting. How to find root cause? (duplicate of [2])
+[7] Docker image size too large. How to optimize? (duplicate of [3])
+[8] How to scan Docker images for vulnerabilities? (duplicate of [4])
+[9] How to manage secrets in Docker securely? (duplicate of [5])
+[10] Docker image layers read-only or read-write?
+[11] How to pass env variables in Docker?
+[12] Which registries used?
+[13] Sample Dockerfile (Node.js)?
+[14] Multi-stage builds?
+[15] Volume vs bind mount?
+[16] Optimize Docker images?
+[17] ENTRYPOINT vs CMD?
+[18] Why Kubernetes over Docker?
+[19] CrashLoopBackOff troubleshooting?
+[20] Docker image layers? (duplicate of [10])
+[21] Multi-stage build? (duplicate of [14])
+[22] Optimize Docker images? (duplicate of [16])
+[23] CMD vs ENTRYPOINT? (duplicate of [17])
+[24] Volume vs bind mount? (duplicate of [15])
+[25] Docker networking modes?
+[26] Why container fails in Jenkins but works locally?
+[27] Image pull failure?
+[28] Docker registry?
+[29] Container security?
+[30] How to reduce Docker image size? (duplicate of [3])
+[31] What are Docker volumes?
+[32] COPY vs ADD?
+[33] Sharing Dockerfiles?
+[34] Running vs stopped containers?
+[35] Stages in Docker image build? (duplicate of [14])
+[36] ENTRYPOINT vs CMD? (duplicate of [17])
+[37] Docker image layers read-only or read-write? (duplicate of [10])
+[38] How do you scan Docker images? (duplicate of [4])
+[39] ADD vs CMD vs ENTRYPOINT? (duplicate of [17])
+[40] Dockerfile (Go best practice)?

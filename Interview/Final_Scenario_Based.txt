@@ -1,0 +1,113 @@
+========================
+KUBERNETES – SCENARIO BASED (PRODUCTION)
+========================
+
+1. Q: EKS node disk utilization reached ~85%, SSH is restricted, and even after increasing EBS volume the OS didn’t reflect changes — how do you fix it without node access?
+   A: Deploy a privileged pod with hostPath mount, chroot into host, run growpart + filesystem expansion (xfs_growfs/resize2fs). Used in production for zero-access node recovery.
+
+2. Q: Why doesn’t EBS volume auto-expand at OS level after resizing?
+   A: AWS expands block device only; partition + filesystem must be manually extended inside OS.
+
+3. Q: Why use a privileged pod instead of SSH?
+   A: Secure environments block SSH; privileged pod provides controlled, auditable access via Kubernetes.
+
+4. Q: What risks exist with privileged pods?
+   A: Full host access can compromise node; restrict via RBAC and use only for emergency ops.
+
+5. Q: How do you ensure this doesn’t happen again?
+   A: Use monitoring alerts (disk usage), automate node bootstrap scripts to auto-expand volumes.
+
+6. Q: What tools are required for disk expansion in Linux?
+   A: growpart for partition resizing; xfs_growfs or resize2fs for filesystem expansion.
+
+7. Q: How do you identify correct device and partition?
+   A: Use lsblk/df -h to map root filesystem to underlying device (e.g., /dev/xvda1).
+
+8. Q: What is the difference between partition resize and filesystem resize?
+   A: Partition resize increases disk allocation; filesystem resize makes OS usable space available.
+
+9. Q: How would you automate this fix in production clusters?
+   A: Use user-data scripts, DaemonSets, or AMI baking to auto-expand volumes on boot.
+
+10. Q: How do you validate successful expansion?
+    A: Run df -h and ensure new disk size reflects expected capacity.
+
+Q107. Jenkins failed creating AWS resources – first check?
+Q108. Terraform works locally but fails in Jenkins – why?
+Q109. EC2 created but provisioning failed – debug?
+Q110. How to rollback failed deployment?
+Q111. How to make CI/CD idempotent?
+Q81. App down but infra up?
+Q82. High traffic spike?
+Q83. Deployment failure?
+Q84. Pod not starting?
+Q85. Node failure?
+Q86. DB slow?
+Q87. Disk full node?
+Q88. Secrets leaked?
+Q89. Pipeline slow?
+Q90. Security breach?
+Q18. Service down, no alerts?
+Q19. Vault + GitHub Actions?
+Q20. Pod-to-pod TLS?
+Q21. Postmortem format?
+Q22. Terraform drift command?
+Q23. Remote team state handling?
+Q24. Simulate DNS failure?
+Q1. EKS node disk utilization reached ~85%...
+Q2. Why doesn’t EBS volume auto-expand at OS level after resizing?
+Q3. Why use a privileged pod instead of SSH?
+Q4. What risks exist with privileged pods?
+Q5. How do you ensure this doesn’t happen again?
+Q6. What tools are required for disk expansion in Linux?
+Q7. How do you identify correct device and partition?
+Q8. What is the difference between partition resize and filesystem resize?
+Q9. How would you automate this fix in production clusters?
+Q10. How do you validate successful expansion?
+[1] Q74. Minimize blast radius?
+[2] Q75. Partial cloud failure?
+[3] Q76. Cost control?
+=====================
+   Shell Scripts
+=====================
+
+Prevent disk space issues by deleting old logs automatically.
+
+#!/bin/bash
+echo "Deleting log files older than 7 days..."
+find /var/log -type f -name "*.log" -mtime +7 -exec rm -f {} \;
+
+2. Check SSL Certificate Expiry 
+
+Avoid downtime by monitoring SSL certificate expiration.
+
+#!/bin/bash
+DOMAIN="yourdomain.com"
+echo | openssl s_client -servername $DOMAIN -connect $DOMAIN:443 2>/dev/null | openssl x509 -noout -enddate
+
+3. Automate System Package Updates 
+
+Keep your Linux system updated without manual intervention.
+
+#!/bin/bash
+echo "Updating system packages..."
+sudo apt update && sudo apt upgrade -y
+
+4. Send Alerts for High CPU Usage 
+
+Get notified when CPU usage crosses a threshold.
+
+#!/bin/bash
+THRESHOLD=80
+USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
+if (( $(echo "$USAGE > $THRESHOLD" | bc -l) )); then
+ echo "High CPU Usage: $USAGE%" | mail -s "CPU Alert" you@example.com
+fi
+
+5. Restart a Failing Kubernetes Pod 
+
+Automatically restart pods stuck in CrashLoopBackOff.
+
+#!/bin/bash
+echo "Restarting failed pods..."
+kubectl get pods --all-namespaces | grep CrashLoopBackOff | awk '{print $2}' | xargs kubectl delete pod

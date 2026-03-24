@@ -1,0 +1,63 @@
+[1] How many Git repositories or Git tools have you used?
+[2] Which branching strategy do you follow?
+[3] Fixing critical production bug?
+[4] How can you restrict users in GitHub?
+[5] Why do we use Pull Requests (PRs) in Git?
+[6] Difference between working directory, staging area, and repository?
+[7] What is HEAD in Git?
+[8] Difference between tracked and untracked files?
+[9] What does git init do internally?
+[10] Default branch and how to change it?
+[11] Purpose of .git directory?
+[12] How to check current branch?
+[13] What happens with git add .?
+[14] What is a bare repository?
+[15] Difference between git pull and git clone?
+[16] Fast-forward vs three-way merge?
+[17] What is git cherry-pick?
+[18] git revert vs git reset?
+[19] Types of git reset?
+[20] origin vs upstream vs local?
+[21] What is detached HEAD?
+[22] How to rename branch?
+[23] How to squash commits?
+[24] Undo last commit without losing changes?
+[25] git diff vs staged vs HEAD?
+[26] What is git reflog?
+[27] Recover deleted branch?
+[28] What is git bisect?
+[29] git blame usage?
+[30] Resolve conflicts during rebase?
+[31] Annotated vs lightweight tag?
+[32] How to sign commits/tags?
+[33] What is git worktree?
+[34] What is git submodule?
+[35] What is git subtree?
+[36] Clean untracked files safely?
+[37] What is git archive?
+[38] How Git stores data?
+[39] Compression and hashing?
+[40] git filter-branch?
+[41] SSL deployment?
+[42] Resolve merge conflict? (duplicate of [30])
+[43] Switch branch? (duplicate of [12])
+[44] Sensitive credentials committed — remove from history?
+[45] Rebase conflict — how to resolve? (duplicate of [30])
+[46] Broken force-push to main — recovery?
+[47] Apply fix from one branch to another?
+[48] Revert a merged buggy branch?
+[49] Recover deleted local branch? (duplicate of [27])
+[50] Extract subdirectory into new repo?
+[51] Handle & prevent merge conflicts? (duplicate of [30])
+[52] Repo size too large?
+[53] Recover after git reset --hard?
+[54] Split one commit into two?
+[55] Changes on main instead of branch?
+[56] Create & apply patch?
+[57] Detached HEAD after rebase? (duplicate of [21])
+[58] Avoid losing work during pull?
+[59] Compare non-consecutive commits?
+[60] Partial history after clone?
+[61] Prevent direct push to main?
+[62] Git aliases for productivity?
+[63] Create branch from older commit?

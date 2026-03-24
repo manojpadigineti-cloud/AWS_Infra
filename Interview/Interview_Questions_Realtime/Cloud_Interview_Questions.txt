@@ -1,0 +1,157 @@
+[1] Design multi-region DR with minimal downtime. Approach?
+[2] How do you secure cross-region S3 replication and validate data integrity?
+[3] How do you design hybrid routing between AWS and GCP?
+[4] EC2 app failing health checks behind ALB. How do you troubleshoot?
+[5] RDS running out of storage. Immediate actions?
+[6] How do you reduce AWS cost for idle resources?
+[7] S3 bucket accidentally deleted. How do you recover?
+[8] How do you implement centralized logging across AWS accounts?
+[9] Lambda timing out frequently. How do you troubleshoot?
+[10] How do you securely store secrets for EC2/Lambda?
+[11] How do you troubleshoot a failed Lambda execution?
+[12] How do you optimize Lambda cold start performance?
+[13] How do you configure Lambda environment variables securely?
+[14] How do you trigger Lambda using S3 or API Gateway?
+[15] How do you analyze Lambda logs in CloudWatch?
+[16] How do you monitor Lambda concurrency and throttling?
+[17] How do you manage DynamoDB read/write capacity automatically?
+[18] How do you configure DynamoDB TTL for data expiration?
+[19] How do you enable DynamoDB streams for event-driven apps?
+[20] How do you optimize DynamoDB indexes for performance?
+[21] How do you process messages reliably using SQS and Lambda?
+[22] How do you troubleshoot message delivery delays in SQS?
+[23] How do you send alerts using SNS from CloudWatch?
+[24] How do you fan-out notifications to multiple subscribers in SNS?
+[25] How do you design fault-tolerant serverless architecture?
+[26] What is AWS?
+[27] What are Regions and Availability Zones?
+[28] Difference between Region and Edge Location?
+[29] What is Amazon EC2?
+[30] What are EC2 instance types?
+[31] What is Amazon S3?
+[32] What are S3 storage classes?
+[33] What is Amazon EBS?
+[34] Difference between EBS and S3?
+[35] What is IAM?
+[36] What is an IAM Role?
+[37] Difference between IAM User and Role?
+[38] What is VPC?
+[39] What is a Subnet?
+[40] Difference between Public and Private Subnet?
+[41] What is an Internet Gateway?
+[42] What is a NAT Gateway?
+[43] Difference between Security Groups and NACL?
+[44] What is a Route Table?
+[45] What is VPC Peering?
+[46] What is AWS Direct Connect?
+[47] What is a Bastion Host?
+[48] What is AWS WAF?
+[49] What is AWS Shield?
+[50] What is KMS?
+[51] What is Secrets Manager?
+[52] How do you secure an S3 bucket?
+[53] What is CloudFront?
+[54] What is Route 53?
+[55] How does SSL termination work in AWS?
+[56] Difference between EC2, ECS, and EKS?
+[57] What is AWS Lambda?
+[58] What is Auto Scaling?
+[59] What is an Application Load Balancer?
+[60] Difference between ALB and NLB?
+[61] What is Elastic Beanstalk?
+[62] What is Fargate?
+[63] How does Blue-Green Deployment work in AWS?
+[64] What is AMI?
+[65] How do you make EC2 highly available?
+[66] How to create ingress controller in AWS EKS?
+[67] Difference between RDS and DynamoDB?
+[68] What is Multi-AZ in RDS?
+[69] What is Read Replica?
+[70] What is Aurora?
+[71] How does DynamoDB scaling work?
+[72] What is ElastiCache?
+[73] How do you migrate a database to AWS?
+[74] What is AWS Backup?
+[75] What is CloudWatch?
+[76] What is CloudTrail?
+[77] How do you design a highly available multi-tenant system?
+[78] How do you reduce API response time?
+[79] How do you rotate secrets securely?
+[80] How do you deploy FastAPI on EKS?
+[81] How do you implement CI/CD in AWS?
+[82] How do you handle zero-downtime deployments?
+[83] How do you secure inter-service communication in Kubernetes?
+[84] How do you monitor 1000+ servers?
+[85] How do you reduce AWS cost?
+[86] How do you design DR strategy?
+[87] Can VPC CIDR go beyond /16?
+[88] Load balancer uses beyond traffic distribution?
+[89] What are IaaS, PaaS, and SaaS?
+[90] What is the Shared Responsibility Model?
+[91] What are Regions, AZs, and Edge Locations?
+[92] How does AWS pricing work?
+[93] What are key AWS compute services?
+[94] What are AWS storage options?
+[95] What are important AWS networking components?
+[96] What database options does AWS provide?
+[97] What tools are used for Infrastructure as Code?
+[98] What are key AWS security services?
+[99] What AWS services are used for monitoring?
+[100] Why is CloudWatch Agent not pushing logs from a file?
+[101] How do you fix CloudWatch Agent log issues?
+[102] What AWS services support CI/CD?
+[103] What are serverless and event-driven services in AWS?
+[104] Managing 30 AWS accounts?
+[105] DNS role?
+[106] CDN purpose?
+[107] Load balancer types?
+[108] NAT Gateway?
+[109] VPC peering?
+[110] Service Mesh?
+[111] Ingress vs LoadBalancer?
+[112] Firewall types?
+[113] Port vs protocol?
+[114] Network latency troubleshooting?
+[115] IAM principle?
+[116] Secrets management?
+[117] Container scanning?
+[118] Pipeline security?
+[119] RBAC?
+[120] Encryption at rest/in transit?
+[121] WAF role?
+[122] Vulnerability management?
+[123] SSH risk?
+[124] Compliance?
+[125] End-to-end architecture?
+[126] High availability?
+[127] Zero downtime deployment?
+[128] Scaling strategy?
+[129] Security layers?
+[130] Observability?
+[131] Database scaling?
+[132] Cache layer?
+[133] CDN benefit?
+[134] Failure handling?
+[135] S3 bucket accidentally deleted. How to recover? (duplicate of [7])
+[136] How to implement centralized logging across AWS accounts? (duplicate of [8])
+[137] Lambda timing out frequently. How to troubleshoot? (duplicate of [9])
+[138] How to securely store secrets for EC2/Lambda? (duplicate of [10])
+[139] Jenkins failed creating AWS resources – first check?
+[140] Terraform works locally but fails in Jenkins – why?
+[141] EC2 created but provisioning failed – debug?
+[142] How to rollback failed deployment?
+[143] How to make CI/CD idempotent?
+[144] App down but infra up?
+[145] High traffic spike?
+[146] Deployment failure?
+[147] Node failure?
+[148] DB slow?
+[149] Disk full node?
+[150] Secrets leaked?
+[151] Pipeline slow?
+[152] Security breach?
+[153] Service down, no alerts?
+[154] Simulate DNS failure?
+[155] Minimize blast radius?
+[156] Partial cloud failure?
+[157] Cost control?

@@ -1,0 +1,5 @@
+[1] Q61. Ansible ad-hoc vs inventory?
+[2] Q62. Terraform vs Ansible?
+[3] Q35. Ansible usage?
+[4] Q36. Secrets in Ansible?
+[5] Q37. Secure playbooks?

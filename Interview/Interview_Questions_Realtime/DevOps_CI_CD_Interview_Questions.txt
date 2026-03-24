@@ -1,0 +1,154 @@
+[1] Explain your end-to-end CI/CD workflow. Which pipeline type do you use and why?
+[2] Difference between Declarative and Scripted pipelines?
+[3] How do you define and trigger Jenkins pipelines?
+[4] What are Jenkins Shared Libraries?
+[5] Docker works locally but fails in Jenkins?
+[6] What is a CI/CD pipeline?
+[7] How do you connect Jenkins to EC2?
+[8] How does Jenkins authenticate to AWS?
+[9] IAM user vs role in Jenkins?
+[10] How do you store secrets in Jenkins?
+[11] What if pipeline fails during resource creation?
+[12] How do you troubleshoot Jenkins failures?
+[13] What is sshagent in Jenkins?
+[14] How do you deploy code from Jenkins to EC2?
+[15] How to integrate AWS with Jenkins?
+[16] Why IAM role over access keys?
+[17] Required permissions for Jenkins?
+[18] How to test AWS access from Jenkins?
+[19] How does Jenkins deploy infra using Terraform?
+[20] How do you host Jenkins?
+[21] What are parameters in Jenkins and where do you use them?
+[22] Which type of pipeline have you used in Jenkins?
+[23] How do you declare variables (e.g., a=1,2,4 and b=2,4) in a Jenkins pipeline?
+[24] How do you use credentials in Jenkins? Where do you store them?
+[25] Can you explain your project and CI/CD pipeline?
+[26] What applications have you deployed using Jenkins?
+[27] Which deployment tools have you used?
+[28] Pipeline runs but build not triggered—why?
+[29] What is a webhook?
+[30] Complete deployment workflow?
+[31] Pipeline stages for quality?
+[32] How do you design Shared Libraries?
+[33] How do you scan Docker images?
+[34] Security tools used?
+[35] Secure & scalable CI/CD pipeline design?
+[36] Build vs Release pipeline?
+[37] Rollback strategy?
+[38] Jenkins Shared Libraries? (duplicate of [4])
+[39] Multi-branch pipelines?
+[40] Pipeline caching?
+[41] Secure secrets injection?
+[42] Manual approval gates?
+[43] Pipeline-as-code (Azure YAML)?
+[44] Enforce quality/compliance?
+[45] How to deploy a .NET app using CI/CD?
+[46] Common CI/CD issues?
+[47] App not accessible—debug steps?
+[48] CI/CD design?
+[49] Deployment halt signals?
+[50] Artifact versioning?
+[51] Design pipelines for Dev/QA/Prod?
+[52] Dev branch trigger?
+[53] QA branch trigger?
+[54] Trigger QA without Dev?
+[55] Control pipeline per environment?
+[56] Reuse pipeline logic?
+[57] Avoid pipelines per microservice?
+[58] Jenkins Shared Libraries? (duplicate of [4])
+[59] Parameterize pipelines?
+[60] Manage env-specific configs?
+[61] Generic pipeline design?
+[62] Handle pipeline failure?
+[63] Rollback deployment?
+[64] Approval before Prod?
+[65] Retry failed stage?
+[66] Notify teams?
+[67] Jenkins with AWS?
+[68] Jenkins AWS authentication?
+[69] Deploy to Kubernetes?
+[70] Jenkins with EKS?
+[71] Push images to ECR?
+[72] Trigger ArgoCD?
+[73] Jenkins backup strategy?
+[74] What to backup?
+[75] /var/lib/jenkins contents?
+[76] Restore Jenkins?
+[77] Migrate Jenkins EC2?
+[78] Secure Jenkins?
+[79] Restrict user access?
+[80] RBAC in Jenkins?
+[81] Prevent secrets leakage?
+[82] Risks of exposing secrets?
+[83] Jenkins slow?
+[84] Job stuck in queue?
+[85] Agent offline?
+[86] Checkout failure?
+[87] Cleanup old builds?
+[88] Jenkins Shared Library? (duplicate of [4])
+[89] Blue-Green in Jenkins?
+[90] Canary deployment?
+[91] SonarQube integration?
+[92] Nexus/Artifactory integration?
+[93] CI/CD metrics to monitor?
+[94] Security baselines in pipeline?
+[95] Container scanning tools?
+[96] Key Vault / Secrets Manager integration?
+[97] Secret rotation?
+[98] RBAC setup?
+[99] How do you design a scalable CI/CD pipeline? (duplicate of [35])
+[100] Multi-environment pipeline design?
+[101] How do you trigger pipelines? (duplicate of [3])
+[102] Jenkins Shared Library use? (duplicate of [4])
+[103] How to handle pipeline failures? (duplicate of [62])
+[104] Rollback in CI/CD? (duplicate of [37])
+[105] Blue-Green deployment in pipeline? (duplicate of [89])
+[106] Canary deployment? (duplicate of [90])
+[107] Pipeline security best practices?
+[108] GitOps principle?
+[109] DR strategies?
+[110] RTO?
+[111] RPO?
+[112] Backup strategy?
+[113] Multi-region DR?
+[114] Failover mechanism?
+[115] Data consistency?
+[116] DR testing?
+[117] Recovery validation?
+[118] Business impact analysis?
+[119] How do you design a scalable CI/CD pipeline? (duplicate of [35])
+[120] Multi-environment pipeline design? (duplicate of [100])
+[121] How do you trigger pipelines? (duplicate of [3])
+[122] Jenkins Shared Library use? (duplicate of [4])
+[123] How to handle pipeline failures? (duplicate of [62])
+[124] Rollback in CI/CD? (duplicate of [37])
+[125] Blue-Green deployment in pipeline? (duplicate of [89])
+[126] Canary deployment? (duplicate of [90])
+[127] Pipeline security best practices? (duplicate of [107])
+[128] GitOps principle? (duplicate of [108])
+[129] DR strategies? (duplicate of [109])
+[130] RTO? (duplicate of [110])
+[131] RPO? (duplicate of [111])
+[132] Backup strategy? (duplicate of [112])
+[133] Multi-region DR? (duplicate of [113])
+[134] Failover mechanism? (duplicate of [114])
+[135] Data consistency? (duplicate of [115])
+[136] DR testing? (duplicate of [116])
+[137] Recovery validation? (duplicate of [117])
+[138] Business impact analysis? (duplicate of [118])
+[139] What happens when systemd hits a failing unit in a containerized node?
+[140] Vault + GitHub Actions?
+[141] Pod-to-pod TLS?
+[142] Postmortem format?
+[143] Terraform drift command?
+[144] Remote team state handling?
+[145] How do you integrate or deploy an Angular application using a Jenkins pipeline?
+[146] How do you implement GitOps?
+[147] Moving from centralized logging to service mesh observability — tradeoffs?
+[148] Prometheus storage filling up. How to optimize?
+[149] How do you implement centralized logging?
+[150] How do you monitor etcd health?
+[151] What is Blue-Green Deployment?
+[152] What is Canary Deployment?
+[153] What is A/B Testing in deployments?
+[154] Why do we need a service mesh?

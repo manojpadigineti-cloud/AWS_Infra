@@ -1,0 +1,5051 @@
+REORDERED DEVOPS INTERVIEW Q&A (TOOL-WISE SINGLE SECTION)
+
+
+====================
+TERRAFORM
+====================
+
+Q16. What are local variables in Terraform?
+Q17. What are modules in Terraform? Do you use default modules or custom ones?
+
+DOCKER
+Q1. What is Terraform?
+Answer: Terraform is an Infrastructure as Code (IaC) tool used to provision and manage infrastructure using code.
+
+Q2. Difference between Terraform and configuration management tools?
+Answer: Terraform provisions infrastructure, while tools like Ansible/Chef configure software on existing systems.
+
+Q4. How do you install Terraform?
+Answer: Download binary, add to PATH, verify using terraform --version.
+
+Q5. What is a Terraform provider?
+Answer: A plugin that enables Terraform to interact with cloud platforms like AWS, Azure.
+
+Q6. What is Terraform state file?
+Answer: Stores current infrastructure state and acts as the source of truth.
+
+Q7. What are Terraform workspaces?
+Answer: Used to manage multiple environments with separate state files.
+
+Q8. What does terraform init do?
+Answer: Initializes configuration and downloads required providers/modules.
+
+Q9. What is terraform plan?
+Answer: Shows preview of changes before applying.
+
+Q10. What is terraform apply?
+Answer: Executes the planned infrastructure changes.
+
+Q11. What are resources in Terraform?
+Answer: Infrastructure components like VM, VPC, DB defined in code.
+
+Q12. What are variables in Terraform?
+Answer: Inputs used to make configurations dynamic and reusable.
+
+Q14. What are outputs in Terraform?
+Answer: Values exposed after deployment (e.g., IPs).
+
+Q18. How do you manage secrets in Terraform?
+Answer: Use variables, environment variables, or tools like Vault.
+
+Q25. What is terraform.tfvars?
+Answer: File to define variable values separately.
+
+Q27. What are Terraform best practices?
+Answer: Use modules, version control, remote state, and proper naming.
+
+Q30. What is Terraform Enterprise?
+Answer: Enterprise version with collaboration, governance, and remote execution.
+
+Q31. How to manage Terraform state in teams?
+Answer: Use remote backend with state locking.
+
+Q32. What are Terraform modules?
+Answer: Reusable components to manage infrastructure.
+
+Q36. What is Terraform Cloud?
+Answer: Managed service for Terraform execution and collaboration.
+
+Q38. Types of Terraform variables?
+Answer: Input, output, and local variables.
+
+Q39. How does Terraform handle drift?
+Answer: Detects via plan and corrects via apply.
+
+Q40. How do you use Terraform with Git?
+Answer: Store code in repo, use PRs, and integrate with CI/CD.
+
+Q43. How do you version Terraform modules?
+Answer: Use Git with semantic versioning.
+
+Q44. How does Terraform integrate with CI/CD?
+Answer: Automates provisioning through pipelines like Jenkins.
+
+Q45. What is terraform import?
+Answer: Imports existing resources into Terraform management.
+
+Q47. How do you rollback in Terraform?
+Answer: Revert code in Git and re-apply.
+
+Q48. What is Terraform count?
+Answer: Used to create multiple instances of a resource.
+
+Q50. What is lifecycle in Terraform?
+Answer: Controls resource behavior (e.g., prevent_destroy).
+
+Q52. What is Terraform drift?
+Answer: Difference between actual infra and defined state.
+
+Q53. What are locals in Terraform?
+Answer: Named expressions for reuse and readability.
+
+Q60. How does Terraform support multi-cloud?
+Answer: Using multiple providers in the same configuration.
+
+TERRAFORM – ADVANCED INTERVIEW Q&A
+
+Q1. How does Terraform handle state locking, and what happens if the lock is lost mid-apply?
+Answer: Terraform uses remote backends (e.g., S3 + DynamoDB) for state locking. If the lock is lost mid-apply, it can cause state corruption or duplicate changes; manual state recovery may be required.
+
+Q2. Explain a real scenario where terraform plan shows no change, but apply still modifies resources.
+Answer: Happens due to external changes (drift), dynamic values, or provider bugs where actual state differs from stored state.
+
+Q3. How do you safely manage Terraform state across multiple teams and environments?
+Answer: Use remote backend, state locking, separate workspaces or state files, and strict access controls.
+
+Q6. How do you handle secrets in Terraform without exposing them in state files?
+Answer: Use external secret managers (Vault, AWS Secrets Manager) and avoid storing secrets directly in state.
+
+Q8. What happens internally when you delete a resource manually from the cloud but not from Terraform?
+Answer: Terraform detects missing resource during plan and recreates it unless state is updated.
+
+Q9. How do you design Terraform modules to be reusable without becoming tightly coupled?
+Answer: Use input variables, outputs, and avoid hardcoding dependencies.
+
+Q10. Explain depends_on vs implicit dependency — when does Terraform get it wrong?
+Answer: Implicit dependency is auto-detected via references; depends_on is manual. Terraform may fail when dependencies are indirect or hidden.
+
+Q12. How do you refactor a Terraform codebase without destroying production resources?
+Answer: Use terraform state mv, import, and gradual changes instead of recreating resources.
+
+Q15. Describe a real incident caused by Terraform state corruption. How did you fix it?
+Answer: Example: concurrent apply corrupted state; fixed by restoring backup state and reapplying changes.
+
+KUBERNETES DEBUGGING COMMANDS – INTERVIEW Q&A
+
+Q8. Terraform state got corrupted. How do you rebuild?
+Restore from backup, validate resources using terraform import, and rebuild state carefully.
+
+Q22. Terraform state corruption mid-deploy — recovery?
+Restored backup state, validated infra, and re-applied changes safely.
+
+Q1. What is Infrastructure as Code (IaC) and why is Terraform widely used for it?
+IaC is managing infrastructure using code instead of manual setup. Terraform is widely used because it is declarative, cloud-agnostic, and supports version-controlled, automated provisioning.
+
+Q2. What is the difference between Terraform and configuration management tools like Ansible?
+Terraform is used for provisioning infrastructure, while Ansible is used for configuring software on already created systems.
+
+Q3. Explain the purpose of the Terraform state file.
+The state file stores the current infrastructure state and helps Terraform track changes and dependencies.
+
+Q4. What is remote state in Terraform and why should we use it?
+Remote state stores the state file in a shared location (e.g., S3) for collaboration, consistency, and state locking.
+
+Q5. What is the difference between terraform plan, apply, and destroy?
+
+* plan → previews changes
+* apply → executes changes
+* destroy → removes infrastructure
+
+Q6. What are Terraform modules and why are they important?
+Modules are reusable blocks of Terraform code that improve maintainability, consistency, and scalability.
+
+Q7. How do you manage secrets securely in Terraform?
+Use environment variables, secret managers (Vault, AWS Secrets Manager), and avoid hardcoding secrets.
+
+Q8. What is the difference between count and for_each in Terraform?
+count uses index-based iteration; for_each uses key-based iteration and is more stable for dynamic resources.
+
+Q9. What are Terraform workspaces and when should they be used?
+Workspaces allow managing multiple environments (dev, qa, prod) using the same configuration with separate state files.
+
+Q10. How would you implement Terraform in a CI/CD pipeline for infrastructure deployment?
+Use Git for version control, trigger pipeline (e.g., Jenkins), run terraform init → plan → approval → apply, with remote backend and state locking.
+
+DEVOPS – TOOL-WISE INTERVIEW Q&A
+
+
+## AWS
+
+Q18. Terraform state file deleted. How to recover?
+Restore from backup or rebuild using terraform import.
+
+Q19. How to manage secrets in Terraform in teams?
+Use Vault, environment variables, and avoid storing secrets in state.
+
+Q20. Multiple teams modifying Terraform. How to avoid conflicts?
+Use remote backend, state locking, and proper Git workflows.
+
+Q21. How to create reusable Terraform modules?
+Use parameterized modules with variables and outputs.
+
+Q18. Terraform state deleted. How to recover?
+
+Q19. How to manage secrets in Terraform teams?
+
+Use remote backend, state locking, and Git workflows.
+
+1. Q: A manual AWS change caused Terraform drift and apply wants to recreate the resource. How do you fix without downtime?
+   A: Sync state with reality using `terraform import` or update code to match existing config. In production, avoid recreation by validating with `plan` and using targeted apply.
+
+5. Q: Terraform modules across repos fail due to dependency conflicts. Solution?
+   A: Use remote state outputs and versioned modules for dependency control. In production, orchestrate deployments via CI pipelines and enforce module version locking.
+
+KUBERNETES NETWORKING
+
+2. Q: Pods in one namespace work internally but not from another namespace. How do you troubleshoot?
+   A: Check NetworkPolicies, service DNS, and endpoints. In production, most failures are due to restrictive policies blocking cross-namespace communication.
+
+CI/CD & IMAGE MANAGEMENT
+
+3. Q: Deployment pulls old image despite new build. What’s the issue?
+   A: Reused image tag with `IfNotPresent` prevents pulling latest image. In production, use immutable tags (commit SHA) or `imagePullPolicy: Always`.
+
+KUBERNETES AUTOSCALING
+
+4. Q: HPA not scaling despite high CPU usage. How do you debug?
+   A: Verify metrics-server, HPA config, and CPU requests. In production, missing resource requests or broken metrics pipeline is the common root cause.
+
+EKS / KUBERNETES SCHEDULING
+
+6. Q: New nodes join EKS but pods are stuck in Pending. Possible reasons?
+   A: Resource shortage, taints/tolerations mismatch, or label constraints. In production, also check ENI/CNI limits and IAM roles for node groups.
+
+DEPLOYMENT STRATEGIES
+
+7. Q: How do you deploy a critical microservice with zero downtime?
+   A: Use Rolling, Blue-Green, or Canary deployments. In production, combine with readiness probes and traffic shifting via ALB or service mesh.
+
+DEVSECOPS
+
+8. Q: Vulnerable dependency found in deployed Docker image. What actions?
+   A: Patch dependency, rebuild image, and redeploy immediately. In production, enforce CI image scanning (Trivy/Anchore) and fail builds on critical CVEs.
+
+OBSERVABILITY
+
+9. Q: Intermittent failures across microservices but logs look normal. How to find root cause?
+   A: Use distributed tracing (Jaeger/X-Ray) and correlation IDs. In production, issues often stem from latency, retries, or downstream service failures.
+
+AWS ARCHITECTURE (DR)
+
+10. Q: Design multi-region DR with minimal downtime. Approach?
+    A: Implement active-active or active-passive using Route53 failover and cross-region replication. In production, automate failover and run regular DR drills.
+
+CI/CD (JENKINS + ANGULAR)
+
+1. Q: What is Terraform state and why critical?
+   A: Maps real infra to code; without it Terraform can’t track changes → risk of duplicate or destroyed resources.
+
+2. Q: Remote state best practice?
+   A: Use S3 + DynamoDB (locking) or Azure Blob; enables team collaboration and recovery.
+
+3. Q: What happens if state file is lost?
+   A: Infra exists but unmanaged; recover via backup or terraform import.
+
+4. Q: How to recover corrupted state?
+   A: Restore previous version from backend or rebuild via import.
+
+5. Q: Why enable versioning on state backend?
+   A: Allows rollback to previous state → critical for disaster recovery.
+
+STATE MANAGEMENT & DRIFT
+
+6. Q: What is infrastructure drift?
+   A: Difference between actual infra and Terraform state due to manual changes.
+
+7. Q: How to detect drift?
+
+8. Q: How to fix drift?
+   A: Reconcile via apply or import changes into state.
+
+9. Q: Manual change in AWS console — impact?
+   A: Causes drift → next apply may overwrite or destroy resources.
+
+10. Q: Safe approach for emergency fixes?
+    A: Apply fix → import/update state → re-run plan.
+
+BACKEND & MIGRATION
+
+11. Q: Migrate backend safely?
+    A: terraform init -migrate-state with backup.
+
+12. Q: Multi-account Terraform design?
+    A: Separate backends per account with isolated state files.
+
+13. Q: Why state locking needed?
+    A: Prevents concurrent apply causing corruption.
+
+RESOURCE MANAGEMENT
+
+14. Q: count vs for_each?
+    A: count → index-based; for_each → map/set, better for unique resources.
+
+15. Q: dynamic blocks use?
+    A: Generate nested configs dynamically (e.g., security rules).
+
+16. Q: lifecycle block use?
+    A: Control behavior (prevent_destroy, create_before_destroy).
+
+17. Q: prevent_destroy use case?
+    A: Protect critical resources like DBs from accidental deletion.
+
+18. Q: create_before_destroy use?
+    A: Enables zero-downtime infra replacement.
+
+MODULES & REUSABILITY
+
+19. Q: Why use modules?
+    A: Reusable, standardized infra components.
+
+20. Q: Module design best practice?
+    A: Clear inputs/outputs, versioning, minimal coupling.
+
+21. Q: Monolithic vs modular Terraform?
+    A: Modular preferred for scalability and team usage.
+
+PROVISIONING & EXECUTION
+
+22. Q: terraform plan vs apply?
+    A: plan → preview; apply → execute changes.
+
+23. Q: terraform refresh?
+    A: Syncs state with real infra (deprecated in newer versions).
+
+24. Q: Parallelism in Terraform?
+    A: Runs resources concurrently; controlled via -parallelism flag.
+
+25. Q: API rate limiting issue?
+    A: Reduce parallelism or split deployments.
+
+SECURITY & SECRETS
+
+26. Q: Secrets in Terraform?
+    A: Use Vault/Secrets Manager; avoid hardcoding.
+
+27. Q: sensitive = true?
+    A: Masks output but still stored in state → use encryption.
+
+28. Q: Secure state file?
+    A: Encrypt backend + restrict IAM access.
+
+CI/CD INTEGRATION
+
+29. Q: Terraform in CI/CD?
+    A: plan → approval → apply; enforce review gates.
+
+30. Q: Prevent accidental apply?
+    A: Use manual approval and policy checks.
+
+31. Q: Policy-as-code tools?
+    A: Sentinel, OPA for compliance.
+
+ZERO DOWNTIME & SCALING
+
+32. Q: Zero-downtime infra update?
+    A: Use create_before_destroy + load balancer switching.
+
+33. Q: Blue-Green infra strategy?
+    A: Deploy new infra → switch traffic → destroy old.
+
+TROUBLESHOOTING
+
+34. Q: Resource recreation unexpectedly?
+    A: State mismatch or immutable attribute change.
+
+35. Q: Dependency issue?
+    A: Use depends_on to enforce order.
+
+36. Q: Partial apply failure?
+    A: Fix error → re-run apply (Terraform resumes).
+
+
+37. Q: Large-scale refactoring?
+    A: Use terraform state mv to avoid recreation.
+
+38. Q: Import existing infra?
+    A: terraform import <resource> <id>.
+
+39. Q: Multi-region deployment?
+    A: Use provider aliases for different regions.
+
+40. Q: Testing Terraform code?
+    A: Use tflint, checkov, Terratest.
+
+
+41. Q: Why Terraform over manual infra?
+    A: Repeatability, version control, automation.
+
+42. Q: Enterprise Terraform setup?
+    A: Separate state per env + CI/CD + policy enforcement.
+
+43. Q: Cost optimization via Terraform?
+    A: Automate shutdown, right-sizing, tagging.
+
+
+44. Q: State file deleted accidentally?
+    A: Restore from versioned backend or re-import infra.
+
+45. Q: Concurrent apply issue?
+    A: State lock prevents corruption.
+
+46. Q: Backend unreachable?
+    A: No operations possible → fix backend first.
+
+47. Q: Wrong resource deleted?
+    A: Recover via backup or recreate manually + import.
+
+INTERVIEW INSIGHT
+
+48. Q: What interviewers expect?
+    A: State management + drift + recovery knowledge.
+
+49. Q: Most critical Terraform concept?
+    A: State file handling and backend design.
+
+50. Q: Biggest production risk?
+    A: State corruption or unmanaged drift.
+AWS – ADVANCED (ARCHITECTURE + SCENARIOS)
+
+
+====================
+KUBERNETES
+====================
+
+Q14. In a Pod, how many containers can you run? Why use multiple containers?
+Q1. What is a Rolling Update in Kubernetes?
+Answer:
+Rolling Update is the default deployment strategy in Kubernetes where old pods are gradually replaced with new ones.
+
+* Ensures zero downtime
+* Allows controlled rollout
+* Supports easy rollback by redeploying previous versions
+
+It is best suited for stateless applications.
+
+Q2. What is the Recreate strategy in Kubernetes?
+In the Recreate strategy, all existing pods are terminated before new pods are created.
+
+* Simple to implement
+* Useful when old and new versions cannot run together
+* Causes temporary downtime
+
+It is typically used when applications require exclusive access to shared resources like databases.
+
+Q1. How do you perform maintenance activity on a Kubernetes node?
+Maintenance activities like patching or security fixes require making the node unschedulable and draining pods.
+Commands:
+kubectl cordon <node>
+kubectl drain <node> --ignore-daemonsets
+
+This ensures pods are safely moved while avoiding disruption to daemonsets.
+
+Q4. How do you control resource usage of a Pod?
+Using requests and limits:
+
+* Request → minimum guaranteed resources
+* Limit → maximum allowed resources
+
+If limits are exceeded, containers may be throttled or terminated.
+
+Q5. What are the units of CPU and memory in Pod definition?
+
+* CPU → millicores (e.g., 500m)
+* Memory → bytes (Mi, Gi)
+
+Q7. How do you upgrade Kubernetes?
+
+* Read release notes
+* Check compatibility (including etcd)
+* Perform controlled upgrade using tools like kubeadm
+
+Q8. Difference between Helm and Kubernetes Operator?
+
+* Helm → Package manager (like apt/yum)
+* Operator → Custom controller with application-specific logic using CRDs
+
+Q10. What are Kubernetes node components and their roles?
+Master:
+
+* kube-apiserver → entry point
+* kube-scheduler → schedules pods
+* kube-controller-manager → maintains desired state
+
+Worker:
+
+* kubelet → manages pods
+* kube-proxy → networking
+
+Q12. What is a Pod Disruption Budget (PDB)?
+Defines minimum number of pods that must be available during voluntary disruptions.
+
+Q16. What are Kubernetes deployment strategies?
+
+* Recreate
+* Rolling Update
+* Blue-Green
+* Canary
+* A/B Testing
+
+---
+
+KUBERNETES – COMPUTE
+
+Q17. How do you troubleshoot a Pod not getting scheduled?
+Use:
+kubectl describe pod <pod> -n <namespace>
+kubectl get events
+
+Common reasons:
+
+* Resource shortage
+* Taints
+* Node constraints
+
+Q18. How do you run a Pod on a specific node?
+
+* nodeName
+* nodeSelector
+* nodeAffinity
+
+Q19. How do you colocate Pods for performance?
+Using podAffinity and podAntiAffinity.
+
+Q21. How do you provide persistent storage for Pods?
+Using Persistent Volumes (PV) and Persistent Volume Claims (PVC):
+
+* Static provisioning
+* Dynamic provisioning
+
+
+KUBERNETES – NETWORKING
+
+Q22. How do containers in a Pod share a single IP?
+Through a pause container that provides shared network namespace.
+
+Q23. How do you expose Kubernetes services externally?
+
+* NodePort
+* LoadBalancer
+* Ingress
+
+Q26. How does Pod-to-Pod communication work?
+Via virtual networking (CNI) and cluster routing.
+
+Q27. How does Pod-to-Service communication work?
+Using Service abstraction with kube-proxy and DNS.
+
+Q29. How can you improve Kubernetes security?
+
+* Network policies
+* RBAC
+* Namespace isolation
+* Admission controllers
+* Audit logging
+
+
+KUBERNETES – MONITORING
+
+Q30. How do you monitor Kubernetes?
+Using Prometheus ecosystem:
+
+* Prometheus server
+* Alertmanager
+* Exporters
+
+Q34. How do you centralize logs from Pods?
+Common approaches:
+
+* Node-level logging agent
+* Sidecar containers
+* Direct application logging
+
+Example:
+Filebeat/Fluentd → Kafka → ELK stack
+
+TERRAFORM – INTERVIEW QUESTIONS & SHORT ANSWERS
+
+Q1. How do you find non-running pods across all namespaces?
+Answer: kubectl get pods -A --field-selector=status.phase!=Running
+
+Q2. How do you identify pods that are restarting frequently?
+Answer: kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'
+
+Q3. How do you debug a specific pod in detail?
+Answer: kubectl describe pod <pod-name>
+
+Q4. How do you quickly find pending pods?
+Answer: kubectl get pods -A | grep Pending
+
+Q6. How do you verify resource requests and limits of a pod?
+Answer: kubectl get pod <pod-name> -o jsonpath='{.spec.containers[*].resources}'
+
+Q7. How do you check real-time resource usage of pods?
+Answer: kubectl top pods -A
+
+Q9. How do you find which node scheduled a pod?
+Answer: kubectl get pod <pod-name> -o wide
+
+Q10. How do you see all pods running on a specific node?
+Answer: kubectl get pods -A -o wide | grep <node-name>
+
+Q5. How do you detect and prevent pod-to-pod lateral movement?
+Use network policies, service mesh (mTLS), RBAC, and runtime security tools like Falco.
+
+Q11. kubectl logs is blank but pods are running. Why?
+Possible logging driver issue, container crash/restart, or logs redirected to sidecar.
+
+Q16. Pod OOMKilled but no logs. How do you debug?
+Check previous logs (--previous), describe pod, node metrics, and memory limits.
+
+Q12. Pods running but not receiving traffic. How to troubleshoot?
+Check service selectors, endpoints, pod labels, and network policies.
+
+Q17. Pod stuck in CrashLoopBackOff. How to debug?
+Check logs (--previous), describe pod, and inspect events.
+
+
+## TERRAFORM
+
+Q24. How to design monitoring for Kubernetes microservices?
+Use Prometheus for metrics, Grafana dashboards, and distributed tracing.
+
+Q1. How do you design a multi-region Kubernetes architecture for disaster recovery?
+Use multiple clusters across regions, global load balancer, data replication, and failover automation.
+
+Q3. How do you design Kubernetes for 10k+ pods?
+Use cluster sharding, optimized networking (CNI), resource quotas, and autoscaling.
+
+Q5. How does Kubernetes leader election work?
+Components use lease objects in etcd to elect a leader for high availability.
+
+
+## NETWORKING
+
+Q6. Explain Kubernetes networking model and CNI.
+Each pod gets unique IP; CNI plugins manage networking and routing.
+
+Q8. How do you debug pod-to-pod communication failures?
+Check network policies, DNS, CNI, routes, and pod logs.
+
+Q11. How do you secure secrets beyond Kubernetes Secrets?
+Use Vault, external secret managers, and encryption at rest.
+
+Q24. How does Prometheus integrate with Kubernetes?
+Scrapes metrics from pods/services using service discovery.
+
+Q33. Challenges with databases in Kubernetes?
+State management, persistence, failover complexity.
+
+Q35. Pod stuck in ContainerCreating. How to debug?
+Check events, image pull, volumes, and node status.
+
+Q36. Pods in CrashLoopBackOff. What to do?
+Check logs (--previous), describe pod, fix app/config.
+
+Q37. kubectl slow in large cluster. Why?
+API server overload, large resources, or network latency.
+
+Q12. Pods running but not receiving traffic. Troubleshoot?
+
+
+Q17. Pod stuck in CrashLoopBackOff. Debug steps?
+
+
+
+Q1. Could you describe the entire architecture of Kubernetes?
+Kubernetes has control plane (API server, scheduler, controller manager, etcd) and worker nodes (kubelet, kube-proxy, pods).
+
+Q4. If a pod crashes repeatedly, what will kubelet do?
+Kubelet restarts the container based on restart policy.
+
+Q5. If kubelet cannot recreate the pod, what happens next?
+Controller (ReplicaSet/Deployment) will try to create a new pod.
+
+Q10. How do you set up Kubernetes cluster from scratch?
+Use kubeadm, configure networking (CNI), deploy ingress controller.
+
+Q18. Types of services in Kubernetes?
+ClusterIP, NodePort, LoadBalancer, ExternalName.
+
+Q21. How to write a CronJob for kubectl commands?
+Use CronJob resource with container executing kubectl via script.
+
+Q23. DaemonSet pod pending. How to troubleshoot?
+Check node resources, taints/tolerations, and events.
+
+Q25. Can you get logs from a pending pod?
+No, because container is not started.
+
+1. Q: Why is timestamp standardization critical in Kubernetes logging?
+   A: Logs across clusters, apps, and tools use different timezones; without UTC standardization, correlation becomes unreliable. In production, teams enforce UTC to align logs with monitoring (e.g., Prometheus, ELK).
+
+2. Q: What is the impact of stdout vs stderr in container logging?
+   A: stdout carries normal logs, stderr carries errors; many pipelines only ingest stdout. In real-world setups (Fluentd/CloudWatch), misconfigured pipelines can completely miss critical failures.
+
+3. Q: Why should you specify container name in `kubectl logs`?
+   A: Pods can have multiple containers; default logs may come from the wrong one. In production (sidecars like Istio/Fluentd), always use `-c` to avoid debugging incorrect components.
+
+4. Q: Do Kubernetes pods generate logs directly?
+   A: No, containers generate logs; pods are just wrappers. In multi-container architectures (app + sidecar), each container has isolated logs, requiring explicit selection.
+
+5. Q: Why can `kubectl logs` be misleading during failures?
+   A: It only shows application logs, not infrastructure issues. Real-world outages often stem from kubelet, networking, or storage—not visible in app logs.
+
+6. Q: What are common non-application causes of pod failures?
+   A: Node pressure, CNI/network failures, volume mount errors, kubelet issues. In production, engineers correlate logs with `kubectl describe` and node-level diagnostics.
+
+LOGGING STRATEGY
+
+7. Q: Why is structured logging preferred in production systems?
+   A: JSON logs enable parsing, indexing, and querying at scale. Tools like ELK, Splunk, and Loki rely on structured data for efficient filtering and alerting.
+
+8. Q: When should you use plaintext vs structured logs?
+   A: Plaintext for small setups (human readability), structured logs for production. Enterprises prioritize consistency to enable automation and observability pipelines.
+
+9. Q: What is the biggest advantage of structured logging?
+   A: Machine readability—enables real-time alerting, correlation, and analytics. In production, it powers dashboards and incident response automation.
+
+LOG LEVEL MANAGEMENT
+
+10. Q: Why is proper log level usage important in DevOps?
+    A: If everything is INFO, signal is lost in noise. Production systems depend on clear severity separation for alerting and incident prioritization.
+
+11. Q: How should log levels be used in real-world systems?
+    A: ERROR → immediate action, WARN → needs investigation, INFO → system visibility, DEBUG → temporary troubleshooting. Mature teams enforce this via logging standards.
+
+12. Q: What happens if log levels are misused?
+    A: Alert fatigue, missed incidents, and noisy dashboards. In enterprise environments, poor log discipline directly impacts MTTR and operational efficiency.
+	
+
+1. Q: What are the main components of Kubernetes architecture?
+   A: Control Plane (API Server, etcd, Scheduler, Controller Manager) and Worker Nodes (kubelet, kube-proxy, container runtime). In production, control plane manages state, workers run workloads.
+
+2. Q: What is the role of the API Server in Kubernetes?
+   A: It acts as the entry point for all cluster operations. In production, all tools (kubectl, CI/CD) interact with the cluster only via API Server.
+
+3. Q: Why is etcd called the heart of Kubernetes?
+   A: It stores all cluster state as key-value data. In production, etcd backup and HA setup are critical to avoid cluster-wide failures.
+
+4. Q: What does the Scheduler do?
+   A: It assigns pods to nodes based on resources and constraints. In production, it ensures optimal placement for performance and cost efficiency.
+
+5. Q: What is the function of Controller Manager?
+   A: Maintains desired state (replicas, nodes, jobs). In production, it ensures self-healing and auto-recovery of workloads.
+
+6. Q: What happens in the Kubernetes request flow?
+   A: kubectl → API Server → etcd → Scheduler → Kubelet → Container Runtime → kube-proxy. In production, this flow ensures declarative deployment and automation.
+
+KUBERNETES NETWORKING & SECURITY
+
+7. Q: How does service discovery work in Kubernetes?
+   A: CoreDNS resolves service names to cluster IPs. In production, it enables seamless communication without hardcoding IPs.
+
+8. Q: What is the role of NetworkPolicies?
+   A: They control pod-to-pod communication. In production, used for micro-segmentation and zero-trust networking.
+
+9. Q: What does a Service Mesh provide?
+   A: mTLS, retries, traffic control, observability. In production (Istio/Linkerd), it enhances security and reliability of microservices.
+
+10. Q: What is overlay networking (VXLAN/BGP)?
+    A: It enables pod communication across nodes. In production, CNI plugins (Calico/Flannel) handle networking abstraction.
+
+AWS CLOUD FUNDAMENTALS
+
+11. Q: What are IaaS, PaaS, and SaaS?
+    A: IaaS → infra control, PaaS → platform managed, SaaS → fully managed apps. In production, choice depends on control vs operational overhead.
+
+12. Q: What is the Shared Responsibility Model?
+    A: AWS secures cloud, customer secures workloads. In production, misconfigurations (IAM/S3) are customer responsibility.
+
+13. Q: What are Regions, AZs, and Edge Locations?
+    A: Regions = geographic areas, AZs = isolated DCs, Edge = CDN endpoints. In production, multi-AZ ensures HA and fault tolerance.
+
+14. Q: How does AWS pricing work?
+    A: Pay-as-you-go with compute, storage, and data transfer costs. In production, cost optimization uses Reserved/Spot instances.
+
+AWS CORE SERVICES
+
+15. Q: What are key AWS compute services?
+    A: EC2, Lambda, ECS/EKS, Beanstalk, ASG. In production, EKS for containers, Lambda for event-driven workloads.
+
+16. Q: What are AWS storage options?
+    A: S3 (object), EBS (block), EFS (file), Glacier (archive). In production, S3 lifecycle policies optimize cost.
+
+17. Q: What are important AWS networking components?
+    A: VPC, subnets, IGW, NAT, SG, NACL, Route53, ELB. In production, private subnets + NAT ensure secure outbound access.
+
+18. Q: What database options does AWS provide?
+    A: RDS, DynamoDB, ElastiCache, OpenSearch, Redshift. In production, choose based on OLTP, NoSQL, caching, or analytics needs.
+
+INFRASTRUCTURE AS CODE
+
+19. Q: What tools are used for Infrastructure as Code?
+    A: Terraform, CloudFormation, CDK. In production, Terraform is widely used for multi-cloud and modular deployments.
+
+SECURITY & IAM
+
+20. Q: What are key AWS security services?
+    A: IAM, MFA, KMS, WAF, Shield, Cognito. In production, IAM roles and encryption are mandatory for compliance.
+
+MONITORING & LOGGING
+
+21. Q: What AWS services are used for monitoring?
+    A: CloudWatch, CloudTrail, AWS Config, X-Ray. In production, they provide metrics, auditing, compliance, and tracing.
+
+CI/CD & DEVOPS
+
+22. Q: What AWS services support CI/CD?
+    A: CodeCommit, CodeBuild, CodeDeploy, CodePipeline. In production, pipelines automate build, test, and deployment with rollback strategies.
+
+SERVERLESS ARCHITECTURE
+
+23. Q: What are serverless and event-driven services in AWS?
+    A: Lambda, API Gateway, SNS, SQS, EventBridge, Step Functions. In production, used for scalable, loosely coupled architectures.
+
+CLOUDWATCH AGENT TROUBLESHOOTING
+
+24. Q: Why is CloudWatch Agent not pushing logs from a file?
+    A: Common issues include wrong path, permissions, no new logs, rotation mismatch, or config errors. In production, always validate config and agent logs.
+
+25. Q: How do you fix CloudWatch Agent log issues?
+    A: Verify file path, fix permissions, handle rotation with wildcards, restart agent, and check logs. In production, monitoring pipelines must be validated to avoid blind spots.
+
+AWS LAMBDA
+
+1. Q: How does Kubernetes control plane handle requests?
+   A: API server validates requests, scheduler assigns nodes, controllers enforce desired state via etcd-backed reconciliation loop.
+
+2. Q: What happens if kube-apiserver is down?
+   A: No new deployments/changes; existing workloads continue. HA setup uses multiple API servers behind LB.
+
+3. Q: How does etcd ensure consistency?
+   A: Uses Raft consensus; writes require quorum → guarantees strong consistency.
+
+4. Q: Worker node goes NotReady — what happens?
+   A: Scheduler avoids node; after timeout pods are evicted and rescheduled elsewhere.
+
+5. Q: Pod stuck in Pending state?
+   A: Check resources, node selectors, taints, PVC binding, scheduler events.
+
+6. Q: CrashLoopBackOff root causes?
+   A: App crash, bad config, missing secrets, probe failure, OOMKilled.
+
+7. Q: Logs show nothing in CrashLoopBackOff — next step?
+   A: Check events, entrypoint, probes, image, environment variables.
+
+8. Q: How scheduler selects nodes?
+   A: Filters (resources/constraints) + scoring (best fit, affinity, spread).
+
+9. Q: What if cluster runs out of memory?
+   A: Pods evicted based on QoS; BestEffort → first, Guaranteed → last.
+
+10. Q: QoS classes in Kubernetes?
+    A: Guaranteed, Burstable, BestEffort → define eviction priority.
+
+NETWORKING & TRAFFIC
+
+11. Q: Pod-to-pod communication model?
+    A: Flat network via CNI; each pod gets unique IP.
+
+12. Q: kube-proxy role?
+    A: Implements service routing using iptables/IPVS.
+
+13. Q: IPVS vs iptables?
+    A: IPVS more scalable, better performance for large clusters.
+
+14. Q: DNS failure impact?
+    A: Service discovery fails → cascading failures.
+
+15. Q: NetworkPolicy blocking traffic?
+    A: Verify labels, namespace selectors, ingress/egress rules.
+
+SCALING & PERFORMANCE
+
+16. Q: HPA working mechanism?
+    A: Scales pods based on metrics (CPU/custom metrics).
+
+17. Q: Cluster Autoscaler?
+    A: Adds/removes nodes based on pending pods.
+
+18. Q: HPA not scaling issue?
+    A: Missing metrics server, wrong requests, or threshold config.
+
+19. Q: Sudden traffic spike handling?
+    A: HPA + autoscaler + CDN + load balancer + pre-warmed nodes.
+
+20. Q: Resource starvation issue?
+    A: Misconfigured requests/limits; fix via profiling.
+
+STORAGE & STATE
+
+21. Q: PVC in Pending state?
+    A: No matching PV/StorageClass or AZ mismatch.
+
+22. Q: StatefulSet use case?
+    A: Databases requiring stable identity + persistent storage.
+
+23. Q: High storage latency impact?
+    A: DB timeouts, slow pod startup, degraded performance.
+
+24. Q: EBS volume stuck issue in EKS?
+    A: AZ mismatch between node and volume.
+
+DEPLOYMENTS & STRATEGIES
+
+25. Q: Rolling update strategy?
+    A: Gradual pod replacement with zero downtime.
+
+26. Q: Blue-Green deployment?
+    A: Two environments; switch traffic after validation.
+
+27. Q: Canary deployment?
+    A: Gradual traffic shift to new version.
+
+28. Q: Why readinessProbe critical?
+    A: Prevents traffic to unhealthy pods.
+
+29. Q: Wrong readinessProbe impact?
+    A: Downtime due to routing traffic to bad pods.
+
+SECURITY & ACCESS
+
+30. Q: RBAC in Kubernetes?
+    A: Role-based access to API resources.
+
+31. Q: ServiceAccount usage?
+    A: Identity for pods to access cluster/API.
+
+32. Q: Secure etcd?
+    A: TLS, encryption at rest, restricted access.
+
+33. Q: Prevent root containers?
+    A: Use securityContext (runAsNonRoot).
+
+FAILURE SCENARIOS
+
+34. Q: Control plane ↔ node network break?
+    A: No scheduling/updates; workloads continue temporarily.
+
+35. Q: kubelet crash scenario?
+    A: Node NotReady; pods evicted later.
+
+36. Q: CNI failure impact?
+    A: Network instability → intermittent service failures.
+
+37. Q: Cluster certificate expired?
+    A: Full cluster outage due to TLS failure.
+
+ADVANCED SCHEDULING
+
+38. Q: Node affinity vs pod affinity?
+    A: Node → schedule on nodes; Pod → co-locate pods.
+
+39. Q: Taints & tolerations?
+    A: Control which pods run on specific nodes.
+
+40. Q: Dedicated node use case?
+    A: Use taints for GPU/critical workloads.
+
+OBSERVABILITY & DEBUGGING
+
+41. Q: Debug slow application in K8s?
+    A: Check CPU/memory, logs, network latency, DB calls.
+
+42. Q: Pod logs vs events vs metrics?
+    A: Logs → app; Events → cluster actions; Metrics → performance.
+
+43. Q: Prometheus high memory issue?
+
+REAL PRODUCTION SCENARIOS
+
+44. Q: Pod restarting frequently?
+    A: Check OOM, probes, app errors.
+
+45. Q: Service not accessible externally?
+    A: Check Ingress, Service, LB, DNS.
+
+46. Q: Node disk full?
+    A: Cleanup logs or expand volume.
+
+47. Q: Deployment stuck?
+    A: Check rollout status, events, image pull.
+
+ARCHITECTURE THINKING
+
+48. Q: Design HA Kubernetes cluster?
+    A: Multi-AZ masters + worker nodes + LB.
+
+49. Q: Multi-region Kubernetes?
+    A: Use separate clusters + global LB.
+
+50. Q: Production-ready cluster checklist?
+    A: HA, autoscaling, monitoring, security, backups.
+TERRAFORM – ADVANCED (SCENARIO + L2/L3)
+
+
+====================
+AWS
+====================
+
+Q3. How do you secure cross-region S3 replication and validate data integrity?
+Enable encryption (SSE-KMS), IAM policies, replication rules, and validate using checksums and S3 inventory.
+
+Q7. How do you design hybrid routing between AWS and GCP?
+Use VPN/Interconnect, private routing, firewall rules, and enforce boundaries via IAM and network segmentation.
+
+Q1. EC2 app failing health checks behind ALB. How do you troubleshoot?
+Check target group health, security groups, instance logs, application ports, and ALB access logs.
+
+Q2. RDS running out of storage. Immediate actions?
+Enable storage auto-scaling or increase storage manually without downtime.
+
+Q3. How do you reduce AWS cost for idle resources?
+Use auto-scaling, stop unused instances, rightsizing, spot instances, and cost monitoring tools.
+
+Q4. S3 bucket accidentally deleted. How do you recover?
+Recover using versioning, backups, or cross-region replication if enabled.
+
+Q5. How do you implement centralized logging across AWS accounts?
+Use CloudWatch Logs, Kinesis, or OpenSearch with cross-account IAM roles.
+
+Q6. Lambda timing out frequently. How do you troubleshoot?
+Check logs, increase timeout, optimize code, and analyze dependencies or cold starts.
+
+Q7. How do you securely store secrets for EC2/Lambda?
+Use AWS Secrets Manager or Parameter Store with IAM roles.
+
+
+## DOCKER
+
+Q4. S3 bucket accidentally deleted. How to recover?
+Recover using versioning, backups, or cross-region replication.
+
+Q5. How to implement centralized logging across AWS accounts?
+Use CloudWatch, Kinesis, or OpenSearch with cross-account IAM roles.
+
+Q6. Lambda timing out frequently. How to troubleshoot?
+Check CloudWatch logs, increase timeout, optimize code, and reduce external dependencies.
+
+Q7. How to securely store secrets for EC2/Lambda?
+
+
+
+Q11. How to create ingress controller in AWS EKS?
+Use AWS Load Balancer Controller with Ingress resource.
+
+1. Q: How do you troubleshoot a failed Lambda execution?
+   A: Check CloudWatch Logs, error messages, and metrics (errors/throttles). In production, enable X-Ray tracing to identify latency, dependency, or timeout issues.
+
+2. Q: How do you optimize Lambda cold start performance?
+   A: Use smaller runtimes, provisioned concurrency, and avoid heavy initialization. In production, keep functions lightweight and reuse connections outside handler.
+
+3. Q: How do you configure Lambda environment variables securely?
+   A: Store sensitive data in AWS Secrets Manager or Parameter Store and reference via IAM roles. In production, avoid hardcoding secrets in environment variables.
+
+4. Q: How do you trigger Lambda using S3 or API Gateway?
+   A: Configure event triggers—S3 (object events) or API Gateway (HTTP endpoints). In production, use proper IAM permissions and validate event payloads.
+
+5. Q: How do you analyze Lambda logs in CloudWatch?
+   A: Use CloudWatch Logs and Log Insights queries. In production, filter errors, track latency, and create alarms for failures.
+
+13. Q: How do you monitor Lambda concurrency and throttling?
+    A: Use CloudWatch metrics (ConcurrentExecutions, Throttles). In production, configure reserved concurrency and alerts to prevent service disruption.
+
+DYNAMODB
+
+6. Q: How do you manage DynamoDB read/write capacity automatically?
+   A: Enable Auto Scaling or use On-Demand mode. In production, auto scaling adjusts capacity based on traffic to avoid throttling.
+
+7. Q: How do you configure DynamoDB TTL for data expiration?
+   A: Enable TTL on a timestamp attribute. In production, it automatically deletes expired items without manual cleanup.
+
+8. Q: How do you enable DynamoDB streams for event-driven apps?
+   A: Enable Streams on the table and connect to Lambda. In production, used for real-time processing like audit logs or replication.
+
+14. Q: How do you optimize DynamoDB indexes for performance?
+    A: Use GSIs/LSIs based on access patterns. In production, design indexes carefully to avoid full table scans and reduce latency.
+
+SQS (MESSAGE QUEUE)
+
+9. Q: How do you process messages reliably using SQS and Lambda?
+   A: Configure Lambda as event source with DLQ and visibility timeout. In production, ensures retries and prevents message loss.
+
+10. Q: How do you troubleshoot message delivery delays in SQS?
+    A: Check delay queue, visibility timeout, and consumer processing time. In production, delays often come from long-running or failed consumers.
+
+SNS (NOTIFICATIONS)
+
+11. Q: How do you send alerts using SNS from CloudWatch?
+    A: Create CloudWatch alarms and link to SNS topics. In production, used for alerting via email, SMS, or integrations.
+
+12. Q: How do you fan-out notifications to multiple subscribers in SNS?
+    A: Use SNS topics with multiple subscriptions (SQS, Lambda, email). In production, enables parallel event processing.
+
+
+15. Q: How do you design fault-tolerant serverless architecture?
+    A: Use retries, DLQs, idempotency, and multi-AZ services. In production, combine SQS buffering, Lambda scaling, and monitoring for resilience.
+
+AWS FUNDAMENTALS
+
+1. Q: What is AWS?
+   A: A cloud platform providing compute, storage, networking, and managed services. In production, it enables scalable, pay-as-you-go infrastructure.
+
+2. Q: What are Regions and Availability Zones?
+   A: Regions are geographic areas; AZs are isolated data centers within a region. In production, multi-AZ ensures high availability.
+
+3. Q: Difference between Region and Edge Location?
+   A: Region hosts resources; Edge Locations are CDN endpoints (CloudFront). In production, edge improves latency for global users.
+
+4. Q: What is Amazon EC2?
+   A: Virtual servers in AWS. In production, used for hosting apps, APIs, and backend services.
+
+5. Q: What are EC2 instance types?
+   A: Compute-optimized, memory-optimized, general-purpose, storage-optimized. In production, chosen based on workload needs.
+
+6. Q: What is Amazon S3?
+   A: Object storage service. In production, used for backups, static hosting, and data lakes.
+
+7. Q: What are S3 storage classes?
+   A: Standard, IA, Glacier, Deep Archive. In production, lifecycle policies optimize cost.
+
+8. Q: What is Amazon EBS?
+   A: Block storage attached to EC2. In production, used for databases and OS disks.
+
+9. Q: Difference between EBS and S3?
+   A: EBS = block storage (attached), S3 = object storage (scalable). In production, EBS for compute, S3 for storage.
+
+10. Q: What is IAM?
+    A: Identity and Access Management for AWS resources. In production, enforces least privilege access.
+
+11. Q: What is an IAM Role?
+    A: Temporary permission entity assumed by services/users. In production, used instead of access keys.
+
+12. Q: Difference between IAM User and Role?
+    A: User = permanent identity, Role = temporary access. In production, roles are preferred for security.
+
+13. Q: What is VPC?
+    A: Virtual private network in AWS. In production, isolates infrastructure.
+
+14. Q: What is a Subnet?
+    A: Logical network inside VPC. In production, separates tiers (web/app/db).
+
+15. Q: Difference between Public and Private Subnet?
+    A: Public has internet access; private doesn’t. In production, DBs run in private subnets.
+
+NETWORKING & SECURITY
+
+16. Q: What is an Internet Gateway?
+    A: Enables internet access for VPC. In production, attached to public subnets.
+
+17. Q: What is a NAT Gateway?
+    A: Allows private subnet outbound internet access. In production, used for updates without exposing instances.
+
+18. Q: Difference between Security Groups and NACL?
+    A: SG = stateful, instance-level; NACL = stateless, subnet-level. In production, SG used for fine-grained control.
+
+19. Q: What is a Route Table?
+    A: Defines traffic routing in VPC. In production, routes traffic via IGW/NAT.
+
+20. Q: What is VPC Peering?
+    A: Connects two VPCs privately. In production, used for cross-VPC communication.
+
+21. Q: What is AWS Direct Connect?
+    A: Dedicated private connection to AWS. In production, used for low latency and secure connectivity.
+
+22. Q: What is a Bastion Host?
+    A: Jump server for accessing private instances. In production, secured with limited access.
+
+23. Q: What is AWS WAF?
+    A: Web Application Firewall. In production, protects against OWASP attacks.
+
+24. Q: What is AWS Shield?
+    A: DDoS protection service. In production, protects applications from attacks.
+
+25. Q: What is KMS?
+    A: Key management service for encryption. In production, used for securing data at rest.
+
+26. Q: What is Secrets Manager?
+    A: Stores and rotates secrets. In production, used for DB credentials and API keys.
+
+27. Q: How do you secure an S3 bucket?
+    A: Use IAM policies, bucket policies, encryption, and block public access. In production, enforce least privilege.
+
+28. Q: What is CloudFront?
+    A: CDN service. In production, reduces latency and improves performance.
+
+29. Q: What is Route 53?
+    A: DNS service. In production, used for routing and failover.
+
+30. Q: How does SSL termination work in AWS?
+    A: SSL ends at ALB/CloudFront. In production, offloads encryption from backend servers.
+
+COMPUTE & CONTAINERS
+
+31. Q: Difference between EC2, ECS, and EKS?
+    A: EC2 = VMs, ECS = AWS container service, EKS = managed Kubernetes. In production, EKS for complex microservices.
+
+32. Q: What is AWS Lambda?
+    A: Serverless compute service. In production, used for event-driven workloads.
+
+33. Q: What is Auto Scaling?
+    A: Automatically adjusts resources. In production, ensures performance and cost efficiency.
+
+34. Q: What is an Application Load Balancer?
+    A: Layer 7 load balancer. In production, routes HTTP/HTTPS traffic.
+
+35. Q: Difference between ALB and NLB?
+    A: ALB = Layer 7, NLB = Layer 4. In production, NLB for high-performance TCP workloads.
+
+36. Q: What is Elastic Beanstalk?
+    A: PaaS for app deployment. In production, simplifies deployment without infra management.
+
+37. Q: What is Fargate?
+    A: Serverless containers. In production, removes need to manage servers.
+
+38. Q: How does Blue-Green Deployment work in AWS?
+    A: Deploy new version alongside old and switch traffic. In production, ensures zero downtime.
+
+39. Q: What is AMI?
+    A: Machine image for EC2. In production, used for consistent deployments.
+
+40. Q: How do you make EC2 highly available?
+    A: Use Auto Scaling + ALB across multiple AZs. In production, ensures fault tolerance.
+
+DATABASES & STORAGE
+
+41. Q: Difference between RDS and DynamoDB?
+    A: RDS = relational, DynamoDB = NoSQL. In production, choose based on structured vs key-value data.
+
+42. Q: What is Multi-AZ in RDS?
+    A: Synchronous standby replica. In production, ensures failover.
+
+43. Q: What is Read Replica?
+    A: Asynchronous copy for reads. In production, improves performance.
+
+44. Q: What is Aurora?
+    A: AWS-optimized relational DB. In production, high performance and availability.
+
+45. Q: How does DynamoDB scaling work?
+    A: Auto scaling or on-demand. In production, handles variable workloads.
+
+46. Q: What is ElastiCache?
+    A: In-memory caching (Redis). In production, reduces DB load.
+
+47. Q: How do you migrate a database to AWS?
+    A: Use DMS or native tools. In production, ensure minimal downtime.
+
+48. Q: What is AWS Backup?
+    A: Centralized backup service. In production, ensures compliance and recovery.
+
+MONITORING & DEVOPS
+
+49. Q: What is CloudWatch?
+    A: Monitoring service for logs and metrics. In production, used for alerts and dashboards.
+
+50. Q: What is CloudTrail?
+    A: API auditing service. In production, tracks user activity for security.
+
+ARCHITECTURE / DEVOPS (ADVANCED)
+
+51. Q: How do you design a highly available multi-tenant system?
+    A: Use multi-AZ, load balancers, isolated DB schemas. In production, ensure tenant isolation and scalability.
+
+52. Q: How do you reduce API response time?
+    A: Use caching (Redis), optimize queries, async processing. In production, use CloudFront and API Gateway caching.
+
+53. Q: How do you rotate secrets securely?
+    A: Use Secrets Manager with rotation policies. In production, automate across services.
+
+54. Q: How do you deploy FastAPI on EKS?
+    A: Containerize → push to registry → deploy via Kubernetes manifests. In production, use ingress and autoscaling.
+
+55. Q: How do you implement CI/CD in AWS?
+    A: Use CodePipeline or Jenkins. In production, automate build, test, deploy with rollback.
+
+56. Q: How do you handle zero-downtime deployments?
+    A: Use rolling/blue-green deployments. In production, combine with health checks.
+
+57. Q: How do you secure inter-service communication in Kubernetes?
+    A: Use mTLS via service mesh. In production, enforce zero-trust networking.
+
+58. Q: How do you monitor 1000+ servers?
+    A: Use centralized monitoring (CloudWatch, Prometheus). In production, dashboards + alerts.
+
+59. Q: How do you reduce AWS cost?
+    A: Use reserved/spot instances, autoscaling, S3 lifecycle. In production, continuous cost optimization.
+
+60. Q: How do you design DR strategy?
+    A: Multi-region replication + failover. In production, test DR regularly.
+
+JENKINS (CI/CD)
+
+61. Q: What is a CI/CD pipeline?
+    A: Automated build, test, deploy process. Example: Jenkins pipeline builds Docker image → pushes → deploys to Kubernetes. :contentReference[oaicite:0]{index=0}
+
+62. Q: How do you connect Jenkins to EC2?
+    A: Use SSH with key pairs. In production, use IAM roles and private networking.
+
+63. Q: How does Jenkins authenticate to AWS?
+    A: Using IAM roles or access keys. In production, roles are preferred.
+
+64. Q: IAM user vs role in Jenkins?
+    A: User = static keys, Role = temporary credentials. In production, roles improve security.
+
+65. Q: How do you store secrets in Jenkins?
+    A: Use Jenkins Credentials Manager. In production, integrate with Vault/Secrets Manager.
+
+66. Q: What if pipeline fails during resource creation?
+    A: Check logs, rollback, and fix config. In production, use idempotent scripts.
+
+67. Q: How do you troubleshoot Jenkins failures?
+    A: Check console logs, plugin issues, agent connectivity. In production, logs + monitoring tools.
+
+68. Q: What is sshagent in Jenkins?
+    A: Plugin for SSH key usage in pipeline. In production, used for secure remote access.
+
+69. Q: How do you deploy code from Jenkins to EC2?
+    A: Use SSH/scp or scripts. In production, automate via pipelines and config management.
+
+
+70. Q: What is Terraform and why use it?
+    A: IaC tool for provisioning infra. In production, ensures consistency and automation.
+
+71. Q: What are Terraform providers?
+    A: Plugins for cloud platforms. In production, AWS provider manages resources.
+
+72. Q: What are Terraform provisioners?
+    A: Scripts executed after resource creation. In production, avoided due to instability.
+
+73. Q: Providers vs provisioners?
+    A: Providers manage infra; provisioners execute scripts. In production, prefer config tools over provisioners.
+
+74. Q: Why are provisioners not recommended?
+    A: Not idempotent and hard to manage. In production, use Ansible or user_data.
+
+75. Q: What is terraform init/plan/apply?
+    A: Init = setup, Plan = preview, Apply = execute. In production, plan is reviewed before apply.
+
+76. Q: What happens during terraform apply?
+    A: Terraform creates execution plan and provisions resources. In production, state is updated.
+
+TERRAFORM VERSIONING
+
+77. Q: Why lock Terraform versions?
+    A: To avoid breaking changes. In production, ensures consistent deployments.
+
+78. Q: What is required_version?
+    A: Specifies Terraform version constraint. In production, prevents incompatibility.
+
+79. Q: How to lock provider versions?
+    A: Define version in provider block. In production, avoids unexpected updates.
+
+80. Q: What does ~> 5.0 mean?
+    A: Allows minor updates within version 5.x. In production, balances stability and updates.
+
+81. Q: Problems if versions not pinned?
+    A: Breaking changes and failures. In production, leads to instability.
+
+82. Q: How to upgrade Terraform safely?
+    A: Test in lower env, update gradually. In production, validate with plan.
+
+TERRAFORM TROUBLESHOOTING
+
+83. Q: Terraform apply failed – how to debug?
+    A: Check error logs and state. In production, validate dependencies and permissions.
+
+84. Q: What is state lock error?
+    A: Multiple operations on same state. In production, use remote backend with locking.
+
+85. Q: How to fix corrupted state?
+    A: Restore from backup. In production, always enable versioning.
+
+86. Q: What is terraform force-unlock?
+    A: Removes stuck lock. In production, use cautiously.
+
+87. Q: What causes CIDR overlap errors?
+    A: Conflicting IP ranges. In production, plan network carefully.
+
+88. Q: Resource already exists error?
+    A: Resource created outside Terraform. In production, import into state.
+
+89. Q: Provider version conflicts?
+    A: Multiple modules require different versions. In production, standardize versions.
+
+TERRAFORM + EC2
+
+90. Q: How to create multiple EC2 instances?
+    A: Use count or for_each. In production, for_each for unique configs.
+
+91. Q: count vs for_each?
+    A: count = index-based, for_each = key-based. In production, for_each preferred.
+
+92. Q: When to use count?
+    A: Identical resources. In production, simple scaling.
+
+93. Q: When to use for_each?
+    A: Different configurations. In production, flexible deployments.
+
+94. Q: How to create EC2 with different sizes?
+    A: Use for_each with map. In production, dynamic infra.
+
+95. Q: How to create 5 identical EC2?
+    A: Use count = 5. In production, simple scaling.
+
+96. Q: How to tag EC2 dynamically?
+    A: Use variables/maps. In production, standard tagging.
+
+97. Q: Why Auto Scaling over multiple EC2?
+    A: Dynamic scaling and HA. In production, cost-efficient.
+
+AWS + JENKINS
+
+98. Q: How to integrate AWS with Jenkins?
+    A: Use IAM roles/plugins. In production, automate deployments.
+
+99. Q: Why IAM role over access keys?
+    A: Temporary credentials, more secure. In production, avoids key leakage.
+
+100. Q: Required permissions for Jenkins?
+     A: EC2, VPC, IAM, S3. In production, least privilege.
+
+101. Q: How to test AWS access from Jenkins?
+     A: Run AWS CLI commands. In production, validate before deployment.
+
+102. Q: How does Jenkins deploy infra using Terraform?
+     A: Executes terraform commands in pipeline. In production, automated IaC.
+
+SHELL SCRIPTING
+
+103. Q: How to get current date/time in shell?
+     A: Use `date` command. In production, used in logs and automation.
+
+104. Q: How to format date?
+     A: `date +"%Y-%m-%d %H:%M:%S"`. In production, standardized logs.
+
+105. Q: Where is shell scripting used in CI/CD?
+     A: Build, deploy, automation tasks. In production, glue between tools.
+
+106. Q: How to log timestamps in scripts?
+     A: Use `echo "$(date) message"`. In production, helps debugging.
+
+REAL-TIME SCENARIOS
+
+107. Q: Jenkins failed creating AWS resources – first check?
+     A: Logs, IAM permissions, Terraform errors. In production, permissions are common issue.
+
+108. Q: Terraform works locally but fails in Jenkins – why?
+     A: Env differences, credentials, versions. In production, ensure consistent setup.
+
+109. Q: EC2 created but provisioning failed – debug?
+     A: Check user_data, logs, SSH access. In production, validate scripts.
+
+110. Q: How to rollback failed deployment?
+     A: Use previous version or Terraform state. In production, automate rollback.
+
+111. Q: How to make CI/CD idempotent?
+     A: Ensure repeatable scripts. In production, avoid duplicate resource creation.
+
+CI/CD & JENKINS
+
+1. Q: Provision 100 EC2 + install app via CI/CD?
+   A: Use Terraform for infra + Ansible/SSM for config; pipeline triggers infra apply, then parallel config deployment for scalability.
+
+TERRAFORM – ADOPTION
+
+2. Q: Introduce Terraform into existing infra?
+   A: Import resources using terraform import, create state, then refactor to IaC gradually without breaking production.
+
+LINUX / SHELL
+
+3. Q: What is sed and -E option?
+   A: sed is a stream editor for text processing; -E enables extended regex for cleaner pattern matching in scripts.
+
+ARGO CD – GITOPS
+
+4. Q: Argo CD for multiple environments?
+   A: Use separate apps/namespaces or app-of-apps pattern with env-specific values (dev/qa/prod branches).
+
+8. Q: How does Argo CD enforce GitOps?
+   A: Continuously compares Git vs cluster state and auto-syncs to eliminate drift.
+
+9. Q: Manual changes in Argo-managed resources?
+   A: Argo detects drift and reverts changes to match Git (self-healing).
+
+
+5. Q: Docker image layers read-only or read-write?
+   A: Image layers are read-only; container adds a writable layer on top (copy-on-write).
+
+AWS NETWORKING
+
+6. Q: Can VPC CIDR go beyond /16?
+   A: No, AWS VPC CIDR ranges from /16 to /28; /16 is max to control IP allocation and routing limits.
+
+11. Q: Load balancer uses beyond traffic distribution?
+   A: SSL termination, health checks, session stickiness, WAF integration for security.
+
+MONITORING & ALERTING
+
+7. Q: CI/CD metrics to monitor?
+   A: Build success rate, duration, failure trends, deployment frequency; alert via Slack/Email on failures.
+
+MULTI-ACCOUNT AWS
+
+10. Q: Managing 30 AWS accounts?
+    A: Use AWS Organizations + IAM roles + centralized logging/monitoring; access via cross-account roles.
+CI/CD DESIGN & GOVERNANCE
+
+1. Q: Design highly available web architecture in AWS?
+   A: Route53 → CloudFront → WAF → ALB → Auto Scaling (multi-AZ) → RDS (Multi-AZ).
+
+2. Q: What is Auto Scaling Group (ASG)?
+   A: Automatically adjusts EC2 instances based on load/health checks.
+
+3. Q: How ASG ensures availability?
+   A: Replaces unhealthy instances and distributes across AZs.
+
+4. Q: Instance type selection strategy?
+   A: Based on workload profiling (CPU, memory, IO); use mixed instances for resilience.
+
+5. Q: Spot vs On-Demand vs Reserved?
+   A: Spot → cheap/interruptible; On-Demand → flexible; Reserved → cost savings long-term.
+
+
+6. Q: VPC components?
+   A: Subnets, route tables, IGW, NAT, SG, NACL.
+
+7. Q: Public vs Private subnet?
+   A: Public → internet access; Private → no direct internet.
+
+8. Q: NAT Gateway use?
+   A: Enables outbound internet for private subnet.
+
+9. Q: Security Group vs NACL?
+   A: SG → stateful; NACL → stateless.
+
+10. Q: Why NACL blocks traffic despite SG allow?
+    A: NACL evaluated first → denies traffic.
+
+LOAD BALANCING
+
+11. Q: ALB vs NLB?
+    A: ALB → HTTP/HTTPS (Layer 7); NLB → TCP/UDP (Layer 4).
+
+12. Q: ALB health check failure reasons?
+    A: Wrong path/status code (not 200), timeout issues.
+
+13. Q: Client IP behind ALB?
+    A: Use X-Forwarded-For header.
+
+STORAGE & DATABASE
+
+14. Q: EBS vs EFS vs S3?
+    A: EBS → block storage; EFS → shared file; S3 → object storage.
+
+15. Q: RDS Multi-AZ?
+    A: Synchronous replication for HA.
+
+16. Q: RDS read replica?
+    A: Asynchronous read scaling.
+
+17. Q: S3 versioning benefit?
+    A: Prevents data loss and enables recovery.
+
+IAM & ACCESS
+
+18. Q: IAM role vs user?
+    A: Role → temporary access; User → permanent identity.
+
+19. Q: Least privilege principle?
+    A: Grant minimal required permissions.
+
+20. Q: Cross-account access?
+    A: Use IAM roles with trust policies.
+
+
+21. Q: CloudWatch?
+    A: Metrics, logs, alarms.
+
+22. Q: CloudTrail?
+    A: API audit logs.
+
+23. Q: Difference CloudWatch vs CloudTrail?
+    A: Monitoring vs auditing.
+
+DISASTER RECOVERY
+
+24. Q: DR strategies in AWS?
+    A: Backup/restore, pilot light, warm standby, active-active.
+
+25. Q: What is RTO?
+    A: Max acceptable downtime.
+
+26. Q: What is RPO?
+    A: Max acceptable data loss.
+
+27. Q: Multi-region DR design?
+    A: Route53 failover + replicated DB + infra in secondary region.
+
+
+28. Q: Handle traffic spike (festival scenario)?
+    A: CDN + ALB + ASG + caching + pre-scaling.
+
+29. Q: CDN role (CloudFront)?
+    A: Reduces latency and origin load.
+
+30. Q: Cache strategies?
+    A: Edge caching, DB caching (Redis).
+
+SECURITY BEST PRACTICES
+
+31. Q: How to secure EC2?
+    A: Private subnet, SG, IAM roles, no SSH (use SSM).
+
+32. Q: WAF usage?
+    A: Protect against OWASP attacks.
+
+33. Q: Secrets management?
+    A: AWS Secrets Manager / Parameter Store.
+
+TROUBLESHOOTING SCENARIOS
+
+34. Q: EC2 not reachable?
+    A: Check SG, NACL, route table, public IP.
+
+35. Q: ALB healthy but app down?
+    A: Check app response codes/health path.
+
+36. Q: High latency?
+    A: Check CPU, network, DB performance.
+
+37. Q: S3 access denied?
+    A: Check IAM policy + bucket policy.
+
+COST OPTIMIZATION
+
+38. Q: Reduce AWS cost?
+    A: Rightsizing, autoscaling, reserved instances, lifecycle policies.
+
+39. Q: S3 cost optimization?
+    A: Lifecycle → Glacier, compression.
+
+
+40. Q: Multi-account strategy?
+    A: AWS Organizations + centralized IAM/logging.
+
+41. Q: Secure VPC communication?
+    A: VPC peering or Transit Gateway.
+
+42. Q: Private service access?
+    A: Use PrivateLink.
+
+
+43. Q: Zero downtime deployment?
+    A: Blue-green with ALB + ASG.
+
+44. Q: High availability design?
+    A: Multi-AZ + autoscaling + health checks.
+
+45. Q: Fault tolerance?
+    A: Redundancy + failover mechanisms.
+
+
+46. Q: Instance terminated automatically?
+    A: ASG health check failure.
+
+47. Q: Data loss in S3?
+    A: No versioning enabled.
+
+48. Q: App scaling not happening?
+    A: Wrong ASG/HPA config.
+
+
+49. Q: What interviewers expect?
+    A: Architecture thinking + trade-offs.
+
+50. Q: Most critical AWS concept?
+    A: HA + DR + security.
+
+CI/CD + JENKINS + GITOPS (ADVANCED)
+
+
+====================
+DOCKER
+====================
+
+Q21. What is the RUN command in Docker?
+
+PYTHON / AUTOMATION
+Q2. What is the role of a pause container?
+The pause container acts as the parent container for all containers in a pod.
+
+* Enables namespace sharing (network, PID, etc.)
+* Acts as PID 1 to handle zombie processes
+
+Q15. What are init containers?
+Containers that run before the main container.
+Use cases:
+
+* Delay startup
+* Clone repo
+* Pre-configuration
+
+Q5. How do you check logs from a previously crashed container?
+Answer: kubectl logs <pod-name> --previous
+
+Q4. What happens when systemd hits a failing unit in a containerized node?
+The service fails and may restart based on policy; use Restart=always and monitoring to auto-recover.
+
+Q9. Bash one-liner to find containers using >500MB RSS memory?
+ps aux --sort=-rss | awk '$6>512000 {print $0}'
+
+
+## ROUND 2 – RCA / DEBUGGING
+
+Q8. Container keeps restarting in production. Root cause?
+Check docker logs, inspect container, verify health checks and resource limits.
+
+Q9. Docker image size is too large. How do you optimize?
+Use multi-stage builds, minimal base images (Alpine), and remove unnecessary files.
+
+Q10. How do you scan Docker images for vulnerabilities?
+Use tools like Trivy, Clair, or Docker Scout before deployment.
+
+Q11. How do you manage secrets in Docker securely?
+Use Docker secrets, environment variables, or external secret managers.
+
+
+## KUBERNETES
+
+Q15. How do you secure container images?
+Scan with tools (Trivy), use trusted registries, and minimal images.
+
+
+## PERFORMANCE & SCALING
+
+Q8. Container keeps restarting. How to find root cause?
+Check docker logs, inspect container, health checks, and resource limits.
+
+Q9. Docker image size too large. How to optimize?
+Use multi-stage builds, Alpine base images, and remove unnecessary files.
+
+Q10. How to scan Docker images for vulnerabilities?
+Use tools like Trivy, Clair, or Docker Scout.
+
+Q11. How to manage secrets in Docker securely?
+Use Docker secrets or external secret managers.
+
+
+
+
+====================
+JENKINS / CI-CD
+====================
+
+Q1. How do you host Jenkins?
+Q3. What are parameters in Jenkins and where do you use them?
+Q8. Which type of pipeline have you used in Jenkins?
+Q9. How do you declare variables (e.g., a=1,2,4 and b=2,4) in a Jenkins pipeline?
+Q10. How do you use credentials in Jenkins? Where do you store them?
+
+GIT / GITHUB
+1. Q: How do you integrate or deploy an Angular application using a Jenkins pipeline?
+   A: Build using `npm install && npm run build`, then package and deploy via Nginx or S3/CloudFront. In production, pipelines include stages for build, test, artifact storage, and environment-based deployment.
+
+GIT / VERSION CONTROL
+
+2. Q: How many Git repositories or Git tools have you used?
+   A: Typically multiple repos (microservices, infra, configs) using GitHub/GitLab/Bitbucket. In production, teams use branching strategies (GitFlow/Trunk-based) with PR reviews and CI triggers.
+
+
+3. Q: Have you worked with Terraform?
+   A: Yes—used for provisioning AWS/Azure infra using IaC. In production, Terraform manages VPCs, EKS, RDS, IAM, ensuring repeatable and version-controlled deployments.
+
+4. Q: How do you pass values to a Terraform module?
+   A: Using input variables in module blocks. In production, values are passed via `variables.tf`, `.tfvars`, or CI/CD pipeline parameters for environment-specific configs.
+
+5. Q: What are the most important concepts in Terraform?
+   A: Providers, resources, variables, state, modules, and outputs. In production, state management (remote backend + locking) is critical for team collaboration.
+
+6. Q: How do you configure Security Groups using Terraform?
+   A: Define `aws_security_group` with ingress/egress rules. In production, rules are tightly controlled and parameterized to enforce least privilege access.
+
+7. Q: What are Terraform dependencies, and how do they work?
+   A: Terraform auto-detects dependencies via resource references; explicit `depends_on` can be used. In production, this ensures correct resource creation order (e.g., VPC before EC2).
+
+8. Q: Explain Terraform modules in detail.
+   A: Modules are reusable, parameterized code blocks for infra. In production, teams create versioned modules (e.g., VPC/EKS) to standardize deployments across environments.
+
+NETWORKING / DNS
+
+9. Q: How do you check a DNS entry in a system?
+   A: Use `nslookup`, `dig`, or `host` commands. In production, DNS issues are debugged by verifying resolution, TTL, and propagation across regions.
+
+AWS (S3)
+
+10. Q: How can you transfer data to an S3 bucket apart from the copy command?
+    A: Use `sync`, multipart upload, SDKs, or services like DataSync. In production, `aws s3 sync` is preferred for bulk transfers with incremental updates.
+
+PROJECT / CI-CD ARCHITECTURE
+
+11. Q: Can you explain your project and CI/CD pipeline?
+    A: Code pushed to Git triggers Jenkins → build, test, scan (SonarQube), Docker build/push → deploy to Kubernetes. In production, pipelines are parameterized and environment-driven.
+
+AWS IAM
+
+12. Q: What is IAM and how do you assign permissions to a user?
+    A: IAM controls access via users, roles, and policies. In production, permissions are assigned using roles and managed policies following least privilege.
+
+13. Q: How do you ensure correct permissions are assigned to users?
+    A: Use role-based access control, policy reviews, and least privilege principle. In production, audits and tools like IAM Access Analyzer validate permissions.
+
+14. Q: What is IAM Access Analyzer?
+    A: A tool that identifies overly permissive or external access to AWS resources. In production, it helps detect unintended public or cross-account access.
+
+KUBERNETES ARCHITECTURE
+
+1. Q: Explain your end-to-end CI/CD workflow. Which pipeline type do you use and why?
+   A: Git push → Jenkins triggers → build, test, scan → Docker build/push → deploy (K8s/Terraform). In production, Declarative pipelines are preferred for readability and governance.
+
+2. Q: Difference between Declarative and Scripted pipelines?
+   A: Declarative = structured, easy to maintain; Scripted = flexible, Groovy-based. In production, Declarative is standard, Scripted for complex logic.
+
+3. Q: How do you define and trigger Jenkins pipelines?
+   A: Defined in Jenkinsfile; triggered via webhook, SCM polling, or manual. In production, webhooks enable real-time CI/CD.
+
+4. Q: What are Jenkins Shared Libraries?
+   A: Reusable pipeline code (vars, src). In production, used to standardize CI/CD across teams and reduce duplication.
+
+BUILD & DEPLOYMENT
+
+5. Q: What applications have you deployed using Jenkins?
+   A: Java, Node.js, Angular, microservices. In production, containerized apps deployed to Kubernetes/EKS.
+
+6. Q: Which deployment tools have you used?
+   A: Docker, Kubernetes, Helm, Terraform. In production, Terraform for infra, Helm for app deployments.
+
+7. Q: Pipeline runs but build not triggered—why?
+   A: Misconfigured webhook, SCM issue, or branch filter. In production, webhook validation is key.
+
+8. Q: What is a webhook?
+   A: HTTP callback triggered by Git events. In production, used to auto-trigger pipelines on commits.
+
+KUBERNETES
+
+9. Q: How do you create/manage Kubernetes clusters using Terraform?
+   A: Use modules for EKS/GKE with VPC, node groups. In production, modular Terraform ensures reusable infra.
+
+10. Q: Role of control plane and worker nodes?
+    A: Control plane manages cluster state; workers run workloads. In production, HA control plane is critical.
+
+11. Q: Common K8s errors and fixes?
+    A: CrashLoopBackOff → fix app/config; ImagePullBackOff → check image/registry. In production, logs + describe used.
+
+12. Q: How do you access pods and define objects?
+    A: Use `kubectl exec` and YAML manifests. In production, manifests are version-controlled.
+
+CONTAINERS & HELM
+
+13. Q: Helm chart structure?
+    A: Chart.yaml, values.yaml, templates/. In production, used for parameterized deployments.
+
+14. Q: Stages in Docker image build?
+    A: Base image → dependencies → app build → runtime config. In production, multi-stage builds optimize size.
+
+15. Q: ENTRYPOINT vs CMD?
+    A: ENTRYPOINT = fixed command; CMD = default args. In production, ENTRYPOINT ensures consistent execution.
+
+CLOUD SERVICES
+
+16. Q: How do you connect/manage DB, EC2, EKS, ECS?
+    A: Use IAM roles, VPC networking, and service endpoints. In production, secure access via private networking.
+
+17. Q: Command to connect to ECS container?
+    A: `aws ecs execute-command`. In production, requires IAM and SSM integration.
+
+18. Q: Which container registry do you use?
+    A: DockerHub, ECR, GCR. In production, ECR preferred for AWS-native integration.
+
+GIT & RELEASE MANAGEMENT
+
+19. Q: Which branching strategy do you follow?
+    A: Trunk-based or GitFlow. In production, PR reviews and CI checks prevent breaking releases.
+
+20. Q: Fixing critical production bug?
+    A: Create hotfix branch → patch → test → deploy. In production, rollback and quick patch strategy used.
+
+ADVANCED CI/CD
+
+21. Q: Complete deployment workflow?
+    A: Code commit → CI build/test → scan → artifact → deploy → monitor. In production, automated with rollback.
+
+22. Q: Pipeline stages for quality?
+    A: Build, unit test, code scan, security scan, deploy. In production, gates prevent bad releases.
+
+23. Q: How do you design Shared Libraries?
+    A: Modular functions, versioned repo. In production, reused across pipelines for consistency.
+
+SECURITY & COMPLIANCE
+
+24. Q: How do you scan Docker images?
+    A: Use Trivy, Anchore during build and registry scan. In production, fail pipeline on critical vulnerabilities.
+
+25. Q: Security tools used?
+    A: Trivy, Clair, Snyk. In production, integrated into CI/CD pipeline.
+
+DOCKER & INFRASTRUCTURE
+
+26. Q: How to pass env variables in Docker?
+    A: Use `ENV`, `--build-arg`, or runtime `-e`. In production, secrets managed externally.
+
+27. Q: Which registries used?
+    A: ECR, DockerHub, GCR. In production, private registries preferred.
+
+CLOUD & SECRETS
+
+28. Q: How do you secure DB connections?
+    A: Use IAM roles, SSL, Secrets Manager. In production, rotate credentials regularly.
+
+29. Q: How do you authenticate to EKS and manage secrets?
+    A: Use IAM + kubeconfig; secrets via K8s Secrets or Vault. In production, avoid hardcoding.
+
+SERVERLESS & SIGNING
+
+30. Q: How do you create/deploy Lambda?
+    A: Package code → upload via CLI/CI → configure triggers. In production, automated via pipelines.
+
+31. Q: Ways to push artifacts to Lambda?
+    A: ZIP upload, S3, container images. In production, S3-based deployments preferred.
+
+32. Q: What is email and Helm chart signing?
+    A: Ensures integrity using GPG/cosign. In production, used for secure artifact verification.
+
+GIT (CORE CONCEPTS)
+
+1. Q: Secure & scalable CI/CD pipeline design?
+   A: Use pipeline-as-code, RBAC, secrets manager, isolated agents, and staged deployments with approvals for enterprise-grade security.
+
+2. Q: Build vs Release pipeline?
+   A: Build → compile/test/package; Release → deploy across environments with approvals and strategies.
+
+3. Q: Rollback strategy?
+   A: Use versioned artifacts + rollback commands (kubectl rollout undo / redeploy previous build).
+
+4. Q: Jenkins Shared Libraries?
+   A: Central reusable Groovy code to standardize pipelines across microservices.
+
+5. Q: Multi-branch pipelines?
+   A: Auto-create pipelines per branch (feature/dev/prod) using SCM webhooks.
+
+6. Q: Pipeline caching?
+   A: Cache dependencies (npm/maven/docker layers) to reduce build time.
+
+7. Q: Secure secrets injection?
+   A: Use Vault/Secrets Manager + Jenkins credentials binding (never hardcode).
+
+8. Q: Manual approval gates?
+   A: Pre-prod/prod stages to enforce governance and compliance.
+
+9. Q: Pipeline-as-code (Azure YAML)?
+   A: Define pipeline in YAML repo; ensures versioning, reproducibility, and GitOps alignment.
+
+10. Q: Enforce quality/compliance?
+    A: Integrate SonarQube, SAST/DAST, policy checks before deployment.
+
+TERRAFORM – CORE
+
+11. Q: Terraform state file?
+    A: Stores infra state; required for tracking and reconciliation.
+
+12. Q: refresh vs plan vs apply?
+    A: refresh → sync state; plan → preview changes; apply → execute changes.
+
+13. Q: Modularization?
+    A: Use reusable modules for networking, compute, etc. to standardize infra.
+
+14. Q: Drift detection?
+    A: terraform plan shows differences between actual vs desired state.
+
+15. Q: Backend setup (S3/Azure Blob)?
+    A: Use remote backend with locking (S3+DynamoDB / Azure Blob) for team safety.
+
+16. Q: count vs for_each vs dynamic?
+    A: count → simple scaling; for_each → map/set iteration; dynamic → nested blocks.
+
+17. Q: lifecycle block?
+    A: Controls resource behavior (prevent_destroy, ignore_changes).
+
+
+18. Q: Sample Dockerfile (Node.js)?
+    A:
+    FROM node:18
+    WORKDIR /app
+    COPY . .
+    RUN npm install
+    CMD ["node","app.js"]
+
+19. Q: Multi-stage builds?
+    A: Build in one stage, copy only artifacts to final image → smaller, secure images.
+
+20. Q: Volume vs bind mount?
+    A: Volume → managed by Docker; Bind → host path mapping.
+
+KUBERNETES – CORE
+
+21. Q: kubelet vs kube-proxy vs API server?
+    A: kubelet → manages pods; kube-proxy → networking; API server → cluster entry point.
+
+22. Q: Blue-Green deployment?
+    A: Two deployments; switch service traffic after validation.
+
+23. Q: StatefulSet vs Deployment?
+    A: StatefulSet → stateful apps; Deployment → stateless scalable apps.
+
+24. Q: Readiness vs Liveness?
+    A: Readiness controls traffic; Liveness restarts unhealthy containers.
+
+25. Q: Secrets in Kubernetes?
+    A: Use K8s Secrets + external tools (Vault/KMS) for encryption.
+
+AZURE & AWS NETWORKING
+
+26. Q: Private vs Service Endpoint (Azure)?
+    A: Private Endpoint → private IP access; Service Endpoint → secure public endpoint.
+
+27. Q: IAM roles / Managed Identity?
+    A: Provide secure service-to-service auth without credentials.
+
+28. Q: Azure VNet vs AWS VPC?
+    A: Both isolate networks; VPC is AWS-specific, VNet is Azure equivalent.
+
+29. Q: Secure peering/inter-region?
+    A: Use VPC/VNet peering, VPN, or private endpoints with encryption.
+
+30. Q: HA & DR strategy?
+    A: Multi-AZ/region, replication, backups, failover automation.
+
+MONITORING & SECURITY
+
+31. Q: Logging/monitoring tools?
+    A: CloudWatch, Azure Monitor, Prometheus, Grafana, ELK.
+
+32. Q: Security baselines in pipeline?
+    A: Policy-as-code, scanning, RBAC enforcement.
+
+33. Q: Container scanning tools?
+    A: Trivy, Aqua, Snyk for vulnerability detection.
+
+34. Q: Key Vault / Secrets Manager integration?
+    A: Fetch secrets dynamically during pipeline runtime.
+
+35. Q: Secret rotation?
+    A: Use automated rotation + rolling deployments.
+
+36. Q: RBAC setup?
+    A: Define roles/permissions per user/service across Jenkins/K8s/Azure.
+
+INCIDENTS & TROUBLESHOOTING
+
+37. Q: Prod service down?
+    A: Check logs/metrics, isolate issue, rollback, then RCA.
+
+38. Q: Terraform state deleted?
+    A: Recover from backup (S3 versioning) or reconstruct via import.
+
+39. Q: Docker works locally but fails in Jenkins?
+    A: Check environment parity, dependencies, permissions.
+
+40. Q: CrashLoopBackOff fix?
+    A: Check logs, configs, probes, resource limits.
+
+AWS CORE
+
+41. Q: AWS services used?
+    A: EC2, S3, IAM, RDS, EKS, VPC, CloudWatch.
+
+42. Q: EC2 task example?
+    A: Provision infra, deploy app via CI/CD, configure security groups.
+
+43. Q: EC2 latency troubleshooting?
+    A: Check CPU/network, logs, ELB metrics, app bottlenecks.
+
+44. Q: IAM roles & policies?
+    A: Define permissions via JSON; attach to users/services.
+
+45. Q: NACL vs Security Group?
+    A: NACL → stateless; SG → stateful firewall.
+
+46. Q: SG allow but NACL deny?
+    A: Traffic blocked (NACL evaluated first).
+
+47. Q: App fails despite open SG?
+    A: Check NACL, routing, app config, OS firewall.
+
+48. Q: S3 deletion prevention/recovery?
+    A: Enable versioning + MFA delete; restore previous versions.
+
+49. Q: Optimize S3 cost?
+    A: Lifecycle policies, tiering (Glacier), compression.
+
+50. Q: Lambda vs EC2?
+    A: Lambda → serverless/event-driven; EC2 → long-running/custom workloads.
+
+DEVOPS & OBSERVABILITY
+
+51. Q: CloudWatch vs CloudTrail?
+    A: CloudWatch → metrics/logs; CloudTrail → API audit logs.
+
+52. Q: EKS setup?
+    A: Managed control plane, worker nodes, IAM roles, networking.
+
+53. Q: K8s projects & pipelines?
+    A: Microservices deployment via CI/CD + Helm/Kustomize.
+
+54. Q: SonarQube integration?
+    A: Add scan stage + enforce quality gates before deploy.
+
+55. Q: Code smell vs coverage?
+    A: Smell → bad practices; Coverage → test %.
+
+56. Q: Shared Libraries in Jenkins?
+    A: Central reusable code for pipelines.
+
+57. Q: CI/CD errors troubleshooting?
+    A: Check logs, env configs, dependencies.
+
+
+58. Q: Check disk space?
+    A: df -h
+
+59. Q: Count lines in file?
+    A: wc -l file.txt
+
+60. Q: Download file?
+    A: wget / curl
+
+61. Q: Ansible ad-hoc vs inventory?
+    A: Ad-hoc → quick tasks; Static → fixed hosts; Dynamic → cloud-based inventory.
+
+62. Q: Terraform vs Ansible?
+    A: Terraform → infra provisioning; Ansible → config management.
+
+K8s, HELM & TERRAFORM ADVANCED
+
+63. Q: Terraform dynamic/data/modules?
+    A: dynamic → nested configs; data → fetch existing; modules → reusable blocks.
+
+64. Q: Lose Terraform state?
+    A: Recover from backup or re-import resources.
+
+65. Q: terraform validate vs fmt?
+    A: validate → syntax check; fmt → format code.
+
+66. Q: Scheduler working?
+    A: Assigns pods based on resources, constraints, scoring.
+
+67. Q: Helm structure & commands?
+    A: Chart.yaml, values.yaml, templates/; helm install/upgrade.
+
+DOCKER & K8s PRACTICAL
+
+68. Q: Optimize Docker images?
+    A: Use slim base images, multi-stage builds, remove unnecessary files.
+
+69. Q: ENTRYPOINT vs CMD?
+    A: ENTRYPOINT fixed command; CMD default args.
+
+70. Q: Why Kubernetes over Docker?
+    A: Provides orchestration, scaling, self-healing.
+
+71. Q: CrashLoopBackOff troubleshooting?
+    A: Logs, describe, resource/probe validation.
+
+NETWORKING & SERVICE MESH
+
+72. Q: Expose app externally?
+    A: Use NodePort, LoadBalancer, or Ingress.
+
+73. Q: Service Mesh basics?
+    A: Sidecar proxies (Istio/Envoy) handle traffic, security, observability.
+ROUND 1 – TECHNICAL SCREENING
+
+1. Q: How do you design a scalable CI/CD pipeline?
+   A: Use pipeline-as-code, shared libraries, parallel stages, and environment-based deployments.
+
+2. Q: Multi-environment pipeline design?
+   A: Single pipeline with branch/parameter-based stages (dev→qa→prod with approvals).
+
+3. Q: How do you trigger pipelines?
+   A: Git webhooks, cron, manual triggers, upstream jobs.
+
+4. Q: Jenkins Shared Library use?
+   A: Reusable pipeline logic across multiple services for standardization.
+
+5. Q: How to handle pipeline failures?
+   A: Fail fast, notify, rollback, and log RCA.
+
+6. Q: Rollback in CI/CD?
+   A: Use versioned artifacts and redeploy previous stable version.
+
+7. Q: Blue-Green deployment in pipeline?
+   A: Deploy new version, switch traffic, validate, then remove old.
+
+8. Q: Canary deployment?
+   A: Gradual traffic shift using weighted routing.
+
+9. Q: Pipeline security best practices?
+   A: Use RBAC, secrets manager, avoid hardcoding.
+
+10. Q: GitOps principle?
+    A: Git is source of truth; system auto-syncs desired state.
+
+DOCKER – ADVANCED
+
+11. Q: Docker image layers?
+    A: Read-only layers + writable container layer.
+
+12. Q: Multi-stage build?
+    A: Separate build and runtime → smaller secure images.
+
+13. Q: Optimize Docker images?
+    A: Use slim base images, remove unused packages.
+
+14. Q: CMD vs ENTRYPOINT?
+    A: CMD default command; ENTRYPOINT fixed execution.
+
+15. Q: Volume vs bind mount?
+    A: Volume → managed; Bind → host path.
+
+16. Q: Docker networking modes?
+    A: Bridge, host, overlay.
+
+17. Q: Why container fails in Jenkins but works locally?
+    A: Environment mismatch, missing dependencies.
+
+18. Q: Image pull failure?
+    A: Check registry auth, network, tag.
+
+19. Q: Docker registry?
+    A: Stores versioned images (ECR, DockerHub).
+
+20. Q: Container security?
+    A: Scan images, avoid root user.
+
+LINUX – TROUBLESHOOTING
+
+21. Q: Disk full issue?
+    A: Clean logs, extend disk, monitor usage.
+
+22. Q: Check CPU usage?
+    A: top, htop.
+
+23. Q: Check memory usage?
+    A: free -m.
+
+24. Q: Kill process?
+    A: kill -9 PID.
+
+25. Q: Check open ports?
+    A: netstat -tulnp or ss.
+
+26. Q: Check logs?
+    A: tail -f /var/log.
+
+27. Q: High CPU alert handling?
+    A: Identify process, optimize or scale.
+
+28. Q: Cron job use?
+    A: Schedule tasks.
+
+29. Q: File permissions (777)?
+    A: Full access (not recommended in prod).
+
+30. Q: Soft vs hard link?
+
+NETWORKING – ADVANCED
+
+31. Q: DNS role?
+    A: Resolves domain to IP.
+
+32. Q: CDN purpose?
+    A: Reduce latency via caching.
+
+33. Q: Load balancer types?
+    A: L4 (TCP), L7 (HTTP).
+
+34. Q: NAT Gateway?
+    A: Outbound internet for private subnet.
+
+35. Q: VPC peering?
+    A: Private communication between VPCs.
+
+36. Q: Service Mesh?
+    A: Manages service-to-service communication.
+
+37. Q: Ingress vs LoadBalancer?
+    A: Ingress → routing rules; LB → external access.
+
+38. Q: Firewall types?
+    A: SG (stateful), NACL (stateless).
+
+39. Q: Port vs protocol?
+    A: Port → endpoint; Protocol → communication rule.
+
+40. Q: Network latency troubleshooting?
+    A: Check routing, bandwidth, app delays.
+
+
+41. Q: Prometheus role?
+    A: Metrics collection.
+
+42. Q: Grafana role?
+    A: Visualization dashboards.
+
+43. Q: ELK stack?
+    A: Logging (Elasticsearch, Logstash, Kibana).
+
+44. Q: SLI/SLO/SLA?
+    A: Metrics, targets, agreements.
+
+45. Q: Alerting strategy?
+    A: Threshold-based + anomaly detection.
+
+46. Q: High memory in Prometheus?
+    A: Reduce retention.
+
+47. Q: Logs vs metrics vs traces?
+    A: Logs → events; Metrics → numbers; Traces → request flow.
+
+48. Q: Incident debugging approach?
+    A: Metrics → logs → traces.
+
+49. Q: Alert fatigue issue?
+    A: Reduce noise, tune alerts.
+
+50. Q: Monitoring failure?
+    A: Use redundancy + synthetic checks.
+
+SECURITY – DEVSECOPS
+
+51. Q: IAM principle?
+    A: Least privilege.
+
+52. Q: Secrets management?
+    A: Vault/Secrets Manager.
+
+53. Q: Container scanning?
+    A: Trivy, Snyk.
+
+54. Q: Pipeline security?
+    A: Mask secrets, restrict access.
+
+55. Q: RBAC?
+    A: Role-based access control.
+
+56. Q: Encryption at rest/in transit?
+    A: Protect data storage and communication.
+
+57. Q: WAF role?
+    A: Protect from web attacks.
+
+58. Q: Vulnerability management?
+    A: Scan + patch regularly.
+
+59. Q: SSH risk?
+    A: Use SSM instead.
+
+60. Q: Compliance?
+    A: Policy-as-code.
+
+SYSTEM DESIGN – ARCHITECTURE
+
+61. Q: End-to-end architecture?
+    A: Route53 → CDN → WAF → LB → K8s → DB → Monitoring.
+
+62. Q: High availability?
+    A: Multi-AZ + autoscaling.
+
+63. Q: Zero downtime deployment?
+    A: Rolling/blue-green.
+
+64. Q: Scaling strategy?
+    A: HPA + ASG + caching.
+
+65. Q: Security layers?
+    A: WAF, IAM, private subnets.
+
+66. Q: Observability?
+    A: Metrics + logs + traces.
+
+67. Q: Database scaling?
+    A: Read replicas + caching.
+
+68. Q: Cache layer?
+    A: Redis for performance.
+
+69. Q: CDN benefit?
+    A: Reduce backend load.
+
+70. Q: Failure handling?
+    A: Retry + fallback.
+
+
+71. Q: DR strategies?
+    A: Backup, pilot light, warm standby, active-active.
+
+72. Q: RTO?
+    A: Recovery time.
+
+73. Q: RPO?
+    A: Data loss tolerance.
+
+74. Q: Backup strategy?
+    A: Automated + versioned.
+
+75. Q: Multi-region DR?
+    A: Replication + failover.
+
+76. Q: Failover mechanism?
+    A: DNS routing.
+
+77. Q: Data consistency?
+    A: Sync vs async replication.
+
+78. Q: DR testing?
+    A: Regular drills.
+
+79. Q: Recovery validation?
+    A: Test restored systems.
+
+80. Q: Business impact analysis?
+    A: Define critical systems.
+
+SCENARIO-BASED (REAL INTERVIEW)
+
+81. Q: App down but infra up?
+    A: Check logs, DB, dependencies.
+
+82. Q: High traffic spike?
+    A: Autoscale + cache + CDN.
+
+83. Q: Deployment failure?
+    A: Rollback + analyze logs.
+
+84. Q: Pod not starting?
+    A: Check image, config, resources.
+
+85. Q: Node failure?
+    A: Reschedule pods.
+
+86. Q: DB slow?
+    A: Optimize queries, scale DB.
+
+87. Q: Disk full node?
+    A: Cleanup or expand.
+
+88. Q: Secrets leaked?
+    A: Rotate immediately.
+
+89. Q: Pipeline slow?
+    A: Use caching + parallelism.
+
+90. Q: Security breach?
+    A: Isolate, audit, patch.
+
+INTERVIEW FINAL INSIGHTS
+
+91. Q: What interviewers expect?
+    A: Production thinking + trade-offs.
+
+92. Q: Biggest mistake candidates make?
+    A: Giving tool-based answers instead of architecture.
+
+93. Q: Key DevOps skill?
+    A: Automation + reliability.
+
+94. Q: Most critical concept?
+    A: System design thinking.
+
+95. Q: How to stand out?
+    A: Explain real-world scenarios.
+
+96. Q: How to answer scenario questions?
+    A: Problem → approach → tools → outcome.
+
+97. Q: Focus areas for senior roles?
+    A: Architecture, DR, scaling.
+
+98. Q: Common failure area?
+    A: Not knowing why (only how).
+
+99. Q: Best preparation strategy?
+    A: Practice real scenarios.
+
+100. Q: Final tip?
+     A: Think like an architect, not just an engineer.
+
+SYSTEM DESIGN – ADVANCED (ARCHITECT LEVEL)
+
+
+====================
+GIT / VERSION CONTROL
+====================
+
+Q11. How can you restrict users in GitHub?
+Q12. Why do we use Pull Requests (PRs) in Git?
+
+KUBERNETES / AWS EKS
+Q26. How do you implement GitOps?
+Use ArgoCD/Flux to sync Git state with cluster.
+
+
+====================
+MONITORING / OBSERVABILITY
+====================
+
+Q31. How to make Prometheus highly available?
+
+* Run multiple instances
+* Use load balancer
+* Use Thanos for scalability
+
+Q32. What are challenges with Prometheus?
+
+* Limited HA
+* No long-term storage
+* No downsampling
+
+Q33. What is Prometheus Operator?
+Manages Prometheus deployment using Kubernetes-native resources.
+
+
+KUBERNETES – LOGGING
+
+Q12. Sidecar logging agent causing CPU spikes. What to do?
+Check resource limits, optimize logging config, and rollback deployment if needed.
+
+Q20. Moving from centralized logging to service mesh observability — tradeoffs?
+Better tracing and visibility but increased complexity, overhead, and cost.
+
+
+## REAL INCIDENT EXPERIENCE
+
+Q25. Prometheus storage filling up. How to optimize?
+Reduce retention, downsample metrics, and use remote storage like Thanos.
+
+Q21. How do you implement centralized logging?
+Use EFK/ELK stack or Fluentd/Filebeat.
+
+Q25. How do you monitor etcd health?
+Check latency, disk I/O, and cluster status.
+
+
+## CI/CD & GITOPS
+
+Q24. How to design monitoring for microservices?
+Use Prometheus for metrics, Grafana dashboards, and tracing tools.
+
+Reduce retention, use downsampling, and remote storage like Thanos.
+
+Set proper thresholds, reduce noise, and use alert grouping.
+
+KUBERNETES – CORE INTERVIEW Q&A
+
+
+====================
+PYTHON / AUTOMATION
+====================
+
+Q18. Apart from disk usage, what other automation tasks have you done using Python?
+Q19. Have you worked with requests in Python scripts?
+
+REAL-WORLD / DEVOPS EXPERIENCE
+
+====================
+NETWORKING / DNS
+====================
+
+Q12. How do you debug networking inside the cluster?
+Answer: kubectl run tmp-shell --rm -it --image=busybox -- sh
+
+Q10. How do you implement zero-trust networking?
+Use network policies, mTLS (service mesh), and strict RBAC.
+
+
+## SECURITY
+
+Q38. How do you debug DNS issues?
+Check CoreDNS, service config, and pod DNS settings.
+
+DEVOPS – AWS, DOCKER, K8S, TERRAFORM, MONITORING Q&A
+
+
+
+Check target group health, security groups, instance logs, ALB listener rules, and app port availability.
+
+Enable storage autoscaling or increase storage manually without downtime.
+
+Use auto-scaling, stop unused instances, rightsizing, spot instances, and cost monitoring.
+
+
+====================
+HTTP STATUS CODES
+====================
+
+Q1. What are 1xx HTTP status codes?
+They indicate the request is received and processing is ongoing.
+
+Q5. What are 2xx HTTP status codes?
+They indicate the request was successfully processed.
+
+Q9. What are 3xx HTTP status codes?
+They indicate the client must take additional action (redirect).
+
+Q14. What are 4xx HTTP status codes?
+They indicate errors caused by the client request.
+
+Q21. What are 5xx HTTP status codes?
+They indicate server-side errors.
+
+Q25. Why are HTTP status codes important?
+They help in debugging, API validation, and improving user experience.
+
+Q26. How to quickly remember HTTP status codes?
+1xx = Info
+2xx = Success
+3xx = Redirect
+4xx = Client Error
+5xx = Server Error
+
+========================
+KUBERNETES LOGGING
+
+
+====================
+DEVOPS / GENERAL
+====================
+
+SEGREGATED DEVOPS INTERVIEW Q&A (TOOL-WISE)
+
+JENKINS / CI-CD
+Q2. What are environment variables?
+Q4. What is a multibranch pipeline and how do you use it?
+Q5. What is a cron job and how do you create it?
+Q6. If a cron job already exists, would you modify it or create a new one? Why?
+Q7. Why do we use webhook triggers?
+Q13. What is a namespace and how is it used?
+Q15. How do you manage an EKS cluster?
+
+TERRAFORM
+Q20. What is ENTRYPOINT vs CMD?
+Q22. What are your day-to-day responsibilities as a DevOps Engineer?
+Q23. Which tools do you primarily use in your current role?
+
+
+KUBERNETES DEPLOYMENT STRATEGIES
+KUBERNETES DEPLOYMENT STRATEGIES – INTERVIEW Q&A
+
+Q3. What is Blue-Green Deployment?
+Blue-Green Deployment involves running two identical environments:
+
+* Blue → current production version
+* Green → new version
+
+Traffic is switched to the Green environment after validation.
+
+Benefits:
+
+* Instant rollback
+* Safe production testing
+* No user disruption
+
+It is usually implemented using Kubernetes Services or Ingress routing.
+
+Q4. What is Canary Deployment?
+Canary Deployment releases a new version to a small subset of users before a full rollout.
+
+Example rollout:
+5% → 20% → 50% → 100%
+
+This approach helps monitor:
+
+* Errors
+* Latency
+* User impact
+
+It is widely used in large-scale microservices architectures.
+
+Q5. What is A/B Testing in deployments?
+A/B Testing involves serving different versions of an application to different user groups.
+
+* Group A → Version 1
+* Group B → Version 2
+
+It is primarily used for:
+
+* Product experimentation
+* Feature validation
+* User behavior analysis
+
+Unlike Canary, it focuses more on business outcomes than deployment safety.
+
+KUBERNETES – ADMINISTRATION
+
+Q3. Why do we need a service mesh?
+A service mesh ensures secure and reliable communication between services.
+It provides:
+
+* Service discovery
+* Load balancing
+* Encryption
+* Observability
+* Authentication and authorization
+
+Q6. Where else can resource limits be set?
+At the namespace level using ResourceQuota or LimitRange.
+
+Q9. What is a CRD (Custom Resource Definition)?
+CRD extends Kubernetes API to create custom resources for specific applications.
+
+Q11. How do you manage access to multiple clusters?
+Using kubeconfig file and kubectl config commands.
+
+Q13. When are DaemonSets used?
+To run a pod on every node (e.g., logging, monitoring agents).
+
+Q14. When are StatefulSets preferred?
+For stateful applications requiring stable identity and storage (e.g., databases).
+
+Q20. What are taints and tolerations?
+
+* Taints → prevent pods from scheduling
+* Tolerations → allow pods to run on tainted nodes
+
+
+KUBERNETES – STORAGE
+
+Q24. Difference between NodePort and LoadBalancer?
+
+* NodePort → uses node IP + port range (30000–32767)
+* LoadBalancer → provides external IP via cloud provider
+
+Q25. When should you use Ingress instead of LoadBalancer?
+
+* Multiple services
+* Path-based routing
+* SSL termination
+
+Q28. How does a service detect healthy endpoints?
+Kubelet reports health → API server → kube-proxy updates routing rules
+
+
+KUBERNETES – SECURITY
+
+Q3. What is Infrastructure as Code (IaC)?
+Answer: Managing infrastructure using code instead of manual processes.
+
+Q13. How do you reference variables?
+Answer: Using var.variable_name.
+
+Q15. How do you destroy infrastructure?
+Answer: Using terraform destroy command.
+
+Q16. Difference between modules and resources?
+Answer: Resources are individual components; modules group resources for reuse.
+
+Q17. What is provider alias?
+Answer: Allows multiple configurations of the same provider.
+
+Q19. What are count and for_each?
+Answer: Used to create multiple resource instances dynamically.
+
+Q20. What are data sources?
+Answer: Used to fetch existing infrastructure data (read-only).
+
+Q21. How are dependencies handled?
+Answer: Automatically via references or explicitly using depends_on.
+
+Q22. What are provisioners?
+Answer: Used to run scripts during resource creation.
+
+Q23. What is remote-exec?
+Answer: A provisioner to run commands on remote machines.
+
+Q24. What are remote backends?
+Answer: Store state remotely (e.g., S3) for collaboration and locking.
+
+Q26. How do you manage multiple environments?
+Answer: Using workspaces or separate configurations.
+
+Q28. What are dynamic blocks?
+Answer: Used to generate repeated nested configurations.
+
+Q29. What is interpolation syntax?
+Answer: ${} used to reference variables or expressions.
+
+Q33. What are remote backends benefits?
+Answer: Centralized state, collaboration, locking, and security.
+
+Q34. What is immutable infrastructure?
+Answer: Replace resources instead of modifying them.
+
+Q35. What are state management challenges?
+Answer: Concurrency and consistency, solved using remote backend.
+
+Q37. What is state locking?
+Answer: Prevents concurrent modifications to state.
+
+Q41. How to implement conditional logic?
+Answer: Using count, for_each, or locals.
+
+Q42. What is HCL?
+Answer: HashiCorp Configuration Language used in Terraform.
+
+Q46. What are null resources?
+Answer: Used for executing scripts or dependencies without actual resources.
+
+Q49. What are outputs vs data sources?
+Answer: Outputs expose values; data sources fetch external data.
+
+Q51. How to handle secrets securely?
+Answer: Use Vault, env vars, or secret managers.
+
+Q54. Why use modules?
+Answer: For reusability, maintainability, and consistency.
+
+Q55. How do modules communicate?
+Answer: Using input and output variables.
+
+Q56. What is resource targeting?
+Answer: Apply changes to specific resources only.
+
+Q57. What is secret rotation?
+Answer: Managed via external tools like Vault.
+
+Q58. What is state migration?
+Answer: Updating state when infrastructure structure changes.
+
+Q59. How do you manage module versions?
+Answer: Using semantic versioning and Git tags.
+
+Q4. What problems arise when multiple modules reference the same resource, and how do you design around it?
+Answer: Causes conflicts and duplication; solve by centralizing resource creation and sharing via outputs.
+
+Q5. Difference between count and for_each — and why switching between them can destroy resources.
+Answer: count uses index, for_each uses keys; switching changes resource identity, leading to destroy/recreate.
+
+Q7. Explain drift detection. How do you detect and fix infra drift without downtime?
+Answer: Drift is mismatch between actual and desired state; detect via terraform plan and fix using controlled apply or import.
+
+Q11. How do workspaces actually work, and why are they dangerous in large organizations?
+Answer: Workspaces isolate state in same config; dangerous due to misconfiguration, lack of visibility, and accidental deployments.
+
+Q13. What are partial applies, and how do you recover safely from a failed apply?
+Answer: Partial apply occurs when some resources are created before failure; recover by re-running apply after fixing issue.
+
+Q14. How do provider version mismatches break production, and how do you prevent it?
+Answer: Version changes may alter behavior or schema; prevent using version pinning in providers.
+
+Q8. How do you check node pressure or issues?
+Answer: kubectl describe node <node-name>
+
+Q11. How do you list all services with external IPs?
+Answer: kubectl get svc -A -o wide
+
+Q13. How do you access a service locally for testing?
+Answer: kubectl port-forward svc/<service-name> 8080:80
+
+Q14. How do you check deployment rollout history?
+Answer: kubectl rollout history deployment/<name>
+
+Q15. How do you rollback a failed deployment?
+Answer: kubectl rollout undo deployment/<name>
+
+Q16. How do you inspect deployment YAML without editing?
+Answer: kubectl get deployment <name> -o yaml
+
+Q17. How do you quickly port-forward a service?
+
+Q18. How do you view rollout history again (quick check)?
+
+Q19. How do you undo deployment changes quickly?
+
+Q20. How do you inspect YAML configuration quickly?
+
+DEVOPS / SRE INTERVIEW – SCENARIO Q&A
+
+
+## ROUND 1 – INFRA, K8s, CLOUD
+
+Q1. How do you design a multi-tenant EKS cluster with isolation across dev, QA, and prod?
+Use separate namespaces, RBAC, network policies, resource quotas, and node groups (taints/tolerations) to isolate workloads and avoid noisy neighbors.
+
+Q2. How do you manage 10+ Kustomize overlays without drift?
+Use a strong base + minimal overlays, enforce GitOps, avoid duplication, and validate via CI pipelines.
+
+Q6. How do you perform zero-downtime upgrades for stateful apps using Helm?
+Use rolling updates, readiness probes, partitioned updates, and backup before upgrade.
+
+Q10. TLS handshakes failing intermittently in ALB. RCA approach?
+Check SSL certs, ALB listener config, target health, security groups, and logs (ELB + app).
+
+Q13. Autoscaling not triggering despite high CPU. Why?
+Check metrics-server, HPA config, API server, and resource requests mismatch.
+
+Q14. Users see 504 errors but ELB is healthy. How do you debug?
+Check backend latency, pod readiness, timeouts, and app logs.
+
+Q15. Systemd logs missing after reboot. What to check?
+Check journald config (Storage=persistent), disk mounts, and AMI build settings.
+
+Q17. Kernel panic on GKE node. How to isolate root cause?
+Check node logs, kernel version, recent deployments, and workload resource usage.
+
+
+## ROUND 3 – LEADERSHIP / DESIGN
+
+Q18. How do you design infra that empowers devs but avoids risks?
+Provide templates, guardrails (policies), and self-service with controlled access.
+
+Q19. Linux checklist before approving AMI?
+Check security patches, SSH configs, logging, monitoring agents, and CIS compliance.
+
+Q21. Kernel panic in production cluster — how handled?
+Analyzed node logs, isolated faulty node, drained workloads, and replaced node.
+
+Q23. Broken Helm upgrade with no visibility — what did you do?
+Used rollout history, rollback command, and checked previous working release.
+
+Q24. Built cross-cloud boundaries — how?
+Implemented network segmentation, IAM policies, and secure routing between clouds.
+
+TERRAFORM – CORE INTERVIEW Q&A
+
+Q13. Deployment rollout caused outage. How to rollback?
+Use kubectl rollout undo deployment/<name>.
+
+Q14. Cluster nodes running out of memory. What to do?
+Check resource usage, optimize limits/requests, scale nodes, and evict unused pods.
+
+Q15. How to implement zero-downtime deployments?
+Use rolling updates, readiness probes, and proper replica configuration.
+
+Q16. How to restrict communication between namespaces?
+Use Kubernetes Network Policies.
+
+Q22. How to handle infrastructure drift?
+Detect using terraform plan and fix using apply or import.
+
+
+## MONITORING / OBSERVABILITY
+
+Q23. Application latency increased. How to find root cause?
+Analyze metrics (CPU, memory, latency), traces, and logs using Prometheus/Grafana.
+
+Q26. How to create meaningful alerts?
+Set thresholds, use alert grouping, and avoid noisy alerts with proper tuning.
+KUBERNETES – ADVANCED INTERVIEW Q&A
+
+
+## ARCHITECTURE & CLUSTER DESIGN
+
+Q2. Trade-offs between managed (EKS/AKS/GKE) vs self-managed clusters?
+Managed = less ops, more cost; Self-managed = more control, more maintenance.
+
+Q4. What are control plane bottlenecks in large clusters?
+API server load, etcd performance, scheduler latency.
+
+Q7. Differences between Calico, Flannel, Cilium?
+Flannel = simple overlay; Calico = policy + routing; Cilium = eBPF-based advanced networking.
+
+Q9. What happens when you create a Service?
+Kube-proxy updates iptables/IPVS and routes traffic to matching pods.
+
+Q12. PSA vs PSP?
+PSP (deprecated) enforced policies; PSA is the new built-in policy mechanism.
+
+Q13. How do you implement runtime security?
+Use tools like Falco, seccomp, AppArmor.
+
+Q14. Role of OPA Gatekeeper/Kyverno?
+Enforce policies and compliance using admission control.
+
+Q16. How does Cluster Autoscaler work?
+Adds/removes nodes based on unschedulable pods and resource demand.
+
+Q17. Difference between HPA, VPA, KEDA?
+HPA = CPU/memory scaling; VPA = adjusts resources; KEDA = event-driven scaling.
+
+Q18. How do you optimize resource usage?
+Use proper requests/limits, autoscaling, and monitoring.
+
+Q19. How do you handle noisy neighbor problems?
+Use resource quotas, limits, and node isolation.
+
+Q20. How do you tune kube-scheduler performance?
+Adjust scheduling policies, priorities, and resource allocation.
+
+
+## OBSERVABILITY
+
+Q22. Key metrics for cluster health?
+CPU, memory, pod status, API latency, etcd health.
+
+Q23. How do you troubleshoot high CPU in kube-apiserver?
+Check API requests, audit logs, and client load.
+
+Q27. How do you perform blue-green deployment?
+Run two versions and switch traffic via service/ingress.
+
+Q28. How does canary deployment work?
+Gradually shift traffic to new version.
+
+Q29. Benefits of progressive delivery?
+Reduced risk, controlled rollout, better monitoring.
+
+Q30. How do you auto-rollback deployments?
+Use health checks and pipeline automation.
+
+
+## STORAGE
+
+Q31. What is CSI?
+Standard interface for storage plugins in Kubernetes.
+
+Q32. How does PV provisioning work?
+Static or dynamic provisioning via StorageClass.
+
+Q34. How do you migrate stateful workloads?
+Backup, restore, and data replication strategies.
+
+
+## TROUBLESHOOTING
+
+Q14. Nodes running out of memory. What to do?
+Check resource usage, adjust limits, scale nodes, and evict unused pods.
+
+Use rolling updates, readiness probes, and multiple replicas.
+
+
+Q21. How to create reusable modules?
+
+Q22. How to handle drift detection?
+Use terraform plan to detect and apply to fix.
+
+
+
+Q23. App latency increased. How to find root cause?
+Analyze metrics (CPU, memory, latency), traces, and logs.
+
+Q2. What are components in master and worker nodes?
+Master: API server, scheduler, controller manager, etcd
+Worker: kubelet, kube-proxy, container runtime
+
+Q3. Why are we using kubelet?
+Kubelet ensures containers are running as defined in PodSpec.
+
+Q6. What types of controllers exist?
+Deployment, ReplicaSet, StatefulSet, DaemonSet, Job, CronJob.
+
+Q7. What does controller manager manage?
+Maintains desired state (replicas, nodes, endpoints, jobs).
+
+Q8. Can ETCD get corrupted?
+Yes, due to disk issues or improper shutdown.
+
+Q9. Can we run ETCD in high availability?
+Yes, using a clustered ETCD setup (odd number of nodes).
+
+Q12. How to manage SSL certificates for load balancer?
+Use TLS secrets or integrate with certificate managers.
+
+Q13. Best option for SSL in EKS?
+Use AWS Certificate Manager (ACM).
+
+Q14. How to upgrade an EKS cluster?
+Upgrade control plane, then node groups sequentially.
+
+Q15. Upgrade nodes in same group or new group?
+Create new node group and migrate workloads (safer).
+
+Q16. How to write NGINX deployment?
+Define Deployment YAML with replicas, container image nginx, and ports.
+
+Q17. How to expose this deployment?
+Create a Service (ClusterIP/NodePort/LoadBalancer).
+
+Q19. Which service type is used in production?
+LoadBalancer or Ingress.
+
+Q20. Difference between ReplicaSet and Deployment?
+ReplicaSet manages pods; Deployment manages ReplicaSets and updates.
+
+Q22. Difference between Role, ClusterRole, RoleBinding?
+Role = namespace scope
+ClusterRole = cluster scope
+RoleBinding = assigns permissions
+
+Q24. What is DaemonSet? Examples?
+Runs pods on every node; examples: logging, monitoring agents.
+
+Q26. Node out of capacity. What to do?
+Scale cluster, free resources, or optimize workloads.
+
+HTTP STATUS CODES – INTERVIEW Q&A
+
+
+## 1xx – INFORMATIONAL
+
+Q2. What is 100 Continue?
+Server received headers and client can continue sending body.
+
+Q3. What is 101 Switching Protocols?
+Server switches to another protocol (e.g., HTTP to WebSocket).
+
+Q4. What is 103 Checkpoint?
+Used for resumable or preloaded requests (experimental).
+
+
+## 2xx – SUCCESS
+
+Q6. What is 200 OK?
+Request succeeded and response is returned.
+
+Q7. What is 201 Created?
+A new resource was successfully created.
+
+Q8. What is 202 Accepted?
+Request accepted but processing is not complete.
+
+
+## 3xx – REDIRECTION
+
+Q10. What is 302 Found?
+Temporary redirect to another URL.
+
+Q11. What is 303 See Other?
+Resource available at a different URL (usually after POST).
+
+Q12. What is 304 Not Modified?
+Cached resource is still valid; no need to resend.
+
+Q13. What is 307 Temporary Redirect?
+Temporary redirect while preserving HTTP method.
+
+
+## 4xx – CLIENT ERRORS
+
+Q15. What is 400 Bad Request?
+Request is malformed or invalid.
+
+Q16. What is 401 Unauthorized?
+Authentication is required.
+
+Q17. What is 403 Forbidden?
+Client is authenticated but not authorized.
+
+Q18. What is 404 Not Found?
+Requested resource does not exist.
+
+Q19. What is 406 Not Acceptable?
+Requested format is not supported.
+
+Q20. What is 410 Gone?
+Resource permanently removed.
+
+
+## 5xx – SERVER ERRORS
+
+Q22. What is 500 Internal Server Error?
+Generic server failure.
+
+Q23. What is 502 Bad Gateway?
+Invalid response from upstream server.
+
+Q24. What is 504 Gateway Timeout?
+Upstream server took too long to respond.
+
+
+## GENERAL
+
+1. Q: Difference between working directory, staging area, and repository?
+   A: Working dir = files, staging = prepared changes, repo = committed history. In production, staging ensures controlled commits.
+
+2. Q: What is HEAD in Git?
+   A: Pointer to current commit/branch. In production, used to track current working state.
+
+3. Q: Difference between tracked and untracked files?
+   A: Tracked = Git knows changes; untracked = new files. In production, `.gitignore` controls tracking.
+
+4. Q: What does git init do internally?
+   A: Creates `.git` directory and initializes repo metadata. In production, starts version control.
+
+5. Q: Default branch and how to change it?
+   A: Default is `main` (or `master` older). Change via `git branch -m`. In production, standardized naming is enforced.
+
+6. Q: Purpose of .git directory?
+   A: Stores commits, configs, objects. In production, it's the core of version tracking.
+
+7. Q: How to check current branch?
+   A: `git branch` or `git status`. In production, ensures correct branch before commits.
+
+8. Q: What happens with git add .?
+   A: Adds all changes to staging. In production, risky if unwanted files included.
+
+9. Q: What is a bare repository?
+   A: Repo without working directory. In production, used for central repos (GitHub/GitLab).
+
+10. Q: Difference between git pull and git clone?
+    A: Clone = copy repo; Pull = fetch + merge updates. In production, pull syncs local changes.
+
+GIT (INTERMEDIATE)
+
+11. Q: Fast-forward vs three-way merge?
+    A: FF = linear history; 3-way = merge commit. In production, 3-way used for parallel development.
+
+12. Q: What is git cherry-pick?
+    A: Apply specific commit to another branch. In production, used for hotfixes.
+
+13. Q: git revert vs git reset?
+    A: Revert = safe undo with new commit; Reset = rewrites history. In production, revert preferred.
+
+14. Q: Types of git reset?
+    A: --soft (keep staged), --mixed (unstage), --hard (delete changes). In production, hard reset used cautiously.
+
+15. Q: origin vs upstream vs local?
+    A: origin = default remote, upstream = original repo, local = current branch. In production, used in fork workflows.
+
+16. Q: What is detached HEAD?
+    A: HEAD points to commit, not branch. In production, temporary state for debugging.
+
+17. Q: How to rename branch?
+    A: Local: `git branch -m`; Remote: push new + delete old. In production, coordinate with team.
+
+18. Q: How to squash commits?
+    A: `git rebase -i`. In production, used for clean commit history.
+
+19. Q: Undo last commit without losing changes?
+    A: `git reset --soft HEAD~1`. In production, used before pushing.
+
+20. Q: git diff vs staged vs HEAD?
+    A: diff = working vs staging; --staged = staging vs repo; HEAD = working vs last commit.
+
+GIT (ADVANCED)
+
+21. Q: What is git reflog?
+    A: Tracks all HEAD changes. In production, used for recovery.
+
+22. Q: Recover deleted branch?
+    A: Use reflog and recreate branch. In production, critical for recovery.
+
+23. Q: What is git bisect?
+    A: Binary search for bugs. In production, identifies faulty commits quickly.
+
+24. Q: git blame usage?
+    A: Shows author per line. In production, helps debugging ownership.
+
+25. Q: Resolve conflicts during rebase?
+    A: Fix conflicts → add → continue rebase. In production, careful conflict handling needed.
+
+26. Q: Annotated vs lightweight tag?
+    A: Annotated = metadata; lightweight = simple pointer. In production, annotated used for releases.
+
+27. Q: How to sign commits/tags?
+    A: Use GPG keys. In production, ensures authenticity.
+
+28. Q: What is git worktree?
+    A: Multiple working dirs for same repo. In production, useful for parallel work.
+
+29. Q: What is git submodule?
+    A: External repo inside repo. In production, avoided due to complexity.
+
+30. Q: What is git subtree?
+    A: Embed repo without submodule complexity. In production, easier management.
+
+31. Q: Clean untracked files safely?
+    A: `git clean -n` then `-f`. In production, preview before delete.
+
+32. Q: What is git archive?
+    A: Export repo snapshot. In production, used for releases.
+
+33. Q: How Git stores data?
+    A: Blobs, trees, commits. In production, content-addressable storage.
+
+34. Q: Compression and hashing?
+    A: Uses SHA-1 (moving to SHA-256). In production, ensures integrity.
+
+35. Q: git filter-branch?
+    A: Rewrite history. In production, discouraged—use git filter-repo.
+
+CI/CD & APPLICATION DEPLOYMENT
+
+36. Q: How to deploy a .NET app using CI/CD?
+    A: Build → test → package → deploy to IIS/K8s. In production, automated via Jenkins/Azure DevOps.
+
+37. Q: Common CI/CD issues?
+    A: Build failures, env mismatch, permissions. In production, logs and rollback strategies used.
+
+38. Q: App not accessible—debug steps?
+    A: Check service, ports, firewall, logs. In production, verify LB and DNS.
+
+
+39. Q: How to reduce Docker image size?
+    A: Use Alpine, multi-stage builds, remove unused packages. In production, improves performance.
+
+40. Q: What are Docker volumes?
+    A: Persistent storage for containers. In production, used for DB and logs.
+
+41. Q: COPY vs ADD?
+    A: COPY = simple; ADD = extra features (URL, tar). In production, COPY preferred.
+
+42. Q: Sharing Dockerfiles?
+    A: Store in Git repo. In production, version-controlled.
+
+43. Q: Running vs stopped containers?
+    A: `docker ps` vs `docker ps -a`. In production, used for debugging.
+
+
+44. Q: Kubernetes vs Docker Swarm?
+    A: K8s = advanced orchestration; Swarm = simple. In production, K8s preferred.
+
+45. Q: What is ReplicaSet?
+    A: Maintains pod replicas. In production, ensures availability.
+
+46. Q: Basic Pod manifest?
+    A: YAML defining container, image, ports. In production, version-controlled configs.
+
+47. Q: What are static pods?
+    A: Managed by kubelet, not API server. In production, used for core components.
+
+48. Q: HPA vs VPA?
+    A: HPA scales pods; VPA adjusts resources. In production, HPA widely used.
+
+49. Q: Node troubleshooting?
+    A: Check node status, logs, resources. In production, use `kubectl describe node`.
+
+50. Q: High availability architecture?
+    A: Multi-node, multi-AZ, load balancing. In production, ensures resilience.
+
+MONITORING & OBSERVABILITY
+
+51. Q: How do monitoring tools collect metrics?
+    A: Agents/exporters push/pull metrics. In production, Prometheus scrapes metrics.
+
+52. Q: Real-world monitoring strategy?
+    A: Metrics + logs + tracing. In production, centralized dashboards and alerts.
+
+LINUX & AUTOMATION
+
+53. Q: Crontab usage?
+    A: Schedule jobs using cron syntax. In production, used for backups and maintenance.
+
+
+54. Q: Terraform VPC script?
+    A: Define VPC, subnets, IGW, routes. In production, modular design used.
+
+55. Q: Recommended folder structure?
+    A: modules/, envs/, main.tf. In production, separation of concerns.
+
+56. Q: terraform destroy vs taint?
+    A: destroy = delete infra; taint = recreate resource. In production, taint used selectively.
+
+57. Q: How to secure Terraform state?
+    A: Use remote backend (S3 + DynamoDB lock). In production, encryption and access control enforced.
+
+KUBERNETES PROBES
+
+1. Q: What is a Readiness Probe?
+   A: Checks if pod is ready to receive traffic. In production, failed readiness removes pod from service without restarting it.
+
+2. Q: What is a Liveness Probe?
+   A: Checks if container is alive. In production, failure triggers container restart to recover stuck apps.
+
+3. Q: What is a Startup Probe?
+   A: Runs only during startup phase. In production, prevents premature liveness failures for slow-start apps.
+
+4. Q: When should you use all three probes?
+   A: For production-grade apps with slow startup + runtime health checks. Ensures stability and zero downtime.
+
+5. Q: Why should probes have different endpoints?
+   A: Each probe serves a different purpose. In production, using same path can cause false restarts.
+
+CLOUDWATCH DASHBOARD OPTIMIZATION
+
+6. Q: Why is a CloudWatch dashboard slow?
+   A: Too many widgets, high-resolution metrics, large time ranges, or heavy metric math. In production, each widget adds query overhead.
+
+7. Q: How do you optimize CloudWatch dashboards?
+   A: Reduce widgets, shorten time range, simplify metric math. In production, split dashboards per service/team.
+
+KUBERNETES TROUBLESHOOTING
+
+8. Q: Pod in CrashLoopBackOff—what do you do?
+   A: Check logs, events, env vars, configs. In production, most issues are misconfigurations or app crashes.
+
+9. Q: Pod stuck in Pending—why?
+   A: Insufficient resources, PVC issues, or scheduling constraints. In production, check node capacity and taints.
+
+10. Q: Service not accessible—how to debug?
+    A: Verify selectors, endpoints, and labels. In production, mismatch between service and pod labels is common.
+
+11. Q: App works inside pod but not externally—why?
+    A: Wrong service type or ingress misconfig. In production, DNS/Ingress issues are frequent.
+
+12. Q: Pods getting OOMKilled—what to check?
+    A: Resource limits and memory usage. In production, tune limits and optimize application.
+
+13. Q: Rolling update causing downtime—fix?
+    A: Use maxUnavailable=0 and readiness probes. In production, ensures zero downtime deployment.
+
+14. Q: ConfigMap changes not reflected—why?
+    A: Pods don’t auto-reload configs. In production, restart pods or use hot-reload mechanism.
+
+KUBERNETES ERRORS (REAL-WORLD)
+
+15. Q: CrashLoopBackOff root cause?
+    A: App crash, wrong config, missing dependency. In production, logs + events identify issue.
+
+16. Q: ImagePullBackOff cause?
+    A: Invalid image, auth failure. In production, check registry access.
+
+17. Q: OOMKilled cause?
+    A: Memory limit exceeded. In production, optimize or increase limits.
+
+18. Q: Pending pods cause?
+    A: Resource shortage or scheduling constraints. In production, scale nodes or adjust requests.
+
+19. Q: CreateContainerConfigError cause?
+    A: Missing secrets/configs. In production, validate env and mounts.
+
+20. Q: Pod eviction cause?
+    A: Node resource pressure. In production, use autoscaling and proper resource allocation.
+PROXY (NETWORKING)
+
+1. Q: What is a Forward Proxy?
+   A: Sits between client and internet; hides user identity and enforces outbound policies. Used in enterprises for internet filtering and compliance.
+
+2. Q: What is a Reverse Proxy?
+   A: Sits in front of servers; protects backend, handles load balancing, SSL termination, caching. Used in high-traffic apps like e-commerce/CDNs.
+
+3. Q: Forward vs Reverse Proxy?
+   A: Forward → protects clients; Reverse → protects servers. Enterprises use both: outbound control + inbound traffic management.
+
+KUBERNETES – ARCHITECTURE (L2)
+
+4. Q: How does Kubernetes control plane work?
+   A: API server handles requests, scheduler assigns pods, controller manager enforces desired state, etcd stores cluster state.
+
+5. Q: What happens if kube-apiserver goes down?
+   A: Cluster becomes read-only; existing workloads run but no new changes. HA setup uses multiple API servers behind LB.
+
+6. Q: How does etcd ensure consistency?
+   A: Uses Raft consensus; quorum-based writes ensure strong consistency across distributed nodes.
+
+7. Q: How to design HA Kubernetes cluster?
+   A: Multi-master across AZs, external etcd or stacked HA, LB in front of API servers, automated failover.
+
+8. Q: Single-master vs multi-master?
+   A: Single → SPOF; Multi → HA with quorum-based control plane, used in production.
+
+9. Q: Multi-AZ Kubernetes design?
+   A: Spread control plane + worker nodes across AZs, use cloud LB + zonal storage replication.
+
+SCHEDULING & SCALING
+
+10. Q: How scheduler places pods?
+    A: Filters nodes based on resources/constraints, then scores best-fit node using policies.
+
+11. Q: What if node runs out of CPU/memory?
+    A: Pods get evicted or throttled; OOMKilled for memory pressure.
+
+12. Q: Requests vs Limits?
+    A: Requests → scheduling decision; Limits → runtime enforcement. Misconfiguration causes resource starvation.
+
+13. Q: HPA vs VPA?
+    A: HPA scales pods horizontally (traffic spikes); VPA adjusts pod resources (right-sizing workloads).
+
+14. Q: Cluster Autoscaler?
+    A: Adds/removes nodes based on unschedulable pods or underutilization.
+
+NETWORKING & INGRESS
+
+15. Q: Pod-to-pod communication?
+    A: Flat network via CNI; each pod gets IP, no NAT required.
+
+16. Q: Role of kube-proxy?
+    A: Manages service routing using iptables/IPVS for load balancing.
+
+17. Q: iptables vs IPVS?
+    A: IPVS is more scalable and performant; preferred in large clusters.
+
+18. Q: DNS in Kubernetes?
+    A: CoreDNS resolves service names to cluster IPs.
+
+19. Q: Ingress vs LoadBalancer vs NodePort?
+    A: NodePort → basic exposure; LB → cloud-managed external IP; Ingress → HTTP routing + TLS + path-based rules.
+
+FAILURES & TROUBLESHOOTING
+
+20. Q: Worker node failure?
+    A: Pods rescheduled to healthy nodes automatically.
+
+21. Q: Control plane failure?
+    A: HA setup ensures failover; otherwise cluster becomes non-operational for changes.
+
+22. Q: Pod rescheduling?
+    A: Controller detects failure and recreates pods based on desired state.
+
+23. Q: CrashLoopBackOff?
+    A: Pod repeatedly crashes; debug via logs, events, misconfigurations.
+
+24. Q: Liveness vs Readiness probes?
+    A: Liveness → restart unhealthy pods; Readiness → control traffic routing.
+
+25. Q: OOMKilled debugging?
+    A: Check memory limits, logs, heap usage; optimize or increase limits.
+
+CONFIG, STORAGE & STATE
+
+26. Q: ConfigMaps vs Secrets?
+    A: ConfigMaps → non-sensitive config; Secrets → base64-encoded sensitive data.
+
+27. Q: Secrets in etcd?
+    A: Stored encrypted (if enabled); production uses KMS integration.
+
+28. Q: StatefulSets?
+    A: Maintains stable identity, ordered deployment, persistent storage for DB workloads.
+
+29. Q: Headless Service?
+    A: No cluster IP; used for direct pod DNS (e.g., StatefulSets).
+
+30. Q: PVC, PV, StorageClass?
+    A: PVC requests storage, PV provides it, StorageClass automates provisioning.
+
+31. Q: DB in Kubernetes?
+    A: Use StatefulSets + persistent volumes + backups + replication strategy.
+
+SECURITY (K8s L2)
+
+32. Q: Kubernetes RBAC?
+    A: Role-based access using roles, bindings; restricts API access.
+
+33. Q: Role vs ClusterRole?
+    A: Role → namespace scope; ClusterRole → cluster-wide.
+
+34. Q: ServiceAccounts?
+    A: Identity for pods to access API securely.
+
+35. Q: Securing etcd?
+    A: TLS encryption, restricted access, encryption at rest.
+
+36. Q: Network Policies?
+    A: Control pod-to-pod traffic using label-based rules.
+
+37. Q: Prevent root containers?
+    A: Use securityContext, runAsNonRoot, PodSecurity standards.
+
+GITOPS & CI/CD
+
+38. Q: What is GitOps?
+    A: Git as source of truth; cluster state synced automatically.
+
+39. Q: Argo CD vs Flux?
+    A: Argo → UI-driven, enterprise-friendly; Flux → lightweight, Git-native.
+
+40. Q: Argo CD sync?
+    A: Continuously compares Git vs cluster and applies drift correction.
+
+41. Q: Blue-Green/Canary deployments?
+    A: Use service routing or tools like Argo Rollouts for gradual traffic shift.
+
+42. Q: Rollback strategy?
+    A: Revert Git commit or use rollout undo.
+
+UPGRADES & MAINTENANCE
+
+43. Q: Kubernetes upgrade strategy?
+    A: Upgrade control plane first, then worker nodes; ensure version compatibility.
+
+44. Q: Cordon & Drain?
+    A: Cordon → mark unschedulable; Drain → safely evict pods.
+
+45. Q: Zero downtime upgrade?
+    A: Rolling updates with multiple replicas + readiness probes.
+
+ADVANCED CONCEPTS
+
+46. Q: Kubernetes Operators?
+    A: Custom controllers managing app lifecycle (e.g., DB operators).
+
+47. Q: CRD vs Controller?
+    A: CRD defines resource; controller enforces desired state.
+
+48. Q: Mutating vs Validating webhook?
+    A: Mutating → modifies request; Validating → enforces policy.
+
+49. Q: Taints & Tolerations?
+    A: Control pod placement on specific nodes (e.g., dedicated workloads).
+
+50. Q: Node vs Pod affinity?
+    A: Node affinity → node selection; Pod affinity → co-locate workloads.
+
+SYSTEM DESIGN & SCALE
+
+51. Q: Service discovery at scale?
+    A: Use Istio/Envoy with service mesh + DNS + sidecar proxies.
+
+52. Q: eBPF + Cilium advantages?
+    A: Kernel-level networking, better performance, fine-grained security vs iptables.
+
+53. Q: Multi-cloud strategy?
+    A: Use centralized IAM, secret sync (Vault), global routing (DNS/Anycast).
+
+54. Q: systemd failures in EKS?
+    A: Monitor via CloudWatch/DaemonSets; auto-heal with node replacement.
+
+55. Q: Custom AMI validation?
+    A: Pre-prod testing, CIS hardening, runtime validation, golden AMI pipeline.
+
+56. Q: Advanced probes?
+    A: Custom scripts/business checks instead of just HTTP 200.
+
+57. Q: DNS outage handling?
+    A: Use caching, fallback endpoints, service mesh retries.
+
+58. Q: Terraform backend failure?
+    A: Lock state, restore from backup, validate drift before reapply.
+
+RCA & INCIDENTS
+
+59. Q: mTLS break RCA?
+    A: Check certs, Envoy configs, control plane sync, logs.
+
+60. Q: HPA not scaling?
+    A: Verify metrics server, resource requests, Prometheus adapter.
+
+61. Q: Latency spike after sidecar?
+    A: Check network hops, resource limits, caching misconfig.
+
+62. Q: 504 errors triage?
+    A: Trace request path (LB → mesh → app), check timeouts.
+
+63. Q: NAT cost surge?
+    A: High outbound traffic, misconfigured routing, excessive egress.
+
+LEADERSHIP & STRATEGY
+
+64. Q: Build SLO culture?
+    A: Define SLIs/SLOs, enforce error budgets, integrate into CI/CD.
+
+65. Q: Multi-region failover?
+    A: Active-active setup, global LB, data replication.
+
+66. Q: Chaos testing?
+    A: Inject failures (network/pods) and validate resilience.
+
+67. Q: Prove infra ROI?
+    A: Show cost savings, uptime improvements, deployment speed.
+
+CI/CD & INFRA DESIGN
+
+68. Q: CI/CD design?
+    A: Fast builds + automated tests + staged deployments + rollback.
+
+69. Q: Deployment halt signals?
+    A: Error rate, latency, SLO breach.
+
+70. Q: Artifact versioning?
+    A: Immutable tags, promote across environments.
+
+71. Q: Terraform modules design?
+    A: Reusable, versioned, least privilege.
+
+72. Q: Backward-incompatible changes?
+    A: Blue-green infra, feature flags.
+
+73. Q: Terraform vs CloudFormation?
+    A: Terraform → multi-cloud; CF → AWS-native deep integration.
+
+CLOUD & OBSERVABILITY
+
+74. Q: Minimize blast radius?
+    A: Isolate services, multi-AZ, microservices segmentation.
+
+75. Q: Partial cloud failure?
+    A: Failover, retries, degrade gracefully.
+
+76. Q: Cost control?
+    A: Budget alerts, rightsizing, autoscaling.
+
+77. Q: Key metrics?
+    A: Latency, error rate, saturation (RED/USE).
+
+78. Q: Correlate logs/metrics/traces?
+    A: Use observability stack (Prometheus, Grafana, Jaeger).
+
+79. Q: Monitoring failure?
+    A: Use redundancy, synthetic checks.
+
+SECURITY & DR
+
+80. Q: Secure access?
+    A: IAM + RBAC + least privilege.
+
+81. Q: Audit changes?
+    A: Enable logging (CloudTrail, Git history).
+
+82. Q: Compliance validation?
+    A: Automated scans + policy-as-code.
+
+83. Q: Incident handling?
+    A: Triage, mitigate, RCA, document.
+
+84. Q: DR testing?
+    A: Simulate failover in staging.
+
+85. Q: Post-incident improvements?
+    A: Add alerts, automation, fix root cause.
+
+BASIC DEVOPS Q&A
+
+86. Q: Intro & daily tasks?
+    A: CI/CD, infra automation, monitoring, deployments.
+
+87. Q: AWS services used?
+    A: EC2, S3, RDS, EKS, IAM, VPC.
+
+88. Q: Public vs Private subnet?
+    A: Public → internet access; Private → no direct access.
+
+89. Q: Namespace in K8s?
+    A: Logical isolation of resources.
+
+90. Q: Terraform state file?
+    A: Tracks infra state for reconciliation.
+
+91. Q: Terraform commands?
+    A: init, plan, apply, destroy.
+
+92. Q: State management?
+    A: Remote backend (S3 + DynamoDB locking).
+
+93. Q: Multi-user Terraform?
+    A: State locking prevents conflicts.
+
+94. Q: Drift detection?
+    A: terraform plan shows differences.
+
+95. Q: Import existing infra?
+    A: terraform import.
+
+96. Q: App stack?
+    A: Java + Spring Boot + Docker + K8s.
+
+97. Q: CI/CD tool?
+    A: Jenkins/Argo CD.
+
+98. Q: Java app deployment?
+    A: Build → Dockerize → push → deploy via K8s/EC2.
+
+99. Q: Connect EC2?
+    A: SSH or SSM.
+
+100. Q: Terraform with ECR?
+     A: Use aws_ecr_repository + auth via IAM.
+
+101. Q: RBAC in K8s?
+     A: Access control via roles/bindings.
+
+102. Q: Pod logs monitoring?
+     A: kubectl logs / centralized logging.
+
+103. Q: Volume mounts?
+     A: Used for persistent or shared storage.
+
+104. Q: PVC?
+     A: Request for persistent storage.
+
+105. Q: ADD vs CMD vs ENTRYPOINT?
+     A: ADD copies files; CMD default command; ENTRYPOINT fixed execution.
+
+106. Q: Kill process in Ubuntu?
+     A: kill -9 <PID>
+KUBERNETES – TROUBLESHOOTING
+
+1. Q: How do you debug CrashLoopBackOff?
+   A: Check logs (kubectl logs), describe events, validate configs/resources. In prod, often caused by bad env vars, secrets, or OOM.
+
+KUBERNETES – CORE CONCEPTS
+
+2. Q: DaemonSet vs Deployment?
+   A: DaemonSet runs 1 pod per node (logging/monitoring agents); Deployment manages scalable stateless apps with rolling updates.
+
+3. Q: Persistent storage in Kubernetes?
+   A: Use PV + PVC + StorageClass for dynamic provisioning; production uses cloud storage like EBS/FSx with backups.
+
+4. Q: Optimize resource utilization?
+   A: Use requests/limits, HPA/VPA, cluster autoscaler. Right-sizing reduces cost and avoids throttling.
+
+5. Q: Blue-Green deployment in K8s?
+   A: Two identical environments; switch service selector to new version after validation to ensure zero downtime.
+
+6. Q: Autoscaling with custom metrics?
+   A: Use Prometheus Adapter + HPA with custom metrics (e.g., queue length) for business-driven scaling.
+
+JENKINS – MULTI-ENV PIPELINES
+
+7. Q: Design pipelines for Dev/QA/Prod?
+   A: Use single pipeline with environment stages + branch-based conditions; enforce approvals for higher envs.
+
+8. Q: Dev branch trigger?
+   A: Webhook triggers pipeline on commit; pipeline filters branch == dev.
+
+9. Q: QA branch trigger?
+   A: Same pipeline triggered via webhook; branch condition routes to QA stage.
+
+10. Q: Trigger QA without Dev?
+    A: Yes, manual trigger or separate branch-based execution.
+
+11. Q: Control pipeline per environment?
+    A: Use parameters, branch filters, and role-based approvals.
+
+12. Q: Reuse pipeline logic?
+    A: Use Jenkins Shared Libraries for common functions across environments.
+
+PIPELINE DESIGN & SCALING
+
+13. Q: Avoid pipelines per microservice?
+    A: Use generic pipeline + shared library; config-driven approach for scalability.
+
+14. Q: Jenkins Shared Libraries?
+    A: Central Groovy code repo reused across pipelines for standardization.
+
+15. Q: Parameterize pipelines?
+    A: Use input parameters (env, version) to control execution dynamically.
+
+16. Q: Manage env-specific configs?
+    A: Use config files, Vault, or parameter store per environment.
+
+17. Q: Generic pipeline design?
+    A: Build once, deploy anywhere; decouple code, config, and infra.
+
+FAILURE HANDLING & ROLLBACK
+
+18. Q: Handle pipeline failure?
+    A: Fail fast, notify, and stop downstream stages; log RCA.
+
+19. Q: Rollback deployment?
+    A: Use previous artifact version or kubectl rollout undo.
+
+20. Q: Approval before Prod?
+    A: Manual input step with RBAC-based access.
+
+21. Q: Retry failed stage?
+    A: Use retry block in pipeline for transient failures.
+
+22. Q: Notify teams?
+    A: Integrate Slack/Email/Webhooks for real-time alerts.
+
+JENKINS + AWS / K8s
+
+23. Q: Jenkins with AWS?
+    A: Uses CLI/SDK to provision infra, deploy apps, push images.
+
+24. Q: Jenkins AWS authentication?
+    A: IAM roles (preferred) or access keys via credentials store.
+
+25. Q: Deploy to Kubernetes?
+    A: Use kubectl/Helm from pipeline with kubeconfig or service account.
+
+26. Q: Jenkins with EKS?
+    A: Use IAM roles + aws eks update-kubeconfig for secure access.
+
+27. Q: Push images to ECR?
+    A: Authenticate via AWS CLI, then docker build & push.
+
+28. Q: Trigger ArgoCD?
+    A: Update Git repo or call ArgoCD API for sync.
+
+JENKINS BACKUP & RESTORE
+
+29. Q: Jenkins backup strategy?
+    A: Backup /var/lib/jenkins regularly using S3/EBS snapshots.
+
+30. Q: What to backup?
+    A: Jobs, configs, plugins, credentials from Jenkins home directory.
+
+31. Q: /var/lib/jenkins contents?
+    A: Job configs, workspace, plugins, credentials, logs.
+
+32. Q: Restore Jenkins?
+    A: Replace Jenkins home with backup and restart service.
+
+33. Q: Migrate Jenkins EC2?
+    A: Copy Jenkins home + same version/plugins on new instance.
+
+JENKINS SECURITY (L2)
+
+34. Q: Secure Jenkins?
+    A: Use HTTPS, IAM/RBAC, disable anonymous access, secure plugins.
+
+35. Q: Restrict user access?
+    A: Role-based authorization with least privilege.
+
+36. Q: RBAC in Jenkins?
+    A: Assign roles to users/groups controlling job access.
+
+37. Q: Prevent secrets leakage?
+    A: Use credentials binding, mask secrets, avoid echo.
+
+38. Q: Risks of exposing secrets?
+    A: Leads to credential compromise and unauthorized access.
+
+PERFORMANCE & TROUBLESHOOTING
+
+39. Q: Jenkins slow?
+    A: Check CPU/memory, GC, plugin load, optimize agents.
+
+40. Q: Job stuck in queue?
+    A: Check executor availability, label mismatch, node status.
+
+41. Q: Agent offline?
+    A: Check connectivity, credentials, agent service logs.
+
+42. Q: Checkout failure?
+    A: Validate Git credentials, network, repo access.
+
+43. Q: Cleanup old builds?
+    A: Use build discard policy or cron-based cleanup jobs.
+
+ADVANCED JENKINS CONCEPTS
+
+44. Q: Jenkins Shared Library?
+    A: Reusable pipeline code for standard CI/CD patterns.
+
+45. Q: Blue-Green in Jenkins?
+    A: Deploy two versions and switch traffic via LB or K8s service.
+
+46. Q: Canary deployment?
+    A: Gradual traffic shift to new version using stages or Argo Rollouts.
+
+47. Q: SonarQube integration?
+    A: Add scan stage; enforce quality gates before deployment.
+
+48. Q: Nexus/Artifactory integration?
+    A: Store versioned artifacts; pipeline pulls/pushes for traceability.
+CI/CD & AUTOMATION
+
+1. Q: Current infra architecture & ownership?
+   A: Multi-AZ cloud infra with EKS, CI/CD, IaC; own pipeline, deployments, monitoring, and cost/security optimization.
+
+2. Q: EKS vs self-managed K8s?
+   A: EKS → managed control plane, less ops; self-managed → full control but high maintenance.
+
+3. Q: Rollback for monoliths?
+   A: Versioned artifacts + blue-green or redeploy previous stable build.
+
+4. Q: OOMKilled debugging?
+   A: Check limits, heap usage, logs; tune memory or optimize app.
+
+5. Q: NAT Gateway vs VPC Peering?
+   A: NAT → internet access; Peering → private VPC-to-VPC communication.
+
+6. Q: exec vs logs vs describe?
+   A: exec → shell access; logs → app output; describe → events/debug info.
+
+7. Q: ConfigMap vs Secret?
+   A: ConfigMap → config; Secret → sensitive data.
+
+8. Q: Wrong readinessProbe impact?
+   A: Traffic sent to unhealthy pods → downtime or errors.
+
+9. Q: One-liner open ports?
+   A: netstat -tulnp or ss -tulnp
+
+10. Q: NetworkPolicy debugging?
+    A: Check labels/selectors, policies, CNI support, test connectivity.
+
+ROUND 2 – DEEP DIVE
+
+11. Q: Image pull failure?
+    A: Check image name, registry auth, pull secrets, network.
+
+12. Q: Stuck pods & taints?
+    A: Check node taints, tolerations, scheduler events.
+
+13. Q: Multi-account Terraform?
+    A: Separate backends per account with S3 + DynamoDB locking.
+
+14. Q: HPA cost explosion RCA?
+    A: Misconfigured metrics/thresholds causing over-scaling.
+
+15. Q: Dockerfile (Go best practice)?
+    A: Multi-stage build, static binary, minimal base image (scratch/alpine).
+
+16. Q: Blue-Green vs Canary?
+    A: Blue-Green → instant switch; Canary → gradual traffic shift.
+
+17. Q: Cross-region S3 replication?
+    A: Enable versioning + replication rules via Terraform.
+
+18. Q: Service down, no alerts?
+    A: Check metrics, dependencies, network, synthetic checks.
+
+19. Q: Vault + GitHub Actions?
+    A: Use OIDC auth + short-lived tokens, no static secrets.
+
+20. Q: Pod-to-pod TLS?
+    A: Use service mesh (Istio/mTLS) or cert-manager.
+
+21. Q: Postmortem format?
+    A: Timeline, root cause, impact, actions, prevention.
+
+22. Q: Terraform drift command?
+    A: terraform plan
+
+23. Q: Remote team state handling?
+    A: Remote backend + locking + versioning.
+
+24. Q: Simulate DNS failure?
+    A: Scale down CoreDNS or block DNS via NetworkPolicy.
+
+ROUND 3 – BEHAVIORAL
+
+25. Q: Prod issue handling?
+    A: Stabilize, rollback, RCA, implement preventive controls.
+
+26. Q: Learning under pressure?
+    A: Rapid POC, docs, community, apply immediately.
+
+27. Q: Regret decision?
+    A: Over-engineering early; now prefer incremental design.
+
+28. Q: Convince leadership?
+    A: Show ROI via cost, reliability, deployment speed.
+
+29. Q: On-call burnout?
+    A: Rotate shifts, automate alerts, reduce noise.
+
+GRAFANA & MONITORING
+
+30. Q: Grafana dashboards?
+    A: Infra (CPU/mem), app (latency/errors), business metrics.
+
+31. Q: Configure dashboards?
+    A: Connect data source (Prometheus), create panels/queries.
+
+32. Q: Node Exporter?
+    A: Exposes OS-level metrics for Prometheus.
+
+33. Q: Email alerts from Grafana?
+    A: Configure alert rules + notification channels.
+
+34. Q: Alert conditions?
+    A: Thresholds on latency, error rate, CPU, memory.
+
+ANSIBLE & AUTOMATION
+
+35. Q: Ansible usage?
+    A: Config management, patching, app deployment.
+
+36. Q: Secrets in Ansible?
+    A: Use Ansible Vault or external secret stores.
+
+37. Q: Secure playbooks?
+    A: Encrypt secrets + restrict access + avoid logs exposure.
+
+LINUX & PROCESS MANAGEMENT
+
+38. Q: PM2 usage?
+    A: Node.js process manager for scaling/restarts.
+
+39. Q: Kill process via PM2?
+    A: pm2 delete <app>
+
+40. Q: Check running nodes?
+    A: pm2 list
+
+41. Q: Kill process Linux?
+    A: kill -9 PID
+
+42. Q: Get PID?
+    A: ps -ef | grep <process>
+
+43. Q: Check system performance?
+    A: top, htop, vmstat
+
+44. Q: chmod 555?
+    A: Read & execute for all, no write.
+
+45. Q: Full permissions?
+    A: chmod 777
+
+46. Q: Soft vs hard link?
+    A: Soft → pointer; Hard → same inode.
+
+NETWORKING & OS
+
+47. Q: Open firewall?
+    A: firewall-cmd / iptables rules.
+
+48. Q: Check open ports?
+    A: netstat or ss.
+
+49. Q: netstat -ntlp?
+    A: Shows listening TCP ports with PID.
+
+50. Q: Cron job?
+    A: Scheduled task automation.
+
+51. Q: Clear cache?
+    A: sync; echo 3 > /proc/sys/vm/drop_caches
+
+GIT & SSL
+
+52. Q: SSL deployment?
+    A: Use ACM/Certbot + configure LB/Ingress.
+
+53. Q: Resolve merge conflict?
+    A: Edit conflicts, git add, commit.
+
+54. Q: Switch branch?
+    A: git checkout <branch>
+
+KUBERNETES SCENARIOS
+
+55. Q: CrashLoopBackOff no logs?
+    A: Check events, probes, env vars, entrypoint.
+
+56. Q: StatefulSet pod not recreating?
+    A: Check PVC binding, volume attach, node/AZ issues.
+
+57. Q: Autoscaler not scaling?
+    A: Check metrics, limits, node group config.
+
+58. Q: NetworkPolicy blocking?
+    A: Verify ingress/egress rules, labels, namespaces.
+
+59. Q: External DB via VPN?
+    A: Use private networking + secure endpoints + HA VPN.
+
+60. Q: Multi-tenant EKS?
+    A: Use namespaces, RBAC, quotas, network policies.
+
+61. Q: kubelet restarting?
+    A: Check node logs, disk/memory, systemd issues.
+
+62. Q: Pod eviction?
+    A: Tune requests/limits, QoS class (Guaranteed preferred).
+
+63. Q: TCP+UDP same port?
+    A: Use separate service definitions per protocol.
+
+64. Q: Zero downtime upgrade?
+    A: Use canary, readiness probes, traffic shifting.
+
+65. Q: Sidecar high usage?
+    A: Tune resources, disable unused features.
+
+66. Q: Operator design?
+    A: CRD + controller loop to enforce desired state.
+
+67. Q: High disk IO from logs?
+    A: Use log rotation, sidecar logging, external storage.
+
+68. Q: etcd performance issues?
+    A: Disk latency, large DB, compaction needed.
+
+69. Q: Enforce trusted registry?
+    A: Use admission controllers (OPA/Gatekeeper).
+
+70. Q: Multi-region K8s challenges?
+    A: Latency, consistency, control plane HA.
+
+71. Q: Ingress under load?
+    A: Scale ingress pods, tune LB, optimize configs.
+
+AWS REAL-WORLD EDGE CASES
+
+72. Q: EC2 reachable issue?
+    A: Check NACL blocking traffic.
+
+73. Q: AMI sharing issue?
+    A: Missing EBS snapshot sharing.
+
+74. Q: RDS behavior difference?
+    A: Parameter group not restored.
+
+75. Q: IRSA not working?
+    A: Service account annotation missing.
+
+76. Q: ALB unhealthy targets?
+    A: Health check path/status mismatch.
+
+77. Q: ECS old image?
+    A: Cached image due to same tag.
+
+78. Q: EKS volume Pending?
+    A: AZ mismatch with EBS volume.
+KUBERNETES – SCENARIO BASED (PRODUCTION)
+
+1. Q: EKS node disk utilization reached ~85%, SSH is restricted, and even after increasing EBS volume the OS didn’t reflect changes — how do you fix it without node access?
+   A: Deploy a privileged pod with hostPath mount, chroot into host, run growpart + filesystem expansion (xfs_growfs/resize2fs). Used in production for zero-access node recovery.
+
+2. Q: Why doesn’t EBS volume auto-expand at OS level after resizing?
+   A: AWS expands block device only; partition + filesystem must be manually extended inside OS.
+
+3. Q: Why use a privileged pod instead of SSH?
+   A: Secure environments block SSH; privileged pod provides controlled, auditable access via Kubernetes.
+
+4. Q: What risks exist with privileged pods?
+   A: Full host access can compromise node; restrict via RBAC and use only for emergency ops.
+
+5. Q: How do you ensure this doesn’t happen again?
+   A: Use monitoring alerts (disk usage), automate node bootstrap scripts to auto-expand volumes.
+
+6. Q: What tools are required for disk expansion in Linux?
+   A: growpart for partition resizing; xfs_growfs or resize2fs for filesystem expansion.
+
+7. Q: How do you identify correct device and partition?
+   A: Use lsblk/df -h to map root filesystem to underlying device (e.g., /dev/xvda1).
+
+8. Q: What is the difference between partition resize and filesystem resize?
+   A: Partition resize increases disk allocation; filesystem resize makes OS usable space available.
+
+9. Q: How would you automate this fix in production clusters?
+   A: Use user-data scripts, DaemonSets, or AMI baking to auto-expand volumes on boot.
+
+10. Q: How do you validate successful expansion?
+    A: Run df -h and ensure new disk size reflects expected capacity.
+GIT – ADVANCED SCENARIOS (PRODUCTION)
+
+1. Q: Sensitive credentials committed — remove from history?
+   A: Use git filter-repo (or BFG) to purge secrets, force-push, rotate credentials immediately.
+
+2. Q: Rebase conflict — how to resolve?
+   A: Fix conflicts, git add, then git rebase --continue; ensures clean linear history.
+
+3. Q: Broken force-push to main — recovery?
+   A: Use git reflog to find previous HEAD, then reset and force-push to restore.
+
+4. Q: Apply fix from one branch to another?
+   A: git cherry-pick <commit>; applies specific commit without full merge.
+
+5. Q: Revert a merged buggy branch?
+   A: git revert -m 1 <merge_commit>; safely undoes merge without rewriting history.
+
+6. Q: Recover deleted local branch?
+   A: Use git reflog to find commit, then git checkout -b <branch> <commit>.
+
+7. Q: Extract subdirectory into new repo?
+   A: Use git filter-repo --subdirectory-filter <dir>; isolates history cleanly.
+
+8. Q: Handle & prevent merge conflicts?
+   A: Pull/rebase frequently, resolve locally, enforce branch protection rules.
+
+9. Q: Repo size too large?
+   A: Remove large files (BFG), enable Git LFS, run git gc for cleanup.
+
+10. Q: Recover after git reset --hard?
+    A: Use git reflog to locate commit, then reset back to it.
+
+11. Q: Split one commit into two?
+    A: git reset HEAD~1, stage changes selectively, commit in parts.
+
+12. Q: Changes on main instead of branch?
+    A: git checkout -b new-branch, then reset main to previous state.
+
+13. Q: Create & apply patch?
+    A: git format-patch + git apply; useful for controlled code transfer.
+
+14. Q: Detached HEAD after rebase?
+    A: Create branch (git checkout -b <name>) to retain changes.
+
+15. Q: Avoid losing work during pull?
+    A: git stash, pull/rebase, then git stash pop.
+
+16. Q: Compare non-consecutive commits?
+    A: git diff <commit1> <commit2>.
+
+17. Q: Partial history after clone?
+    A: Shallow clone (--depth); fix using git fetch --unshallow.
+
+18. Q: Prevent direct push to main?
+    A: Enable branch protection rules in GitHub/GitLab.
+
+19. Q: Git aliases for productivity?
+    A: Example: git config --global alias.co checkout; alias.st status.
+
+20. Q: Create branch from older commit?
+    A: git checkout -b <branch> <commit>; used for hotfix or backporting.
+KUBERNETES – FAILURE SCENARIOS (PRODUCTION)
+
+1. Q: Master ↔ Worker firewall broken?
+   A: Existing pods run, but no scheduling/updates; API server loses node control → cluster becomes partially unavailable.
+
+2. Q: Corrupted etcd backup during restore?
+   A: Control plane fails to start; must restore from valid backup or rebuild cluster.
+
+3. Q: kubelet crash but runtime alive?
+   A: Pods run temporarily; node becomes NotReady → pods evicted after timeout.
+
+4. Q: CoreDNS failure impact?
+   A: Service discovery fails; new connections break → cascading failures.
+
+5. Q: Control plane ↔ node partition?
+   A: Workloads run but no scaling/deployments; nodes marked unreachable.
+
+6. Q: CNI dropping packets?
+   A: Intermittent network failures; unstable services and timeouts.
+
+7. Q: High storage latency (StatefulSet)?
+   A: Slow startup, DB timeouts, pods stuck in ContainerCreating.
+
+8. Q: Low resource limits?
+   A: Frequent OOMKills; unstable apps and ineffective scaling.
+
+9. Q: Cloud API unreachable?
+   A: LB/PV provisioning fails; node lifecycle incomplete.
+
+10. Q: Expired cluster certificates?
+    A: API/auth failures; cluster becomes inaccessible until certs renewed.
+
+AWS – REAL-WORLD SCENARIOS
+
+11. Q: ALB shows LB IP instead of client IP?
+    A: Enable X-Forwarded-For header; configure app/web server (NGINX/Apache) to log real client IP.
+
+12. Q: Automate EC2 start/stop schedule?
+    A: Use EventBridge (cron) + Lambda or AWS Instance Scheduler for cost optimization.
+
+13. Q: EC2 SSH timeout troubleshooting?
+    A: Check SG (port 22), NACL, route table, public IP, instance state.
+
+14. Q: Auto-replace failed EC2 instances?
+    A: Use Auto Scaling Group with health checks + desired capacity.
+
+15. Q: Backup EC2 database safely?
+    A: Use EBS snapshots, AWS Backup, or DB-native backups with minimal I/O impact.
+
+16. Q: Secure EC2 access without SSH?
+    A: Use AWS SSM Session Manager with IAM roles (no open ports).
+
+17. Q: Zero-downtime deployment on EC2?
+    A: Use ALB + rolling/blue-green deployment via ASG.
+
+18. Q: ASG instance unhealthy frequently?
+    A: Check health checks, app readiness, resource limits, logs.
+
+KUBERNETES + AWS EDGE CASE INSIGHTS
+
+19. Q: Why is X-Forwarded-For critical in production?
+    A: Required for auditing, rate limiting, and security tracking of real users.
+
+20. Q: Why prefer SSM over SSH?
+    A: Eliminates open ports, improves security, enables audit logging.
+
+21. Q: Why etcd backup validation is critical?
+    A: Corrupted backup = full control plane loss; always test restores.
+
+22. Q: Why monitor CNI health?
+    A: Network issues are hardest to debug and impact all services.
+
+23. Q: Why enforce proper resource limits?
+    A: Prevents noisy neighbor issues and ensures cluster stability.
+
+TERRAFORM – ADVANCED SCENARIOS (PRODUCTION)
+
+1. Q: Prevent accidental resource deletion?
+   A: Use lifecycle prevent_destroy + RBAC + mandatory terraform plan review in CI.
+
+2. Q: Handle provider API rate limiting?
+   A: Use batching, reduce parallelism, retry/backoff; split large applies.
+
+3. Q: Recover from corrupted state file?
+   A: Restore from remote backup/versioning or re-import resources.
+
+4. Q: Migrate backend safely?
+   A: terraform init -migrate-state with backup during maintenance window.
+
+5. Q: Handle state drift in prod?
+   A: Run terraform plan in CI; detect drift and reconcile via import/apply.
+
+6. Q: Manage secrets securely?
+   A: Use Vault/Secrets Manager; avoid plaintext in state; enable encryption.
+
+7. Q: Zero-downtime infra updates?
+   A: Use create_before_destroy + blue-green infra switching.
+
+8. Q: Enterprise module design?
+   A: Versioned reusable modules with clear inputs/outputs.
+
+9. Q: Large-scale refactoring?
+   A: Use terraform state mv + phased PRs to avoid downtime.
+
+10. Q: Terraform testing strategy?
+    A: Use tflint/checkov + Terratest + ephemeral env validation.
+
+
+11. Q: Master ↔ Worker firewall broken?
+    A: Pods run but no scheduling/updates; control plane loses node communication.
+
+12. Q: Corrupted etcd backup restore?
+    A: Control plane fails; must use valid backup or rebuild cluster.
+
+13. Q: kubelet crash, runtime alive?
+    A: Node NotReady → pods evicted after timeout.
+
+14. Q: CoreDNS failure?
+    A: Service discovery fails → cascading app failures.
+
+15. Q: Control plane ↔ node partition?
+    A: Workloads run but no scaling or updates.
+
+16. Q: CNI packet drops?
+    A: Intermittent network failures → unstable services.
+
+17. Q: High storage latency (StatefulSet)?
+    A: Slow pods, DB timeouts, stuck containers.
+
+18. Q: Low resource limits?
+    A: OOMKills → unstable apps.
+
+19. Q: Cloud API unreachable?
+    A: LB/PV provisioning fails.
+
+20. Q: Cluster CA expired?
+    A: TLS failures → full cluster outage.
+
+LINUX & AUTOMATION (SRE USE CASES)
+
+21. Q: Automate log cleanup?
+    A: Use cron + find to delete old logs; prevents disk exhaustion.
+
+22. Q: Check SSL expiry?
+    A: Use openssl to validate cert expiry proactively.
+
+23. Q: Automate package updates?
+    A: Use cron/Ansible for patching and security compliance.
+
+24. Q: CPU alert automation?
+    A: Monitor via scripts or Prometheus; trigger alerts on threshold.
+
+25. Q: Restart failed K8s pods?
+    A: Script detects CrashLoopBackOff and deletes pods for recovery.
+
+PRODUCTION BEST PRACTICES
+
+26. Q: Why enable state versioning?
+    A: Protects against corruption and accidental deletion.
+
+27. Q: Why automate disk/log cleanup?
+    A: Prevents node failures due to disk pressure.
+
+28. Q: Why monitor DNS & CNI health?
+    A: Network issues impact entire cluster availability.
+
+29. Q: Why enforce CI/CD plan review?
+    A: Prevents accidental infra destruction.
+
+30. Q: Why use external secret managers?
+    A: Avoids credential leakage and improves compliance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HELM – DESIGN & ARCHITECTURE
+
+1. Q: Reusable Helm chart for microservices?
+   A: Use common chart + values-driven configs, templates for deployments/services, and shared helpers for consistency.
+
+2. Q: Subcharts vs Parent-child charts?
+   A: Subcharts → independent dependencies; Parent-child → tightly coupled configs managed centrally.
+
+3. Q: Helm dependencies & override values?
+   A: Defined in Chart.yaml; override via values.yaml using dependencyName.key structure.
+
+4. Q: helm dependency update vs build?
+   A: update → fetch latest; build → rebuild from Chart.lock for reproducibility.
+
+5. Q: Versioning strategy in CI/CD?
+   A: Semantic versioning + appVersion mapping; enforce compatibility via pipelines.
+
+HELM – TEMPLATING
+
+6. Q: Helm templating (include, required, lookup)?
+   A: Go templates; include → reuse blocks, required → enforce values, lookup → fetch live cluster data.
+
+7. Q: Manage secrets securely?
+   A: Use external tools (Vault, SealedSecrets); never store plain secrets in Git.
+
+8. Q: lookup function use case?
+   A: Fetch existing resources (e.g., service IP) to avoid recreation.
+
+9. Q: Common templating pitfalls?
+   A: Missing values, wrong indentation, nil errors → deployment failures.
+
+10. Q: Dynamic labels/annotations?
+    A: Yes, generate via templates using values and helper functions.
+
+HELM – TROUBLESHOOTING
+
+11. Q: Rollout failed — troubleshoot?
+    A: helm status, helm get manifest, kubectl describe/logs.
+
+12. Q: Rollback release?
+    A: helm rollback <release> <revision>.
+
+13. Q: Values not applied?
+    A: Cache issue, wrong values file, or missing --values flag.
+
+HELM – DEPLOYMENT STRATEGIES
+
+14. Q: Blue-Green with Helm?
+    A: Use separate releases or values; switch service selector for traffic routing.
+
+15. Q: Helm in GitOps (ArgoCD/Flux)?
+    A: Store charts in Git; Argo syncs desired state automatically.
+
+16. Q: Restrict namespaces?
+    A: Use RBAC + namespace-scoped service accounts.
+
+17. Q: Namespace control approach?
+    A: Bind Helm SA to limited namespaces via Role/RoleBinding.
+
+18. Q: --set vs external secrets?
+    A: --set insecure for secrets; external stores preferred for production.
+
+19. Q: Audit Helm privileges?
+    A: Use RBAC + audit logs + restricted service accounts.
+
+HELM – HOOKS & LIFECYCLE
+
+20. Q: Helm hooks?
+    A: Pre/post install/upgrade hooks for tasks like DB migrations.
+
+21. Q: Prevent hook re-run issues?
+    A: Use hook-delete-policy and idempotent scripts.
+
+HELM – CI/CD & GITOPS
+
+22. Q: Helm in GitOps pipeline?
+    A: Push chart updates to Git; ArgoCD auto-syncs to cluster.
+
+23. Q: Canary deployment with Helm?
+    A: Use weighted services or integrate with Argo Rollouts.
+
+24. Q: Testing Helm charts?
+    A: helm lint, helm template, and CI validation with test clusters.
+
+25. Q: Multi-cluster deployments?
+    A: Use different values files per cluster/environment.
+
+26. Q: Env-specific overrides?
+    A: Maintain separate values-dev.yaml, values-prod.yaml.
+
+HELM – ADVANCED
+
+27. Q: CRD lifecycle management?
+    A: Install CRDs separately; Helm doesn’t upgrade/delete automatically.
+
+28. Q: helm install --atomic vs hooks?
+    A: --atomic auto rollback on failure; hooks require custom cleanup.
+
+29. Q: Zero downtime upgrades?
+    A: Rolling updates + readiness probes + maxUnavailable tuning.
+
+30. Q: Private Helm repo strategy?
+    A: Use Nexus/Artifactory/S3-backed repo with versioned charts.
+DEVOPS – ADVANCED SCENARIOS (PROJECT + ARCHITECTURE)
+
+1. Q: What triggered your interest in DevOps/Cloud?
+   A: Real-world infra scaling challenges and need for automation, reliability, and faster delivery cycles. :contentReference[oaicite:0]{index=0}
+
+2. Q: Cloud gaming platform architecture?
+   A: Low-latency multi-region setup with CDN, autoscaling compute, GPU nodes, and streaming via WebSockets. :contentReference[oaicite:1]{index=1}
+
+3. Q: IISc role & deployment?
+   A: Designed infra, automated deployments, ensured HA and monitoring for research workloads. :contentReference[oaicite:2]{index=2}
+
+4. Q: Flask → Django migration?
+   A: Needed scalability, ORM, security features, and structured architecture for production. :contentReference[oaicite:3]{index=3}
+
+TERRAFORM – DRIFT & STATE
+
+5. Q: What is infrastructure drift?
+   A: Difference between actual infra and Terraform state → leads to inconsistencies and security risks. :contentReference[oaicite:4]{index=4}
+
+6. Q: Drift categorization?
+   A: Security-critical (IAM/network changes) vs non-critical (tags/metadata). :contentReference[oaicite:5]{index=5}
+
+7. Q: terraform import vs refresh vs init -reconfigure?
+   A: import → bring existing resource; refresh → sync state; init -reconfigure → backend re-init. :contentReference[oaicite:6]{index=6}
+
+8. Q: Emergency manual fix handling?
+   A: Use import/refresh to sync state before next apply. :contentReference[oaicite:7]{index=7}
+
+9. Q: What updates state vs config?
+   A: State → terraform operations; Config → manual code updates. :contentReference[oaicite:8]{index=8}
+
+CI/CD & GITOPS
+
+10. Q: CI vs CD?
+    A: CI → build/test; CD → deploy automation. :contentReference[oaicite:9]{index=9}
+
+11. Q: What happens in CI on code push?
+    A: Build, test, scan, artifact creation. :contentReference[oaicite:10]{index=10}
+
+12. Q: Is CD always auto-prod deploy?
+    A: No, often gated with approvals. :contentReference[oaicite:11]{index=11}
+
+13. Q: Why SonarQube?
+    A: Enforces code quality and security gates. :contentReference[oaicite:12]{index=12}
+
+14. Q: ArgoCD purpose?
+    A: GitOps tool syncing Git state to cluster. :contentReference[oaicite:13]{index=13}
+
+15. Q: Manual prod changes with ArgoCD?
+    A: Detected as drift and auto-reverted. :contentReference[oaicite:14]{index=14}
+
+CI TESTING & DEPLOYMENT CONTROL
+
+16. Q: Test without deployment?
+    A: Run unit/integration tests in CI pipeline. :contentReference[oaicite:15]{index=15}
+
+17. Q: Enforce tests if devs bypass?
+    A: Pipeline-controlled execution, not dependent on package.json. :contentReference[oaicite:16]{index=16}
+
+18. Q: Whitelisting directories?
+    A: Deploy only specific folders via pipeline config. :contentReference[oaicite:17]{index=17}
+
+19. Q: Why not .gitignore?
+    A: It controls repo, not deployment artifacts. :contentReference[oaicite:18]{index=18}
+
+20. Q: How pipeline controls deployment?
+    A: Explicit artifact packaging and path filtering. :contentReference[oaicite:19]{index=19}
+
+NGINX & SSL
+
+21. Q: Enable SSL in NGINX?
+    A: Configure cert + key + HTTPS server block (443). :contentReference[oaicite:20]{index=20}
+
+22. Q: Let’s Encrypt role?
+    A: Provides free SSL certs with automated renewal. :contentReference[oaicite:21]{index=21}
+
+23. Q: Ports for HTTPS?
+    A: 443 (HTTPS), 80 (redirect). :contentReference[oaicite:22]{index=22}
+
+24. Q: Validate NGINX config?
+    A: nginx -t :contentReference[oaicite:23]{index=23}
+
+25. Q: reload vs restart?
+    A: reload → zero downtime; restart → service interruption. :contentReference[oaicite:24]{index=24}
+
+RUNNERS & NETWORKING
+
+26. Q: GitHub hosted vs self-hosted runners?
+    A: Self-hosted → private access, custom networking. :contentReference[oaicite:25]{index=25}
+
+27. Q: Why fixed IP?
+    A: Required for firewall whitelisting. :contentReference[oaicite:26]{index=26}
+
+28. Q: Why not SSH 0.0.0.0/0?
+    A: Security risk, exposed to attacks. :contentReference[oaicite:27]{index=27}
+
+29. Q: Multi-subscription deploy?
+    A: Use private networking + peering + service principals. :contentReference[oaicite:28]{index=28}
+
+30. Q: Why IAM/SP alone insufficient?
+    A: Needs network-level access control also. :contentReference[oaicite:29]{index=29}
+
+SECURITY & RISKS
+
+31. Q: Crypto miners in VMs?
+    A: Via vulnerable apps, exposed ports, or compromised dependencies. :contentReference[oaicite:30]{index=30}
+
+32. Q: CI pipelines as risk?
+    A: Secrets exposure, malicious code execution. :contentReference[oaicite:31]{index=31}
+
+33. Q: Dependency vulnerabilities?
+    A: Can introduce exploitable code into infra. :contentReference[oaicite:32]{index=32}
+
+34. Q: Value as DevOps engineer?
+    A: Improve reliability, speed, cost efficiency, and security. :contentReference[oaicite:33]{index=33}
+
+JENKINS & PIPELINES
+
+35. Q: Jenkins pipeline basics?
+    A: Define stages: build, test, deploy with Jenkinsfile.
+
+36. Q: agent / environment / post?
+    A: agent → execution node; environment → vars; post → actions after stages.
+
+37. Q: Jenkins backup?
+    A: Backup /var/lib/jenkins (jobs, configs, creds).
+
+38. Q: Trigger pipeline?
+    A: Webhooks, cron, manual, upstream jobs.
+
+39. Q: View-only access?
+    A: Use RBAC roles with read permissions.
+
+OBSERVABILITY & TROUBLESHOOTING
+
+40. Q: Observability stack?
+    A: Metrics (Prometheus), logs (ELK), traces (Jaeger).
+
+41. Q: New image fails in prod?
+    A: Check logs, rollback, validate config/env differences.
+
+42. Q: Pod-to-pod communication?
+    A: Flat network via CNI.
+
+43. Q: Ingress vs controller?
+    A: Ingress → rules; controller → implementation.
+
+44. Q: Cost optimization?
+    A: Rightsizing, autoscaling, reserved instances.
+
+45. Q: Trunk-based branching?
+    A: Frequent merges to main, small changes.
+
+REAL-TIME DEBUGGING
+
+46. Q: PVC pending?
+    A: Check StorageClass, PV binding, AZ mismatch.
+
+47. Q: Slow app?
+    A: Check CPU/memory, DB latency, network.
+
+48. Q: RDS read-only access?
+    A: Create read replica or IAM auth.
+
+49. Q: Prometheus high memory?
+    A: Reduce retention, optimize queries.
+
+50. Q: RDS storage 95%?
+    A: Enable autoscaling, cleanup, alerting.
+
+ARCHITECTURE & SCALING
+
+51. Q: Multi-microservice CI/CD?
+    A: Use shared pipeline + parallel builds + artifact repo.
+
+52. Q: Secret management?
+    A: Vault/Secrets Manager + encryption.
+
+53. Q: SSL in Ingress?
+    A: Use TLS secret + ingress config.
+
+54. Q: Service mesh?
+    A: Sidecar proxies for traffic, security, observability.
+
+55. Q: Remove quality checks request?
+    A: Enforce via policy; optimize scans instead of removing.
+
+AWS & CLOUD BASICS
+
+56. Q: What is AWS?
+    A: Cloud platform providing compute, storage, networking.
+
+57. Q: Regions vs AZs?
+    A: Region → geographic; AZ → isolated data centers.
+
+58. Q: EC2?
+    A: Virtual server.
+
+59. Q: S3?
+    A: Object storage.
+
+60. Q: IAM?
+    A: Access control service.
+
+61. Q: VPC?
+    A: Isolated network.
+
+ADVANCED SCENARIOS
+
+62. Q: Reduce API latency?
+    A: Use caching, CDN, DB optimization.
+
+63. Q: Zero downtime deploy?
+    A: Rolling/blue-green with health checks.
+
+64. Q: Secure inter-service comms?
+    A: mTLS via service mesh.
+
+65. Q: Monitor 1000+ servers?
+    A: Centralized monitoring stack.
+
+66. Q: Disaster recovery?
+    A: Multi-region + backups + failover.
+
+67. Q: Terraform resource missing?
+    A: Use terraform import.
+
+68. Q: terraform apply recreates resources?
+    A: State mismatch or config drift.
+
+69. Q: Optimize CI pipeline time?
+    A: Parallel stages, caching.
+
+70. Q: Credentials in logs?
+    A: Rotate secrets, fix masking immediately.
+SYSTEM DESIGN – INTERVIEW GAPS (PRODUCTION LEVEL)
+
+1. Q: New disk in Linux — LVM vs direct filesystem (Architect view)?
+   A: Use LVM for production apps (DB/logs) needing resize, snapshots, HA; direct FS for stateless/high-performance workloads to reduce overhead.
+
+2. Q: Why LVM from application architecture perspective?
+   A: Enables dynamic scaling, safer migrations, snapshots for backup, and abstraction from physical disks → critical for evolving production workloads.
+
+TERRAFORM – STATE RECOVERY
+
+3. Q: How to recover lost/corrupted tfstate?
+   A: Restore from remote backend (S3 versioning) or reconstruct using terraform import.
+
+4. Q: Why remote backend mandatory?
+   A: Provides locking, versioning, and recovery → prevents infra inconsistency.
+
+KUBERNETES – FESTIVAL TRAFFIC DESIGN
+
+5. Q: Sudden traffic spike (Diwali) — zero downtime design?
+   A: Multi-AZ EKS, HPA + Cluster Autoscaler, ALB + CDN, readiness probes, rolling updates.
+
+6. Q: Instance type selection in ASG?
+   A: Use mixed instance types (compute/memory optimized) based on workload profiling + spot/on-demand mix for cost + resilience.
+
+7. Q: Why not depend only on dev input?
+   A: Architect must analyze metrics (CPU/mem/latency) and choose right instance families (e.g., C for compute, R for memory).
+
+DISASTER RECOVERY (DR)
+
+8. Q: DR strategy for production system?
+   A: Multi-region active-passive/active-active with data replication, failover via Route53.
+
+9. Q: What is RTO?
+   A: Recovery Time Objective → max acceptable downtime.
+
+10. Q: What is RPO?
+    A: Recovery Point Objective → max acceptable data loss.
+
+11. Q: Example (real-world)?
+    A: Banking app → RTO: minutes, RPO: near-zero using synchronous replication.
+
+END-TO-END ARCHITECTURE (INTERVIEW READY)
+
+12. Q: Full production architecture (high-level)?
+    A: Route53 → CloudFront (CDN) → WAF → ALB → EKS → Pods → RDS/Cache → Monitoring stack.
+
+13. Q: Where is WAF used?
+    A: At edge (CloudFront/ALB) for blocking malicious traffic.
+
+14. Q: How do you ensure zero downtime deployments?
+    A: Rolling updates, blue-green/canary, readiness probes, traffic shifting.
+
+15. Q: How do you ensure scalability?
+    A: HPA + Cluster Autoscaler + CDN caching.
+
+16. Q: How do you ensure security?
+    A: IAM, private subnets, WAF, mTLS, secrets manager.
+
+17. Q: How do you ensure observability?
+    A: Prometheus, Grafana, logs, tracing.
+KUBERNETES – ADVANCED (SCENARIO + L2/L3)
+
+1. Q: Design a highly available web application (end-to-end flow)?
+   A: Route53 → CloudFront (CDN) → WAF → ALB → EKS → Services → Pods → RDS/Redis → Monitoring stack.
+
+2. Q: Why use CDN before ALB?
+   A: Reduces latency and offloads traffic from backend → improves performance and cost.
+
+3. Q: Where is WAF placed and why?
+   A: At CDN/ALB layer to block malicious traffic before reaching backend.
+
+4. Q: How do you design for zero downtime?
+   A: Rolling/blue-green deployments + readiness probes + multi-AZ + autoscaling.
+
+5. Q: Multi-AZ vs Multi-region?
+   A: Multi-AZ → HA within region; Multi-region → disaster recovery.
+
+6. Q: Active-active vs active-passive DR?
+   A: Active-active → both regions serve traffic; Active-passive → failover on failure.
+
+7. Q: How to design failover?
+   A: Route53 health checks + DNS failover to secondary region.
+
+8. Q: RTO vs RPO?
+   A: RTO → recovery time; RPO → acceptable data loss.
+
+9. Q: Example DR decision?
+   A: E-commerce → low RTO/RPO → multi-region replication.
+
+10. Q: Data replication strategy?
+    A: Sync (low RPO, high latency) vs async (higher RPO, better performance).
+
+ARCHITECT THINKING (YOUR INTERVIEW GAP)
+
+11. Q: LVM vs direct disk (architect view)?
+    A: LVM for flexibility (resize/snapshots); direct disk for performance-critical stateless workloads.
+
+12. Q: Why LVM in production?
+    A: Enables scaling storage without downtime → critical for DB/log systems.
+
+13. Q: Instance type selection logic?
+    A: Based on workload profiling (CPU-bound → C, memory → R, general → M).
+
+14. Q: Why not depend only on dev input?
+    A: Architect must validate via metrics (CPU, memory, IO patterns).
+
+15. Q: Mixed instance strategy?
+    A: Use multiple instance types + spot for cost + resilience.
+
+
+16. Q: Handle sudden traffic spike (festival)?
+    A: Pre-scale ASG, HPA, CDN caching, DB scaling.
+
+17. Q: Horizontal vs vertical scaling?
+    A: Horizontal → more instances; Vertical → bigger instances.
+
+18. Q: Caching layers?
+    A: CDN (edge), Redis (app), DB query cache.
+
+19. Q: Why Redis?
+    A: Reduces DB load and improves latency.
+
+20. Q: Database bottleneck handling?
+    A: Read replicas + sharding + caching.
+
+
+21. Q: Region failure?
+    A: Failover to secondary region via DNS.
+
+22. Q: DB failure?
+    A: Use replicas or Multi-AZ failover.
+
+23. Q: Node failure?
+    A: Kubernetes reschedules pods.
+
+24. Q: Pod failure?
+    A: Restart via controller.
+
+25. Q: Network failure?
+    A: Retry logic + circuit breaker.
+
+SECURITY ARCHITECTURE
+
+26. Q: Secure architecture layers?
+    A: WAF + IAM + private subnets + encryption.
+
+27. Q: How to secure internal services?
+
+28. Q: Secret management?
+
+OBSERVABILITY DESIGN
+
+29. Q: Monitoring strategy?
+
+30. Q: Alerting?
+    A: Based on SLO breaches (latency, error rate).
+
+
+31. Q: Reduce infra cost?
+    A: Autoscaling, spot instances, caching.
+
+32. Q: CDN cost benefit?
+    A: Reduces backend compute usage.
+
+
+33. Q: What interviewer expected from you?
+    A: Decision-making logic (WHY), not just tools.
+
+34. Q: Key architect mindset?
+    A: Trade-offs: cost vs performance vs reliability.
+
+35. Q: Most important skill?
+    A: Designing for failure.
+
+WAR ROOM – REAL INCIDENT SCENARIOS
+
+36. Q: Service down but logs are normal?
+    A: Check dependencies (DB, DNS, network), metrics, latency.
+
+37. Q: High latency but CPU normal?
+    A: Check DB queries, network, external APIs.
+
+38. Q: Autoscaler not scaling?
+    A: Check metrics, thresholds, limits.
+
+39. Q: DNS failure inside cluster?
+    A: Check CoreDNS pods, config, network policies.
+
+40. Q: NAT cost spike suddenly?
+    A: High outbound traffic, misconfigured routing.
+
+41. Q: CI/CD deployed wrong version?
+    A: Rollback + fix tagging/versioning.
+
+42. Q: Memory leak in app?
+    A: Monitor heap usage, restart pods, fix code.
+
+43. Q: Sidecar causing latency?
+    A: Check resource limits, disable unnecessary features.
+
+44. Q: Database slow during peak?
+    A: Enable caching, scale replicas.
+
+45. Q: No alerts but system failing?
+    A: Monitoring gap → add synthetic checks.
+
+46. Q: Kubernetes node NotReady?
+    A: Check kubelet, network, disk pressure.
+
+47. Q: Pod stuck in Pending during traffic spike?
+    A: Cluster autoscaler not scaling or resource limits.
+
+48. Q: SSL expired in production?
+    A: Automate renewal (ACM/Certbot).
+
+49. Q: Secrets leaked in logs?
+    A: Rotate immediately + fix masking.
+
+50. Q: Production outage handling steps?
+    A: Detect → mitigate → rollback → RCA → prevent recurrence.

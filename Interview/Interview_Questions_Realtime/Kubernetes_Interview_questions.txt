@@ -1,0 +1,232 @@
+[1] In a Pod, how many containers can you run? Why use multiple containers?
+[2] What is a Rolling Update in Kubernetes?
+[3] What is the Recreate strategy in Kubernetes?
+[4] How do you perform maintenance activity on a Kubernetes node?
+[5] How do you control resource usage of a Pod?
+[6] What are the units of CPU and memory in Pod definition?
+[7] How do you upgrade Kubernetes?
+[8] Difference between Helm and Kubernetes Operator?
+[9] What are Kubernetes node components and their roles?
+[10] What is a Pod Disruption Budget (PDB)?
+[11] What are Kubernetes deployment strategies?
+[12] Pods in one namespace work internally but not from another namespace. How do you troubleshoot?
+[13] HPA not scaling despite high CPU usage. How do you debug?
+[14] New nodes join EKS but pods are stuck in Pending. Possible reasons?
+[15] How do you troubleshoot a Pod not getting scheduled?
+[16] How do you run a Pod on a specific node?
+[17] How do you colocate Pods for performance?
+[18] How do you provide persistent storage for Pods?
+[19] How do containers in a Pod share a single IP?
+[20] How do you expose Kubernetes services externally?
+[21] How does Pod-to-Pod communication work?
+[22] How does Pod-to-Service communication work?
+[23] How can you improve Kubernetes security?
+[24] How do you monitor Kubernetes?
+[25] How do you centralize logs from Pods?
+[26] How do you find non-running pods across all namespaces?
+[27] How do you identify pods that are restarting frequently?
+[28] How do you debug a specific pod in detail?
+[29] How do you quickly find pending pods?
+[30] How do you detect and prevent pod-to-pod lateral movement?
+[31] How do you verify resource requests and limits of a pod?
+[32] How do you check real-time resource usage of pods?
+[33] How do you find which node scheduled a pod?
+[34] How do you see all pods running on a specific node?
+[35] kubectl logs is blank but pods are running. Why?
+[36] Pods running but not receiving traffic. How to troubleshoot?
+[37] Pod OOMKilled but no logs. How do you debug?
+[38] Pod stuck in CrashLoopBackOff. How to debug?
+[39] Could you describe the entire architecture of Kubernetes?
+[40] How do you design a multi-region Kubernetes architecture for disaster recovery?
+[41] How do you design Kubernetes for 10k+ pods?
+[42] If a pod crashes repeatedly, what will kubelet do?
+[43] If kubelet cannot recreate the pod, what happens next?
+[44] How does Kubernetes leader election work?
+[45] How do you set up Kubernetes cluster from scratch?
+[46] Types of services in Kubernetes?
+[47] How to write a CronJob for kubectl commands?
+[48] DaemonSet pod pending. How to troubleshoot?
+[49] Can you get logs from a pending pod?
+[50] Challenges with databases in Kubernetes?
+[51] Pod stuck in ContainerCreating. How to debug?
+[52] Pods in CrashLoopBackOff. What to do?
+[53] kubectl slow in large cluster. Why?
+[54] Pods running but not receiving traffic. Troubleshoot? (duplicate of [36])
+[55] Pod stuck in CrashLoopBackOff. Debug steps? (duplicate of [38])
+[56] Explain Kubernetes networking model and CNI.
+[57] How do you debug pod-to-pod communication failures?
+[58] How do you secure secrets beyond Kubernetes Secrets?
+[59] How to design monitoring for Kubernetes microservices?
+[60] How does Prometheus integrate with Kubernetes?
+[61] Why is timestamp standardization critical in Kubernetes logging?
+[62] What is the impact of stdout vs stderr in container logging?
+[63] Why should you specify container name in kubectl logs?
+[64] Do Kubernetes pods generate logs directly?
+[65] Why can kubectl logs be misleading during failures?
+[66] What are common non-application causes of pod failures?
+[67] Why is structured logging preferred in production systems?
+[68] When should you use plaintext vs structured logs?
+[69] What is the biggest advantage of structured logging?
+[70] Why is proper log level usage important in DevOps?
+[71] How should log levels be used in real-world systems?
+[72] What happens if log levels are misused?
+[73] What are the main components of Kubernetes architecture?
+[74] What is the role of the API Server in Kubernetes?
+[75] Why is etcd called the heart of Kubernetes?
+[76] What does the Scheduler do?
+[77] What is the function of Controller Manager?
+[78] What happens in the Kubernetes request flow?
+[79] How does Kubernetes control plane handle requests?
+[80] What happens if kube-apiserver is down?
+[81] How does etcd ensure consistency?
+[82] Worker node goes NotReady — what happens?
+[83] Pod stuck in Pending state?
+[84] CrashLoopBackOff root causes?
+[85] Logs show nothing in CrashLoopBackOff — next step?
+[86] How scheduler selects nodes?
+[87] What if cluster runs out of memory?
+[88] QoS classes in Kubernetes?
+[89] How does service discovery work in Kubernetes?
+[90] What is the role of NetworkPolicies?
+[91] What does a Service Mesh provide?
+[92] What is overlay networking (VXLAN/BGP)?
+[93] Pod-to-pod communication model?
+[94] kube-proxy role?
+[95] IPVS vs iptables?
+[96] DNS failure impact?
+[97] NetworkPolicy blocking traffic?
+[98] HPA working mechanism?
+[99] Cluster Autoscaler?
+[100] HPA not scaling issue?
+[101] Sudden traffic spike handling?
+[102] Resource starvation issue?
+[103] PVC in Pending state?
+[104] StatefulSet use case?
+[105] High storage latency impact?
+[106] EBS volume stuck issue in EKS?
+[107] Rolling update strategy?
+[108] Blue-Green deployment?
+[109] Canary deployment?
+[110] Why readinessProbe critical?
+[111] Wrong readinessProbe impact?
+[112] RBAC in Kubernetes?
+[113] ServiceAccount usage?
+[114] Secure etcd?
+[115] Prevent root containers?
+[116] Control plane ↔ node network break?
+[117] kubelet crash scenario?
+[118] CNI failure impact?
+[119] Cluster certificate expired?
+[120] Node affinity vs pod affinity?
+[121] Taints & tolerations?
+[122] Dedicated node use case?
+[123] Debug slow application in K8s?
+[124] Pod logs vs events vs metrics?
+[125] Prometheus high memory issue?
+[126] Pod restarting frequently?
+[127] Service not accessible externally?
+[128] Node disk full?
+[129] Deployment stuck?
+[130] Design HA Kubernetes cluster?
+[131] Multi-region Kubernetes?
+[132] Production-ready cluster checklist?
+[133] Where else can resource limits be set?
+[134] What is a CRD (Custom Resource Definition)?
+[135] How do you manage access to multiple clusters?
+[136] When are DaemonSets used?
+[137] When are StatefulSets preferred?
+[138] What are taints and tolerations?
+[139] Difference between NodePort and LoadBalancer?
+[140] When should you use Ingress instead of LoadBalancer?
+[141] How does a service detect healthy endpoints?
+[142] How do you check node pressure or issues?
+[143] How do you list all services with external IPs?
+[144] How do you access a service locally for testing?
+[145] How do you check deployment rollout history?
+[146] How do you rollback a failed deployment?
+[147] How do you inspect deployment YAML without editing?
+[148] How do you quickly port-forward a service?
+[149] How do you view rollout history again (quick check)?
+[150] How do you undo deployment changes quickly?
+[151] How do you inspect YAML configuration quickly?
+[152] Deployment pulls old image despite new build. What’s the issue?
+[153] How do you deploy a critical microservice with zero downtime?
+[154] Vulnerable dependency found in deployed Docker image. What actions?
+[155] How do you debug networking inside the cluster?
+[156] How do you implement zero-trust networking?
+[157] How do you debug DNS issues?
+[158] What is a namespace and how is it used?
+[159] How do you manage an EKS cluster?
+[160] How do you design a multi-tenant EKS cluster with isolation across dev, QA, and prod?
+[161] How do you manage 10+ Kustomize overlays without drift?
+[162] How do you perform zero-downtime upgrades for stateful apps using Helm?
+[163] Autoscaling not triggering despite high CPU. Why?
+[164] Kernel panic on GKE node. How to isolate root cause?
+[165] Kernel panic in production cluster — how handled?
+[166] Broken Helm upgrade with no visibility — what did you do?
+[167] What is GitOps?
+[168] Argo CD vs Flux?
+[169] Argo CD sync?
+[170] Blue-Green/Canary deployments? (duplicate of [108])
+[171] Rollback strategy?
+[172] HPA not scaling? (duplicate of [100])
+[173] Latency spike after sidecar?
+[174] Current infra architecture & ownership?
+[175] EKS vs self-managed K8s?
+[176] OOMKilled debugging? (duplicate of [37])
+[177] exec vs logs vs describe?
+[178] ConfigMap vs Secret?
+[179] Wrong readinessProbe impact? (duplicate of [111])
+[180] NetworkPolicy debugging?
+[181] Image pull failure?
+[182] Stuck pods & taints?
+[183] Nodes running out of memory. What to do?
+[184] App latency increased. How to find root cause?
+[185] How to manage SSL certificates for load balancer?
+[186] Best option for SSL in EKS?
+[187] How to upgrade an EKS cluster? (duplicate of [7])
+[188] Upgrade nodes in same group or new group?
+[189] What is GitOps? (duplicate of [167])
+[190] Argo CD vs Flux? (duplicate of [168])
+[191] Argo CD sync? (duplicate of [169])
+[192] Blue-Green/Canary deployments? (duplicate of [108])
+[193] Rollback strategy? (duplicate of [171])
+[194] Service Mesh basics?
+[195] Nodes running out of memory. What to do? (duplicate of [183])
+[196] App latency increased. How to find root cause? (duplicate of [184])
+[197] How to manage SSL certificates for load balancer? (duplicate of [185])
+[198] Best option for SSL in EKS? (duplicate of [186])
+[199] How to upgrade an EKS cluster? (duplicate of [7])
+[200] Upgrade nodes in same group or new group? (duplicate of [188])
+[201] What is GitOps? (duplicate of [167])
+[202] Argo CD vs Flux? (duplicate of [168])
+[203] Argo CD sync? (duplicate of [169])
+[204] Blue-Green/Canary deployments? (duplicate of [108])
+[205] Rollback strategy? (duplicate of [171])
+[206] Service Mesh basics? (duplicate of [194])
+[207] What is the role of a pause container?
+[208] What are init containers?
+[209] How do you check logs from a previously crashed container?
+[210] Restart failed K8s pods?
+[211] EKS node disk utilization reached ~85%, SSH is restricted, and even after increasing EBS volume the OS didn’t reflect changes — how do you fix it without node access?
+[212] Why doesn’t EBS volume auto-expand at OS level after resizing?
+[213] Why use a privileged pod instead of SSH?
+[214] What risks exist with privileged pods?
+[215] How do you ensure this doesn’t happen again?
+[216] What tools are required for disk expansion in Linux?
+[217] How do you identify correct device and partition?
+[218] What is the difference between partition resize and filesystem resize?
+[219] How would you automate this fix in production clusters?
+[220] How do you validate successful expansion?
+[221] EKS node disk utilization reached ~85... (duplicate of [211])
+[222] Why doesn’t EBS volume auto-expand at OS level after resizing? (duplicate of [212])
+[223] Why use a privileged pod instead of SSH? (duplicate of [213])
+[224] What risks exist with privileged pods? (duplicate of [214])
+[225] How do you ensure this doesn’t happen again? (duplicate of [215])
+[226] What tools are required for disk expansion in Linux? (duplicate of [216])
+[227] How do you identify correct device and partition? (duplicate of [217])
+[228] What is the difference between partition resize and filesystem resize? (duplicate of [218])
+[229] How would you automate this fix in production clusters? (duplicate of [219])
+[230] How do you validate successful expansion? (duplicate of [220])
+[231] Pod not starting?
+[232] How do you create/manage Kubernetes clusters using Terraform?

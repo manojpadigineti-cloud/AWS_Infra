@@ -1,0 +1,47 @@
+[1] What is sed and -E option?
+[2] How do you check a DNS entry in a system?
+[3] What are environment variables?
+[4] What is a cron job and how do you create it?
+[5] If a cron job already exists, would you modify it or create a new one? Why?
+[6] Why do we use webhook triggers?
+[7] Systemd logs missing after reboot. What to check?
+[8] Kill process in Ubuntu?
+[9] Open firewall?
+[10] Check open ports?
+[11] netstat -ntlp?
+[12] Cron job? (duplicate of [4])
+[13] Clear cache?
+[14] What is a Forward Proxy?
+[15] What is a Reverse Proxy?
+[16] Forward vs Reverse Proxy?
+[17] How to get current date/time in shell?
+[18] How to format date?
+[19] Where is shell scripting used in CI/CD?
+[20] How to log timestamps in scripts?
+[21] Bash one-liner to find containers using >500MB RSS memory?
+[22] Check disk space?
+[23] Count lines in file?
+[24] Download file?
+[25] Disk full issue?
+[26] Check CPU usage?
+[27] Check memory usage?
+[28] Kill process? (duplicate of [8])
+[29] Check open ports? (duplicate of [10])
+[30] Check logs?
+[31] High CPU alert handling?
+[32] Cron job use? (duplicate of [4])
+[33] File permissions (777)?
+[34] Soft vs hard link?
+[35] Kill process Linux? (duplicate of [28])
+[36] Get PID?
+[37] Check system performance?
+[38] chmod 555?
+[39] Full permissions?
+[40] Soft vs hard link? (duplicate of [34])
+[41] What are 1xx HTTP status codes?
+[42] What are 2xx HTTP status codes?
+[43] What are 3xx HTTP status codes?
+[44] What are 4xx HTTP status codes?
+[45] What are 5xx HTTP status codes?
+[46] Why are HTTP status codes important?
+[47] How to quickly remember HTTP status codes?

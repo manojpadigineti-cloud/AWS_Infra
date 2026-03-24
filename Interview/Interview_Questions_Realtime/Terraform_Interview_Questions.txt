@@ -1,0 +1,225 @@
+[1] What is Terraform?
+[2] Difference between Terraform and configuration management tools?
+[3] How do you install Terraform?
+[4] What is a Terraform provider?
+[5] What is Terraform state file?
+[6] What are Terraform workspaces?
+[7] What does terraform init do?
+[8] What is terraform plan?
+[9] What is terraform apply?
+[10] What are resources in Terraform?
+[11] What are variables in Terraform?
+[12] What are outputs in Terraform?
+[13] What are local variables in Terraform?
+[14] What are modules in Terraform? Do you use default modules or custom ones?
+[15] How do you manage secrets in Terraform?
+[16] What is terraform.tfvars?
+[17] What are Terraform best practices?
+[18] What is Terraform Enterprise?
+[19] How to manage Terraform state in teams?
+[20] What are Terraform modules?
+[21] What is Terraform Cloud?
+[22] Types of Terraform variables?
+[23] How does Terraform handle drift?
+[24] How do you use Terraform with Git?
+[25] How do you version Terraform modules?
+[26] How does Terraform integrate with CI/CD?
+[27] What is terraform import?
+[28] How do you rollback in Terraform?
+[29] What is Terraform count?
+[30] What is lifecycle in Terraform?
+[31] What is Terraform drift?
+[32] What are locals in Terraform?
+[33] How does Terraform support multi-cloud?
+[34] How does Terraform handle state locking, and what happens if the lock is lost mid-apply?
+[35] Explain a real scenario where terraform plan shows no change, but apply still modifies resources.
+[36] How do you safely manage Terraform state across multiple teams and environments?
+[37] How do you handle secrets in Terraform without exposing them in state files? (duplicate of [15])
+[38] What happens internally when you delete a resource manually from the cloud but not from Terraform?
+[39] How do you design Terraform modules to be reusable without becoming tightly coupled?
+[40] Explain depends_on vs implicit dependency — when does Terraform get it wrong?
+[41] How do you refactor a Terraform codebase without destroying production resources?
+[42] Describe a real incident caused by Terraform state corruption. How did you fix it?
+[43] Terraform state got corrupted. How do you rebuild? (duplicate of [42])
+[44] Terraform state corruption mid-deploy — recovery? (duplicate of [42])
+[45] Terraform state file deleted. How to recover? (duplicate of [15])
+[46] Terraform state deleted. How to recover? (duplicate of [45])
+[47] What happens if state file is lost? (duplicate of [36])
+[48] How to recover corrupted state? (duplicate of [42])
+[49] State file deleted accidentally? (duplicate of [45])
+[50] Wrong resource deleted?
+[51] What is Infrastructure as Code (IaC) and why is Terraform widely used for it? (duplicate of [1])
+[52] What is the difference between Terraform and configuration management tools like Ansible? (duplicate of [2])
+[53] Explain the purpose of the Terraform state file. (duplicate of [5])
+[54] What is remote state in Terraform and why should we use it?
+[55] What is the difference between terraform plan, apply, and destroy?
+[56] What are Terraform modules and why are they important? (duplicate of [20])
+[57] How do you manage secrets securely in Terraform? (duplicate of [15])
+[58] What is the difference between count and for_each in Terraform? (duplicate of [29])
+[59] What are Terraform workspaces and when should they be used? (duplicate of [6])
+[60] How would you implement Terraform in a CI/CD pipeline? (duplicate of [26])
+[61] A manual AWS change caused Terraform drift and apply wants to recreate the resource. How do you fix without downtime?
+[62] Terraform modules across repos fail due to dependency conflicts. Solution?
+[63] What is Terraform state and why critical? (duplicate of [5])
+[64] Remote state best practice?
+[65] What happens if state file is lost? (duplicate of [47])
+[66] How to recover corrupted state? (duplicate of [48])
+[67] Why enable versioning on state backend?
+[68] What is infrastructure drift?
+[69] How to detect drift?
+[70] How to fix drift?
+[71] Manual change in AWS console — impact?
+[72] Safe approach for emergency fixes?
+[73] Migrate backend safely?
+[74] Multi-account Terraform design?
+[75] Why state locking needed?
+[76] count vs for_each? (duplicate of [29])
+[77] dynamic blocks use?
+[78] lifecycle block use?
+[79] prevent_destroy use case?
+[80] create_before_destroy use?
+[81] Why use modules? (duplicate of [20])
+[82] Module design best practice?
+[83] Monolithic vs modular Terraform?
+[84] terraform plan vs apply? (duplicate of [8])
+[85] terraform refresh?
+[86] Parallelism in Terraform?
+[87] API rate limiting issue?
+[88] Secrets in Terraform? (duplicate of [15])
+[89] sensitive = true?
+[90] Secure state file?
+[91] Terraform in CI/CD? (duplicate of [26])
+[92] Prevent accidental apply?
+[93] Policy-as-code tools?
+[94] Zero-downtime infra update?
+[95] Blue-Green infra strategy?
+[96] Resource recreation unexpectedly?
+[97] Dependency issue?
+[98] Partial apply failure?
+[99] Large-scale refactoring?
+[100] Import existing infra?
+[101] Multi-region deployment?
+[102] Testing Terraform code?
+[103] Why Terraform over manual infra? (duplicate of [1])
+[104] Enterprise Terraform setup?
+[105] Cost optimization via Terraform?
+[106] Concurrent apply issue?
+[107] Backend unreachable?
+[108] What interviewers expect?
+[109] Most critical Terraform concept?
+[110] Biggest production risk?
+[111] Terraform state file deleted. How to recover? (duplicate of [45])
+[112] How to manage secrets in Terraform in teams? (duplicate of [15])
+[113] Multiple teams modifying Terraform. How to avoid conflicts?
+[114] How to create reusable Terraform modules? (duplicate of [20])
+[115] How to manage secrets in Terraform teams? (duplicate of [112])
+[116] Terraform state got corrupted. How do you rebuild? (duplicate of [43])
+[117] Terraform state corruption mid-deploy — recovery? (duplicate of [44])
+[118] What is Terraform and why use it? (duplicate of [1])
+[119] What are Terraform providers? (duplicate of [4])
+[120] What are Terraform provisioners?
+[121] Providers vs provisioners?
+[122] Why are provisioners not recommended?
+[123] What is terraform init/plan/apply? (duplicate of [7])
+[124] What happens during terraform apply? (duplicate of [9])
+[125] Why lock Terraform versions?
+[126] What is required_version?
+[127] How to lock provider versions?
+[128] What does ~> 5.0 mean?
+[129] Problems if versions not pinned?
+[130] How to upgrade Terraform safely?
+[131] Terraform apply failed – how to debug?
+[132] What is state lock error?
+[133] How to fix corrupted state? (duplicate of [48])
+[134] What is terraform force-unlock?
+[135] What causes CIDR overlap errors?
+[136] Resource already exists error?
+[137] Provider version conflicts?
+[138] How to create multiple EC2 instances?
+[139] count vs for_each? (duplicate of [29])
+[140] When to use count?
+[141] When to use for_each?
+[142] How to create EC2 with different sizes?
+[143] How to create 5 identical EC2?
+[144] How to tag EC2 dynamically?
+[145] Why Auto Scaling over multiple EC2?
+[146] Have you worked with Terraform?
+[147] How do you pass values to a Terraform module?
+[148] What are the most important concepts in Terraform?
+[149] How do you configure Security Groups using Terraform?
+[150] What are Terraform dependencies, and how do they work?
+[151] Explain Terraform modules in detail. (duplicate of [20])
+[152] Terraform state file? (duplicate of [5])
+[153] refresh vs plan vs apply?
+[154] Modularization?
+[155] Drift detection?
+[156] Backend setup (S3/Azure Blob)?
+[157] count vs for_each vs dynamic?
+[158] lifecycle block?
+[159] Terraform dynamic/data/modules?
+[160] Lose Terraform state?
+[161] terraform validate vs fmt?
+[162] What is Infrastructure as Code (IaC)? (duplicate of [51])
+[163] How do you reference variables?
+[164] How do you destroy infrastructure?
+[165] Difference between modules and resources?
+[166] What is provider alias?
+[167] What are count and for_each? (duplicate of [29])
+[168] What are data sources?
+[169] How are dependencies handled?
+[170] What are provisioners? (duplicate of [120])
+[171] What is remote-exec?
+[172] What are remote backends?
+[173] How do you manage multiple environments?
+[174] What are dynamic blocks?
+[175] What is interpolation syntax?
+[176] What are remote backends benefits?
+[177] What is immutable infrastructure?
+[178] What are state management challenges?
+[179] What is state locking?
+[180] How to implement conditional logic?
+[181] What is HCL?
+[182] What are null resources?
+[183] What are outputs vs data sources?
+[184] How to handle secrets securely? (duplicate of [15])
+[185] Why use modules? (duplicate of [20])
+[186] How do modules communicate?
+[187] What is resource targeting?
+[188] What is secret rotation?
+[189] What is state migration?
+[190] How do you manage module versions?
+[191] What problems arise when multiple modules reference the same resource, and how do you design around it?
+[192] Difference between count and for_each — and why switching between them can destroy resources. (duplicate of [29])
+[193] Explain drift detection. How do you detect and fix infra drift without downtime? (duplicate of [69])
+[194] How do workspaces actually work, and why are they dangerous in large organizations? (duplicate of [6])
+[195] What are partial applies, and how do you recover safely from a failed apply? (duplicate of [98])
+[196] How do provider version mismatches break production, and how do you prevent it? (duplicate of [137])
+[197] Terraform VPC script?
+[198] Recommended folder structure?
+[199] terraform destroy vs taint?
+[200] How to secure Terraform state? (duplicate of [90])
+[201] Prevent accidental resource deletion? (duplicate of [92])
+[202] Handle provider API rate limiting? (duplicate of [87])
+[203] Recover from corrupted state file? (duplicate of [48])
+[204] Migrate backend safely? (duplicate of [73])
+[205] Handle state drift in prod? (duplicate of [70])
+[206] Manage secrets securely? (duplicate of [15])
+[207] Zero-downtime infra updates? (duplicate of [94])
+[208] Enterprise module design? (duplicate of [82])
+[209] Large-scale refactoring? (duplicate of [99])
+[210] Terraform testing strategy? (duplicate of [102])
+[211] Terraform state deleted? (duplicate of [45])
+[212] Terraform backend failure?
+[213] Provision 100 EC2 + install app via CI/CD?
+[214] Introduce Terraform into existing infra?
+[215] Terraform modules design? (duplicate of [82])
+[216] Backward-incompatible changes?
+[217] Terraform vs CloudFormation?
+[218] Terraform state file? (duplicate of [5])
+[219] Terraform commands?
+[220] State management? (duplicate of [19])
+[221] Multi-user Terraform? (duplicate of [113])
+[222] Drift detection? (duplicate of [69])
+[223] Import existing infra? (duplicate of [100])
+[224] Terraform with ECR?
+[225] Multi-account Terraform? (duplicate of [74])
