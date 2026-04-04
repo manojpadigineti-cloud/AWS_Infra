@@ -402,3 +402,5 @@
 
 How to recover a failed ec2 intance automatically? (No IP change, no data loss, Auto recovery)
 using cloud watch auto recovery -- status and alarm -> create alarm -> statuschackfailed_system (alarm notification) -> alarm action -> recover | alarm threshold maximum -> type: status check failed system 
+
+s3 access points
