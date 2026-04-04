@@ -840,3 +840,114 @@ kubectl rollout status deployment <name>
 [147] Node failure?
 Node marked NotReady, pods rescheduled to other nodes, autoscaler may provision new nodes.
 
+
+[148] Kubernetes admission controllers?
+
+[149] where kubernetes default manifests?
+  /etc/kubernetes/manifests 
+
+
+[150] How to check containers running inside a pod?
+either you describe or just kubectl get pods -o wilde filter with json for containers 
+
+[1] If a pod has 2 container and pod holds the ip how will containers comunticate with each other
+Containers in the same Pod communicate over localhost because they share the same network namespace and Pod IP 
+
+Q1: How does Kubernetes provide persistent storage to Pods?
+Answer: Kubernetes uses Persistent Volumes (PV) and Persistent Volume Claims (PVC). PVC is requested by the Pod, and PV is provisioned dynamically using a StorageClass (like EBS/EFS via CSI driver).
+
+Q2: What is the role of CSI driver?
+Answer: CSI (Container Storage Interface) driver allows Kubernetes to provision and manage external storage systems like EBS and EFS dynamically.
+
+Q3: Will enabling CSI driver automatically create EBS volumes?
+Answer: No. CSI driver only enables provisioning. EBS is created only when a PVC is created using a StorageClass.
+
+Q4: What is the access mode of EBS and EFS?
+Answer:
+EBS → ReadWriteOnce (RWO)
+EFS → ReadWriteMany (RWX)
+
+Q5: Can multiple Pods share the same EBS volume?
+Answer: No. EBS supports RWO, so it can be attached to only one node at a time.
+
+Q6: Can multiple Pods share the same EFS volume?
+Answer: Yes. EFS supports RWX, so multiple Pods across nodes can access it simultaneously.
+
+Q7: What happens if multiple Pods write to the same file in EFS?
+Answer: It can cause data corruption, duplicate logs, and race conditions. Solution: use subPath or separate directories.
+
+Q8: What is subPathExpr in Kubernetes?
+Answer: subPathExpr allows dynamic directory creation using environment variables like Pod name, so each Pod writes to its own directory in shared storage.
+
+Q9: Difference between subPath and subPathExpr?
+Answer:
+subPath → static directory
+subPathExpr → dynamic (uses env variables like Pod name)
+
+Q10: Where does Elasticsearch store logs and data?
+Answer:
+Logs → /usr/share/elasticsearch/logs
+Data → /usr/share/elasticsearch/data
+
+Q11: Can we store Elasticsearch data on EFS?
+Answer: Not recommended. Elasticsearch requires low latency, so EBS is preferred. EFS can cause performance issues.
+
+Q12: Can we store Elasticsearch logs on EFS?
+Answer: Yes, but only for internal logs. Not for indexed data.
+
+Q13: How does Elasticsearch write logs?
+Answer: Elasticsearch appends logs to a file using Log4j2 and rotates them based on size/time.
+
+Q14: What is log rotation?
+Answer: Log rotation creates new log files when the current file reaches a size or time limit (e.g., elasticsearch.log.1, .gz).
+
+Q15: How do you prevent log duplication in EFS?
+Answer: Use subPathExpr (per Pod directory), unique log file names, or centralized logging (best practice).
+
+Q16: What is the best logging architecture in Kubernetes?
+Answer:
+Pods → stdout → Fluent Bit → Elasticsearch → Kibana
+
+Q17: Why avoid shared file logging in Kubernetes?
+Answer: Because it is not scalable, causes conflicts, and is hard to manage. Centralized logging is preferred.
+
+Q18: How does Fluent Bit work?
+Answer: Fluent Bit runs as a DaemonSet, collects logs from all nodes, and forwards them to systems like Elasticsearch.
+
+Q19: Why use StatefulSet for Elasticsearch?
+Answer: Because it provides stable identity, persistent storage, and each Pod gets its own volume.
+
+Q20: How does EBS get attached to a Pod?
+Answer:
+Pod → PVC → StorageClass → CSI → EBS
+
+Q21: Can one Pod mount same volume to multiple paths?
+Answer: Yes, within the same Pod.
+
+Q22: Can two Deployments share same EBS?
+Answer: No, because EBS supports only ReadWriteOnce.
+
+Q23: When do you use EFS instead of EBS?
+Answer: Use EFS when shared access is required and multiple Pods need the same data.
+
+Q24: What happens to data if Pod restarts without PVC?
+Answer: Data is lost (ephemeral storage).
+
+Q25: How do you debug EFS data in Kubernetes?
+Answer:
+kubectl exec -it <pod> -- ls /mount-path
+
+Q26: How does data look inside EFS?
+Answer: Like a normal Linux filesystem with files and directories.
+
+Q27: What is volumeClaimTemplates?
+Answer: Used in StatefulSets to automatically create one PVC per Pod.
+
+Q28: Why EBS is preferred for databases?
+Answer: Because of low latency, high IOPS, and better consistency.
+
+Q29: What is a common mistake with EFS?
+Answer: Mounting the same path for multiple Pods without isolation, causing overwrite issues.
+
+Q30: How do you secure EBS/EFS?
+Answer: Use encryption (KMS), IAM roles, security groups, and access points (EFS).

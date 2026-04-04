@@ -1,0 +1,112 @@
+# GitHub Actions → AWS ECR using OIDC (Complete Setup)
+
+## Step 1: Create OIDC Provider in AWS
+
+aws iam create-open-id-connect-provider 
+--url https://token.actions.githubusercontent.com 
+--client-id-list sts.amazonaws.com 
+--thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1
+
+## Step 2: Verify OIDC Provider
+
+aws iam list-open-id-connect-providers
+
+aws iam get-open-id-connect-provider 
+--open-id-connect-provider-arn arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com
+
+## Step 3: Create Trust Policy
+
+cat <<EOF > trust-policy.json
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Principal": {
+"Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+},
+"Action": "sts:AssumeRoleWithWebIdentity",
+"Condition": {
+"StringEquals": {
+"token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+},
+"StringLike": {
+"token.actions.githubusercontent.com:sub": "repo:<GITHUB_USERNAME>/<REPO_NAME>:*"
+}
+}
+}
+]
+}
+EOF
+
+## Step 4: Create IAM Role
+
+aws iam create-role 
+--role-name github-ecr-role 
+--assume-role-policy-document file://trust-policy.json
+
+## Step 5: Attach ECR Permissions
+
+aws iam attach-role-policy 
+--role-name github-ecr-role 
+--policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
+
+## Step 6: Create ECR Repository
+
+aws ecr create-repository --repository-name my-app
+
+## Step 7: GitHub Actions Workflow (.github/workflows/ecr.yml)
+
+name: Build and Push to ECR
+
+on:
+push:
+branches: [ "main" ]
+
+permissions:
+id-token: write
+contents: read
+
+jobs:
+build:
+runs-on: ubuntu-latest
+
+```
+steps:
+- name: Checkout
+  uses: actions/checkout@v4
+
+- name: Configure AWS Credentials
+  uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/github-ecr-role
+    aws-region: us-east-1
+
+- name: Login to ECR
+  uses: aws-actions/amazon-ecr-login@v2
+
+- name: Build and Push Docker Image
+  run: |
+    IMAGE_URI=<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/my-app:latest
+    
+    docker build -t my-app .
+    docker tag my-app:latest $IMAGE_URI
+    docker push $IMAGE_URI
+
+- name: Verify Identity
+  run: aws sts get-caller-identity
+```
+
+## Step 8: Expected Output
+
+{
+"Arn": "arn:aws:sts::<ACCOUNT_ID>:assumed-role/github-ecr-role/..."
+}
+
+## Summary
+
+1. Create OIDC provider in AWS
+2. Create IAM role with trust policy (GitHub repo)
+3. Attach ECR permissions
+4. Configure GitHub Actions with OIDC
+5. Build → Tag → Push Docker image to ECR

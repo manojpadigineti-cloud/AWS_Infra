@@ -399,3 +399,6 @@
 
 [134] How to create Lambda variables?
 "Console: Configuration → Environment variables. CLI: aws lambda update-function-configuration --environment Variables='{KEY1=val1}'. Secrets Manager reference for secure vars."
+
+How to recover a failed ec2 intance automatically? (No IP change, no data loss, Auto recovery)
+using cloud watch auto recovery -- status and alarm -> create alarm -> statuschackfailed_system (alarm notification) -> alarm action -> recover | alarm threshold maximum -> type: status check failed system 
